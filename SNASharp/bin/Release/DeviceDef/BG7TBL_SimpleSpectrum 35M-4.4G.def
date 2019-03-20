@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ModelName>SimpleSpectrum 35M-4.4G</ModelName>
+  <BuilderName>BG7TBL</BuilderName>
+  <Attenuator>false</Attenuator>
+  <AD8309>true</AD8309>
+  <AD8361>false</AD8361>
+  <Firmware>119</Firmware>
+  <MinFrequencyInHz>35000000</MinFrequencyInHz>
+  <MaxFrequencyInHz>4400000000</MaxFrequencyInHz>
+  <FrequencyDivisor>10</FrequencyDivisor>
+  <VerticalResolutiondB>0.1923</VerticalResolutiondB>
+  <Operating_mode>SpectrumNoTracking</Operating_mode>
+  <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
+</NWTCompatibleDeviceDef>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ModelName>NWT70</ModelName>
+  <BuilderName>BG7TBL</BuilderName>
+  <Attenuator>true</Attenuator>
+  <AD8309>true</AD8309>
+  <AD8361>true</AD8361>
+  <Firmware>110</Firmware>
+  <MinFrequencyInHz>50000</MinFrequencyInHz>
+  <MaxFrequencyInHz>90000000</MaxFrequencyInHz>
+  <FrequencyDivisor>1</FrequencyDivisor>
+  <VerticalResolutiondB>0.1923</VerticalResolutiondB>
+  <Operating_mode>TrackingNoSpectrum</Operating_mode>
+  <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
+</NWTCompatibleDeviceDef>
