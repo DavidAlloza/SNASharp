@@ -222,7 +222,8 @@ namespace SNASharp
             int nLowerScale = -90;
 
 
-            GraphDef Graph = new GraphDef();
+            //GraphDef Graph = new GraphDef();
+             GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
 
             CurveDef CurveConfig = new CurveDef();
 
@@ -307,10 +308,10 @@ namespace SNASharp
             Graph.nLastDrawingHighFrequency = nFrequencyDetectionEnd /*CurveConfig.nSpectrumHighFrequency*/;
             Graph.fLastDrawingLevelLow = nLowerScale;
             Graph.fLastDrawingLevelHigh = nUpperScale;
-            SpectrumPictureBox.DrawBackground(Graph);
+            SpectrumPictureBox.GetGraphConfig().DrawBackGround();
 
             if (AcquisitionParams.ResultDatas!=null)
-                SpectrumPictureBox.CurveDraw(CurveConfig);
+                SpectrumPictureBox.DrawCurve(CurveConfig);
         }
 
         private void backgroundWorkerSerialCapture_DoWork(object sender, DoWorkEventArgs e)

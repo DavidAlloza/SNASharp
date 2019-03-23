@@ -45,7 +45,7 @@ namespace SNASharp
             FreqDisplayLabel.Font = Font;
             LevelDisplayLabel.Font = Font;
 
-
+            GraphConfig.SetPictureBox(this);
 
         }
 
@@ -64,7 +64,7 @@ namespace SNASharp
 
         public void DisplayFrequencyAndLevelOnCorners(int nXMouse)
         {
-            Int64 nFrequency = GraphConfig.GetFrequencyFromXDisplay(Size.Width,nXMouse);
+            Int64 nFrequency = GraphConfig.GetFrequencyFromXDisplay(nXMouse);
 
 
             double dBLevel;
@@ -113,7 +113,7 @@ namespace SNASharp
                 Int64 nNewEndFrequency ;
 
 
-                nCentralFrequency = GraphConfig.GetFrequencyFromXDisplay(Size.Width, Event.X);
+                nCentralFrequency = GraphConfig.GetFrequencyFromXDisplay(Event.X);
                 nPreviousBW = GraphConfig.nLastDrawingHighFrequency - GraphConfig.nLastDrawingLowFrequency;
 
 
@@ -192,293 +192,15 @@ namespace SNASharp
             GraphicDisplay( GraphConfig,Curve);
         }
 
-
-
-        Int64 GetFrequencyGranularityDisplay(Int64 fBW, int nDisplay = 13)
-        {
-            Int64[ ] List = new Int64[] { 100,200,250,500,1000,2000,2500,
-                                        5000,10000,20000,25000,50000,
-                                        100000,200000,250000,500000,
-                                        1000000,2000000, 2500000,
-                                        5000000,10000000,20000000,
-                                        25000000,50000000,100000000,200000000,250000000,500000000 };
-
-            for ( int i = 0; i < List.Length; i++)
-            {
-                if ((fBW / List[i]) <= nDisplay) return List[i];
-            }
-
-            return 1000000000;
-        }
-
-
-        int GetXFromFrequency(Int64 nStartFrequencyInHz, Int64 nEndFrequencyInHz, Int64 nFrequency)
-        {
-            int nWidth = Size.Width - GraphConfig.LeftBorder - GraphConfig.RightBorder;
-
-            if (nEndFrequencyInHz == nStartFrequencyInHz)
-                return GraphConfig.LeftBorder;
-
-            return GraphConfig.LeftBorder + (Int32)(((Int64)(nFrequency - nStartFrequencyInHz) * nWidth )/ (nEndFrequencyInHz - nStartFrequencyInHz));
-        }
-
-
-        int GetVerticalScaleIncrementFromDelta(int nDelta)
-        {
-            if (nDelta <= 20)
-                return 1;
-
-            if (nDelta <= 40)
-                return 5;
-
-                return 10;
-        }
-        public void DrawBackground(GraphDef _Graph)
-        {
-            if (Size.Width == 0 || Size.Height == 0)
-                return;
-
-            GraphConfig = _Graph;
-
-            int nWidth = Size.Width - GraphConfig.LeftBorder - GraphConfig.RightBorder;
-            int nHeight = Size.Height - GraphConfig.UpBorder - GraphConfig.LowBorder;
-
-
-            Bitmap DrawArea = new Bitmap(Size.Width, Size.Height);
-            //DrawArea.
-            Image = DrawArea;
-
-            Graphics g = Graphics.FromImage(Image);
-            g.Clear(Color.White);
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            
-            System.Drawing.Font dBFont = null;
-
-            System.Drawing.Font FreqFont = new Font("Times New Roman", 10.0f);
-
-
-            if (!GraphConfig.bSWRDisplay)
-                dBFont = new Font("Times New Roman", 10.0f);
-            else
-                dBFont = new Font("Times New Roman", 15.0f);
-
-
-
-            Pen mypenHLines = new Pen(Brushes.LightGray);
-            //Pen mypenHLinesInter = new Pen(Brushes.WhiteSmoke);
-
-
-            Int64 fBW = _Graph.nLastDrawingHighFrequency - _Graph.nLastDrawingLowFrequency;
-
-            Int64 nGranularity;
-
-            nGranularity = GetFrequencyGranularityDisplay(fBW, nWidth / 80);
-
-            Int64 nExtra;
-            Int64 nFirst;
-
-            nExtra = _Graph.nLastDrawingLowFrequency % nGranularity;
-
-            if (nExtra != 0)
-            {
-                nFirst = _Graph.nLastDrawingLowFrequency - nExtra + nGranularity;
-            }
-            else
-            {
-                nFirst = _Graph.nLastDrawingLowFrequency;
-            }
-
-            for (Int64 nFreqDisplay = nFirst; nFreqDisplay <= _Graph.nLastDrawingHighFrequency; nFreqDisplay += nGranularity)
-            {
-                //int nXDisplay = GetXFromFrequency(_Graph.nLastDrawingLowFrequency, _Graph.nLastDrawingHighFrequency, nFreqDisplay);
-                int nXDisplay = _Graph.GetXFromFrequency(Size.Width, nFreqDisplay);
-
-                String sFrequency = null;
-                if (nGranularity >= 1000000)
-                {
-                    Int64 nRest = nFreqDisplay / 100000;
-                    nRest = nRest % 10;
-
-                    sFrequency = (nFreqDisplay / 1000000).ToString() + "." + nRest.ToString() + "M";
-                }
-                else
-                {
-                    Int64 nRest = nFreqDisplay / 100;
-                    nRest = nRest % 10;
-                    sFrequency = (nFreqDisplay / 1000).ToString() + "." + nRest.ToString() + "k";
-                }
-
-                float StringSize = g.MeasureString(sFrequency, FreqFont).Width;
-                int nXTextDisplay = nXDisplay - (int)(StringSize / 2);
-                if (nXTextDisplay + StringSize < Size.Width)
-                {
-                    g.DrawString(sFrequency, FreqFont, Brushes.Black, new Point(nXTextDisplay, 30));
-                }
-
-                g.DrawLine(mypenHLines, nXDisplay, GraphConfig.UpBorder, nXDisplay, GraphConfig.UpBorder + nHeight);
-            }
-
-            float fVerticalRangedB = GraphConfig.fLastDrawingLevelHigh - GraphConfig.fLastDrawingLevelLow;
-            float fVerticalScale = nHeight / fVerticalRangedB;
-
-            int ndBDisplayStep = GetVerticalScaleIncrementFromDelta((int)fVerticalRangedB);
-
-            // draw 10dB HLines
-            for (int ndB = (int)GraphConfig.fLastDrawingLevelHigh; ndB >= (int)GraphConfig.fLastDrawingLevelLow; ndB -= ndBDisplayStep)
-            {
-               // int nY = (int)((GraphConfig.fLastDrawingdBHigh - ndB - ndBDisplayStep / 2) * fVerticalScale) + GraphConfig.UpBorder;
-               // g.DrawLine(mypenHLinesInter, GraphConfig.LeftBorder, nY, GraphConfig.LeftBorder + nWidth, nY);
-
-                int nY = (int)((GraphConfig.fLastDrawingLevelHigh - ndB) * fVerticalScale) + GraphConfig.UpBorder;
-                g.DrawLine(mypenHLines, GraphConfig.LeftBorder, nY, GraphConfig.LeftBorder + nWidth, nY);
-
-                if (!GraphConfig.bSWRDisplay)
-                {
-                    float fX = 5.0f;
-
-                    if (ndB < 0)
-                        g.DrawString(ndB.ToString() + "dB", dBFont, Brushes.Black, new PointF(fX, nY - 7));
-
-                    if (ndB == 0)
-                        g.DrawString("   0" + "dB", dBFont, Brushes.Black, new PointF(fX, nY - 7));
-
-                    if (ndB > 0)
-                        g.DrawString("+" + ndB.ToString() + "dB", dBFont, Brushes.Black, new PointF(fX, nY - 7));
-                }
-                else
-                {
-                    float fX = 25.0f;
-
-                    g.DrawString(ndB.ToString(), dBFont, Brushes.Black, new PointF(fX, nY - 10));
-                }
-
-
-            }
-
-            // borders
-            mypenHLines = new Pen(Brushes.Gray);
-            g.DrawLine(mypenHLines, GraphConfig.LeftBorder, GraphConfig.UpBorder, GraphConfig.LeftBorder + nWidth, GraphConfig.UpBorder);
-            g.DrawLine(mypenHLines, GraphConfig.LeftBorder, GraphConfig.UpBorder + nHeight, GraphConfig.LeftBorder + nWidth, GraphConfig.UpBorder + nHeight);
-            g.DrawLine(mypenHLines, GraphConfig.LeftBorder, GraphConfig.UpBorder, GraphConfig.LeftBorder, GraphConfig.UpBorder + nHeight);
-            g.DrawLine(mypenHLines, GraphConfig.LeftBorder + nWidth, GraphConfig.UpBorder, GraphConfig.LeftBorder + nWidth, GraphConfig.UpBorder + nHeight);
-
-
-
-
-            g.Dispose();
-
-        }
-
-        public void CurveDraw(CurveDef _curve)
+        public void DrawCurve(CurveDef _curve)
         {
             if (Size.Width == 0 || Size.Height == 0)
                 return;
             Curve[0] = _curve;
 
-            int nWidth = Size.Width - GraphConfig.LeftBorder - GraphConfig.RightBorder;
-            int nHeight = Size.Height - GraphConfig.UpBorder - GraphConfig.LowBorder;
-
-            Graphics g = Graphics.FromImage(Image);
-
-            if (GraphConfig.AntiAlias)
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            else
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
-
-
-            if (_curve.SpectrumValues != null
-                && _curve.nSpectrumLowFrequency < GraphConfig.nLastDrawingHighFrequency 
-                && _curve.nSpectrumHighFrequency > GraphConfig.nLastDrawingLowFrequency
-                && GraphConfig.nLastDrawingHighFrequency > GraphConfig.nLastDrawingLowFrequency) // check if curve is visible
-            {
-
-         
-                float fVerticalRangedB = GraphConfig.fLastDrawingLevelHigh - GraphConfig.fLastDrawingLevelLow;
-                float fVerticalScale = nHeight / fVerticalRangedB;
-
-
-                Pen mypen = new Pen(_curve.DrawingColor);
-
-
-                int nFirstSpectrumIndex;
-                float fXStartOffset = 0;
-                float fXEndOffset = 0;
-
-                float fSpectrumHRes = (GraphConfig.nLastDrawingHighFrequency - GraphConfig.nLastDrawingLowFrequency) / nWidth;
-                Int64 nCurveBW = _curve.nSpectrumHighFrequency - _curve.nSpectrumLowFrequency;
-
-                if (_curve.nSpectrumLowFrequency < GraphConfig.nLastDrawingLowFrequency)
-                {
-                    nFirstSpectrumIndex = (Int32)(((Int64)(GraphConfig.nLastDrawingLowFrequency - _curve.nSpectrumLowFrequency) * _curve.SpectrumValues.Length) / nCurveBW);
-                }
-                else
-                {
-                    nFirstSpectrumIndex = 0;  
-                    fXStartOffset = (_curve.nSpectrumLowFrequency - GraphConfig.nLastDrawingLowFrequency) / fSpectrumHRes;
-                }
-
-                int nLastSpectrumIndex;
-
-                if (_curve.nSpectrumHighFrequency > GraphConfig.nLastDrawingHighFrequency)
-                {
-                    nLastSpectrumIndex = (Int32)(((Int64)(GraphConfig.nLastDrawingHighFrequency - _curve.nSpectrumLowFrequency) * _curve.SpectrumValues.Length) / nCurveBW);
-                }
-                else
-                {
-                    nLastSpectrumIndex = _curve.SpectrumValues.Length - 1;
-                    fXEndOffset = (GraphConfig.nLastDrawingHighFrequency - _curve.nSpectrumHighFrequency ) / fSpectrumHRes;
-                }
-
-                int nSpectrumCount = nLastSpectrumIndex - nFirstSpectrumIndex;
-
-                int nPixelToDisplay = nWidth - (int)(fXEndOffset + fXStartOffset);
-
-                PointF[] Mesures = new PointF[nSpectrumCount];
-
-                for (int i = 0; i < nSpectrumCount; i++)
-                {
- 
-                    Mesures[i].Y = ((GraphConfig.fLastDrawingLevelHigh - _curve.SpectrumValues[i + nFirstSpectrumIndex]) * fVerticalScale) + GraphConfig.UpBorder;
-                    Mesures[i].X = ((float)i * nPixelToDisplay) / nSpectrumCount + GraphConfig.LeftBorder+ fXStartOffset;
-                }
-
-                g.DrawLines(mypen, Mesures);
-
-                System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
-
-                float fPixelPerSample = (float)Math.Round((float)nWidth / nSpectrumCount, 1);
-                float fSamplePerPixel = (float)Math.Round((float)nSpectrumCount / nWidth, 1);
-
-
-                if (nSpectrumCount > nWidth)
-                    g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fSamplePerPixel.ToString() + " Samples per pixel)", SampleFont, Brushes.Black, new Point(nWidth - 190, 10));
-                else
-                    g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fPixelPerSample.ToString() + " Pixel per sample)", SampleFont, Brushes.Red, new Point(nWidth - 190, 10));
-
-
-            }
-
-            
-            System.Drawing.Font MsgFont = new Font("Verdana", 8.0f);
-            g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 230, Size.Height - 33));
-
-            /*
-            if (_curve != null)
-            {
-                // now we can trace all additionals graphics
-                if (_curve.n3dBBandpassLowFrequency > 0 || _curve.n3dBBandpassHighFrequency > 0)
-                {
-                    float fTopReferenceLevel = _curve.fMaxLeveldB;
-
-                    //g.DrawLine(mypen,)
-                }
-            }
-            */
-            g.Dispose();
-
+            GraphConfig.DrawCurve(_curve);
 
         }
-
         public void GraphicUpdateScaleRefresh(Int64 nStartFrequency, Int64 nEndFrequency)
         {
             if (nStartFrequency > 0)
@@ -494,21 +216,25 @@ namespace SNASharp
         public void GraphicDisplay( GraphDef _graphdef,
                                     CurveDef [] curveList = null)
         {
+            _graphdef.DrawBackGround();
 
-            DrawBackground(_graphdef);
 
             if (curveList != null)
             {
                 for (int i = 0; i < curveList.Length; i++)
                 {
                     if (curveList[i] != null)
-                        CurveDraw(curveList[i]);
+                        DrawCurve(curveList[i]);
                 }
             }
 
         }
 
-        
+        public GraphDef GetGraphConfig()
+        {
+            return GraphConfig;
+        }
+
         private GraphDef GraphConfig = new GraphDef();
         private CurveDef[] Curve = new CurveDef[1];
 
@@ -581,7 +307,18 @@ namespace SNASharp
 
     public class GraphDef
     {
-         // AXES
+
+
+        public GraphDef()
+        {
+
+        }
+
+        public void SetPictureBox(System.Windows.Forms.PictureBox _PictureBox)
+        {
+            Picture = _PictureBox;
+        }
+        // AXES
         public Int64 nLastDrawingLowFrequency = 50000;
         public Int64 nLastDrawingHighFrequency = 90000000;
         public float fLastDrawingLevelLow = -90;
@@ -598,10 +335,12 @@ namespace SNASharp
         public bool AntiAlias = true;
         public bool HighQualityCurves = true;
 
+        // where to draw
+        System.Windows.Forms.PictureBox Picture = null;
 
-        public Int64 GetFrequencyFromXDisplay(int nSize, int nX)
+        public Int64 GetFrequencyFromXDisplay(int nX)
         {
-            int nWidth = nSize - LeftBorder - RightBorder;
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
             float fFrequencyFraction = ((float)(nX - LeftBorder)) / nWidth;
 
             if (fFrequencyFraction < 0.0f)
@@ -614,15 +353,286 @@ namespace SNASharp
         }
 
 
-        public int GetXFromFrequency(int nXSize, Int64 nFrequency)
+        public int GetXFromFrequency(Int64 nFrequency)
         {
-            int nWidth = nXSize - LeftBorder - RightBorder;
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
 
             if (nLastDrawingHighFrequency == nLastDrawingLowFrequency)
                 return LeftBorder;
 
             return LeftBorder + (Int32)(((Int64)(nFrequency - nLastDrawingLowFrequency) * nWidth) / (nLastDrawingHighFrequency - nLastDrawingLowFrequency));
         }
+
+        public Int64 GetFrequencyGranularityDisplay(Int64 fBW, int nDisplay = 13)
+        {
+            Int64[] List = new Int64[] { 100,200,250,500,1000,2000,2500,
+                                        5000,10000,20000,25000,50000,
+                                        100000,200000,250000,500000,
+                                        1000000,2000000, 2500000,
+                                        5000000,10000000,20000000,
+                                        25000000,50000000,100000000,200000000,250000000,500000000 };
+
+            for (int i = 0; i < List.Length; i++)
+            {
+                if ((fBW / List[i]) <= nDisplay) return List[i];
+            }
+
+            return 1000000000;
+        }
+
+        public void DrawCurve(CurveDef _curve)
+        {
+            if (Picture.Size.Width == 0 || Picture.Size.Height == 0)
+                return;
+            //Curve[0] = _curve;
+
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+
+            Graphics g = Graphics.FromImage(Picture.Image);
+
+            if (AntiAlias)
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            else
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+
+
+            if (_curve.SpectrumValues != null
+                && _curve.nSpectrumLowFrequency < nLastDrawingHighFrequency
+                && _curve.nSpectrumHighFrequency > nLastDrawingLowFrequency
+                && nLastDrawingHighFrequency > nLastDrawingLowFrequency) // check if curve is visible
+            {
+
+
+                float fVerticalRangedB = fLastDrawingLevelHigh - fLastDrawingLevelLow;
+                float fVerticalScale = nHeight / fVerticalRangedB;
+
+
+                Pen mypen = new Pen(_curve.DrawingColor);
+
+
+                int nFirstSpectrumIndex;
+                float fXStartOffset = 0;
+                float fXEndOffset = 0;
+
+                float fSpectrumHRes = (nLastDrawingHighFrequency - nLastDrawingLowFrequency) / nWidth;
+                Int64 nCurveBW = _curve.nSpectrumHighFrequency - _curve.nSpectrumLowFrequency;
+
+                if (_curve.nSpectrumLowFrequency < nLastDrawingLowFrequency)
+                {
+                    nFirstSpectrumIndex = (Int32)(((Int64)(nLastDrawingLowFrequency - _curve.nSpectrumLowFrequency) * _curve.SpectrumValues.Length) / nCurveBW);
+                }
+                else
+                {
+                    nFirstSpectrumIndex = 0;
+                    fXStartOffset = (_curve.nSpectrumLowFrequency - nLastDrawingLowFrequency) / fSpectrumHRes;
+                }
+
+                int nLastSpectrumIndex;
+
+                if (_curve.nSpectrumHighFrequency > nLastDrawingHighFrequency)
+                {
+                    nLastSpectrumIndex = (Int32)(((Int64)(nLastDrawingHighFrequency - _curve.nSpectrumLowFrequency) * _curve.SpectrumValues.Length) / nCurveBW);
+                }
+                else
+                {
+                    nLastSpectrumIndex = _curve.SpectrumValues.Length - 1;
+                    fXEndOffset = (nLastDrawingHighFrequency - _curve.nSpectrumHighFrequency) / fSpectrumHRes;
+                }
+
+                int nSpectrumCount = nLastSpectrumIndex - nFirstSpectrumIndex;
+
+                int nPixelToDisplay = nWidth - (int)(fXEndOffset + fXStartOffset);
+
+                PointF[] Mesures = new PointF[nSpectrumCount];
+
+                for (int i = 0; i < nSpectrumCount; i++)
+                {
+
+                    Mesures[i].Y = ((fLastDrawingLevelHigh - _curve.SpectrumValues[i + nFirstSpectrumIndex]) * fVerticalScale) + UpBorder;
+                    Mesures[i].X = ((float)i * nPixelToDisplay) / nSpectrumCount + LeftBorder + fXStartOffset;
+                }
+
+                g.DrawLines(mypen, Mesures);
+
+                System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
+
+                float fPixelPerSample = (float)Math.Round((float)nWidth / nSpectrumCount, 1);
+                float fSamplePerPixel = (float)Math.Round((float)nSpectrumCount / nWidth, 1);
+
+
+                if (nSpectrumCount > nWidth)
+                    g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fSamplePerPixel.ToString() + " Samples per pixel)", SampleFont, Brushes.Black, new Point(nWidth - 190, 10));
+                else
+                    g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fPixelPerSample.ToString() + " Pixel per sample)", SampleFont, Brushes.Red, new Point(nWidth - 190, 10));
+
+
+            }
+
+
+            System.Drawing.Font MsgFont = new Font("Verdana", 8.0f);
+            String Msg = "Generated with " + Program.Version;
+
+            g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 230, Picture.Size.Height - 33));
+
+            /*
+            if (_curve != null)
+            {
+                // now we can trace all additionals graphics
+                if (_curve.n3dBBandpassLowFrequency > 0 || _curve.n3dBBandpassHighFrequency > 0)
+                {
+                    float fTopReferenceLevel = _curve.fMaxLeveldB;
+
+                    //g.DrawLine(mypen,)
+                }
+            }
+            */
+            g.Dispose();
+
+        }
+
+        public void DrawBackGround()
+        {
+            if (Picture.Size.Width == 0 || Picture.Size.Height == 0)
+                return;
+
+
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+
+
+            Bitmap DrawArea = new Bitmap(Picture.Size.Width, Picture.Size.Height);
+            //DrawArea.
+            Picture.Image = DrawArea;
+
+            Graphics g = Graphics.FromImage(Picture.Image);
+            g.Clear(Color.White);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            System.Drawing.Font dBFont = null;
+
+            System.Drawing.Font FreqFont = new Font("Times New Roman", 10.0f);
+
+
+            if (!bSWRDisplay)
+                dBFont = new Font("Times New Roman", 10.0f);
+            else
+                dBFont = new Font("Times New Roman", 15.0f);
+
+
+
+            Pen mypenHLines = new Pen(Brushes.LightGray);
+            //Pen mypenHLinesInter = new Pen(Brushes.WhiteSmoke);
+
+
+            Int64 fBW = nLastDrawingHighFrequency - nLastDrawingLowFrequency;
+
+            Int64 nGranularity;
+
+            nGranularity = GetFrequencyGranularityDisplay(fBW, nWidth / 80);
+
+            Int64 nExtra;
+            Int64 nFirst;
+
+            nExtra = nLastDrawingLowFrequency % nGranularity;
+
+            if (nExtra != 0)
+            {
+                nFirst = nLastDrawingLowFrequency - nExtra + nGranularity;
+            }
+            else
+            {
+                nFirst = nLastDrawingLowFrequency;
+            }
+
+            for (Int64 nFreqDisplay = nFirst; nFreqDisplay <= nLastDrawingHighFrequency; nFreqDisplay += nGranularity)
+            {
+                int nXDisplay = GetXFromFrequency(nFreqDisplay);
+
+                String sFrequency = null;
+                if (nGranularity >= 1000000)
+                {
+                    Int64 nRest = nFreqDisplay / 100000;
+                    nRest = nRest % 10;
+
+                    sFrequency = (nFreqDisplay / 1000000).ToString() + "." + nRest.ToString() + "M";
+                }
+                else
+                {
+                    Int64 nRest = nFreqDisplay / 100;
+                    nRest = nRest % 10;
+                    sFrequency = (nFreqDisplay / 1000).ToString() + "." + nRest.ToString() + "k";
+                }
+
+                float StringSize = g.MeasureString(sFrequency, FreqFont).Width;
+                int nXTextDisplay = nXDisplay - (int)(StringSize / 2);
+                if (nXTextDisplay + StringSize < Picture.Size.Width)
+                {
+                    g.DrawString(sFrequency, FreqFont, Brushes.Black, new Point(nXTextDisplay, 30));
+                }
+
+                g.DrawLine(mypenHLines, nXDisplay, UpBorder, nXDisplay, UpBorder + nHeight);
+            }
+
+            float fVerticalRangedB = fLastDrawingLevelHigh - fLastDrawingLevelLow;
+            float fVerticalScale = nHeight / fVerticalRangedB;
+
+            int ndBDisplayStep = GetVerticalScaleIncrementFromDelta((int)fVerticalRangedB);
+
+            // draw 10dB HLines
+            for (int ndB = (int)fLastDrawingLevelHigh; ndB >= (int)fLastDrawingLevelLow; ndB -= ndBDisplayStep)
+            {
+                // int nY = (int)((GraphConfig.fLastDrawingdBHigh - ndB - ndBDisplayStep / 2) * fVerticalScale) + GraphConfig.UpBorder;
+                // g.DrawLine(mypenHLinesInter, GraphConfig.LeftBorder, nY, GraphConfig.LeftBorder + nWidth, nY);
+
+                int nY = (int)((fLastDrawingLevelHigh - ndB) * fVerticalScale) + UpBorder;
+                g.DrawLine(mypenHLines, LeftBorder, nY,LeftBorder + nWidth, nY);
+
+                if (!bSWRDisplay)
+                {
+                    float fX = 5.0f;
+
+                    if (ndB < 0)
+                        g.DrawString(ndB.ToString() + "dB", dBFont, Brushes.Black, new PointF(fX, nY - 7));
+
+                    if (ndB == 0)
+                        g.DrawString("   0" + "dB", dBFont, Brushes.Black, new PointF(fX, nY - 7));
+
+                    if (ndB > 0)
+                        g.DrawString("+" + ndB.ToString() + "dB", dBFont, Brushes.Black, new PointF(fX, nY - 7));
+                }
+                else
+                {
+                    float fX = 25.0f;
+
+                    g.DrawString(ndB.ToString(), dBFont, Brushes.Black, new PointF(fX, nY - 10));
+                }
+
+
+            }
+
+            // borders
+            mypenHLines = new Pen(Brushes.Gray);
+            g.DrawLine(mypenHLines, LeftBorder, UpBorder, LeftBorder + nWidth, UpBorder);
+            g.DrawLine(mypenHLines, LeftBorder, UpBorder + nHeight, LeftBorder + nWidth, UpBorder + nHeight);
+            g.DrawLine(mypenHLines, LeftBorder, UpBorder, LeftBorder, UpBorder + nHeight);
+            g.DrawLine(mypenHLines, LeftBorder + nWidth, UpBorder, LeftBorder + nWidth, UpBorder + nHeight);
+
+            g.Dispose();
+
+        }
+
+        int GetVerticalScaleIncrementFromDelta(int nDelta)
+        {
+            if (nDelta <= 20)
+                return 1;
+
+            if (nDelta <= 40)
+                return 5;
+
+            return 10;
+        }
+
 
     }
 }

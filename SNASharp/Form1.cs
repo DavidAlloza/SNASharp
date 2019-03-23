@@ -195,13 +195,13 @@ namespace SNASharp
                 DeviceInterface.SetDevice(DeviceDef);
                 LoadCalibrationFile();
                 SetSweepFrequencies(DeviceInterface.MinFrequency, DeviceInterface.MaxFrequency);
-                GraphDef Graph = new GraphDef();
+                GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
 
                 Graph.fLastDrawingLevelLow = -90;
                 Graph.fLastDrawingLevelHigh = 10;
                 Graph.nLastDrawingLowFrequency = DeviceInterface.MinFrequency;
                 Graph.nLastDrawingHighFrequency = DeviceInterface.MaxFrequency;
-                SpectrumPictureBox.DrawBackground(Graph);
+                SpectrumPictureBox.GetGraphConfig().DrawBackGround();
 
                 if (!DeviceDef.Attenuator)
                 {
@@ -463,17 +463,17 @@ namespace SNASharp
             CurveDef Curve = new CurveDef();
             Curve.DrawingColor = Color.DeepPink;
 
-            GraphDef Graph = new GraphDef();
+            GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
             Graph.nLastDrawingLowFrequency = nFrequencyBase;
             Graph.nLastDrawingHighFrequency = nFrequencyBase + nStep * Count;
             Graph.fLastDrawingLevelLow = -90;
             Graph.fLastDrawingLevelHigh = 0;
 
-            SpectrumPictureBox.DrawBackground(Graph);
+            SpectrumPictureBox.GetGraphConfig().DrawBackGround();
             Curve.SpectrumValues = data;
             Curve.nSpectrumLowFrequency = nFrequencyBase;
             Curve.nSpectrumHighFrequency = nFrequencyBase  + nStep * Count;
-            SpectrumPictureBox.CurveDraw(Curve);
+            SpectrumPictureBox.DrawCurve(Curve);
         }
         void DipoleAnalyse()
         {
