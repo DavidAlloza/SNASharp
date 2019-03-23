@@ -27,16 +27,12 @@ namespace SNASharp
 
         }
 
-
         private void SweepLoopStopButton_Click(object sender, EventArgs e)
         {
             bLoop = false;
             SweepLoopStopButton.Enabled = false;
             SweepLoopProcessButton.Enabled = true;
-
-
         }
-
 
 
         private void OutputModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -222,7 +218,6 @@ namespace SNASharp
             int nLowerScale = -90;
 
 
-            //GraphDef Graph = new GraphDef();
              GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
 
             CurveDef CurveConfig = new CurveDef();
@@ -311,7 +306,7 @@ namespace SNASharp
             SpectrumPictureBox.GetGraphConfig().DrawBackGround();
 
             if (AcquisitionParams.ResultDatas!=null)
-                SpectrumPictureBox.DrawCurve(CurveConfig);
+                SpectrumPictureBox.DrawSingleCurve(CurveConfig);
         }
 
         private void backgroundWorkerSerialCapture_DoWork(object sender, DoWorkEventArgs e)

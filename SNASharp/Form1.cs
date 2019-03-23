@@ -473,7 +473,7 @@ namespace SNASharp
             Curve.SpectrumValues = data;
             Curve.nSpectrumLowFrequency = nFrequencyBase;
             Curve.nSpectrumHighFrequency = nFrequencyBase  + nStep * Count;
-            SpectrumPictureBox.DrawCurve(Curve);
+            SpectrumPictureBox.DrawSingleCurve(Curve);
         }
         void DipoleAnalyse()
         {

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using NWTInterface;
 using System.Globalization;
 using System.Drawing.Imaging;
+using System.Collections;
 
 namespace SNASharp
 {
@@ -53,9 +54,6 @@ namespace SNASharp
         {
             Owner = _Owner;
         }
-
-
-        
         
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
@@ -69,9 +67,9 @@ namespace SNASharp
 
             double dBLevel;
 
-            if (Curve[0] != null)
+            if (CurvesList[0] != null)
             {
-                dBLevel = Math.Round(Curve[0].GeDBLevelFromFrequency(nFrequency), 2);
+                dBLevel = Math.Round( ((CurveDef)CurvesList[0]).GeDBLevelFromFrequency(nFrequency), 2);
             }
             else
             {
@@ -167,7 +165,7 @@ namespace SNASharp
                 GraphConfig.nLastDrawingLowFrequency = nNewStartFrequency;
                 GraphConfig.nLastDrawingHighFrequency = nNewEndFrequency;
 
-                GraphicDisplay(GraphConfig, Curve);
+                DrawCurveCollection(CurvesList);
                 Owner.SetSweepStartFrequency(nNewStartFrequency);
                 Owner.SetSweepEndFrequency(nNewEndFrequency);
             }
@@ -189,19 +187,36 @@ namespace SNASharp
 
         public void ResizeAndRedraw(object sender, EventArgs e)
         {
-            GraphicDisplay( GraphConfig,Curve);
+            DrawCurveCollection(CurvesList);
         }
 
-        public void DrawCurve(CurveDef _curve)
+        public void DrawSingleCurve(CurveDef _curve)
         {
             if (Size.Width == 0 || Size.Height == 0)
                 return;
-            Curve[0] = _curve;
 
-            GraphConfig.DrawCurve(_curve);
+
+            CurvesList.Clear();
+            CurvesList.Add(_curve);
+
+            GraphConfig.GraphicDisplay(CurvesList);
 
         }
-        public void GraphicUpdateScaleRefresh(Int64 nStartFrequency, Int64 nEndFrequency)
+
+
+        public void DrawCurveCollection(ArrayList Curves)
+        {
+            CurvesList = Curves;
+            GraphConfig.GraphicDisplay(Curves);
+        }
+
+
+        public GraphDef GetGraphConfig()
+        {
+            return GraphConfig;
+        }
+
+            public void GraphicUpdateScaleRefresh(Int64 nStartFrequency, Int64 nEndFrequency)
         {
             if (nStartFrequency > 0)
                 GraphConfig.nLastDrawingLowFrequency = nStartFrequency;
@@ -210,37 +225,15 @@ namespace SNASharp
                 GraphConfig.nLastDrawingHighFrequency = nEndFrequency;
 
 
-            GraphicDisplay(GraphConfig, Curve);
+            DrawCurveCollection(CurvesList);
         }
 
-        public void GraphicDisplay( GraphDef _graphdef,
-                                    CurveDef [] curveList = null)
-        {
-            _graphdef.DrawBackGround();
 
-
-            if (curveList != null)
-            {
-                for (int i = 0; i < curveList.Length; i++)
-                {
-                    if (curveList[i] != null)
-                        DrawCurve(curveList[i]);
-                }
-            }
-
-        }
-
-        public GraphDef GetGraphConfig()
-        {
-            return GraphConfig;
-        }
-
+       
         private GraphDef GraphConfig = new GraphDef();
-        private CurveDef[] Curve = new CurveDef[1];
+        private ArrayList CurvesList = new ArrayList();
 
-
-        private  String Msg= "Generated with "+Program.Version;
-
+  
         private System.Windows.Forms.Label FreqDisplayLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.Label LevelDisplayLabel = new System.Windows.Forms.Label();
 
@@ -300,14 +293,11 @@ namespace SNASharp
                 return 0.0f;
             }
         }
-
-
     }
 
 
     public class GraphDef
     {
-
 
         public GraphDef()
         {
@@ -318,6 +308,7 @@ namespace SNASharp
         {
             Picture = _PictureBox;
         }
+
         // AXES
         public Int64 nLastDrawingLowFrequency = 50000;
         public Int64 nLastDrawingHighFrequency = 90000000;
@@ -384,7 +375,6 @@ namespace SNASharp
         {
             if (Picture.Size.Width == 0 || Picture.Size.Height == 0)
                 return;
-            //Curve[0] = _curve;
 
             int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
             int nHeight = Picture.Size.Height - UpBorder - LowBorder;
@@ -502,7 +492,6 @@ namespace SNASharp
 
 
             Bitmap DrawArea = new Bitmap(Picture.Size.Width, Picture.Size.Height);
-            //DrawArea.
             Picture.Image = DrawArea;
 
             Graphics g = Graphics.FromImage(Picture.Image);
@@ -633,6 +622,17 @@ namespace SNASharp
             return 10;
         }
 
-
-    }
+        public void GraphicDisplay(ArrayList curveList)
+        {
+            DrawBackGround();
+            if (curveList != null)
+            {
+                for (int i = 0; i < curveList.Count; i++)
+                {
+                    if (curveList[i] != null)
+                        DrawCurve((CurveDef)curveList[i]);
+                }
+            }
+        }
+   }
 }

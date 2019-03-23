@@ -774,6 +774,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SpectrumPictureBox.BackColor = System.Drawing.Color.White;
             this.SpectrumPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.SpectrumPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("SpectrumPictureBox.Image")));
             this.SpectrumPictureBox.Location = new System.Drawing.Point(-1, 27);
             this.SpectrumPictureBox.Name = "SpectrumPictureBox";
             this.SpectrumPictureBox.Size = new System.Drawing.Size(749, 637);
