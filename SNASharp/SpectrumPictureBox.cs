@@ -54,42 +54,8 @@ namespace SNASharp
             Owner = _Owner;
         }
 
-        Int64 GetFrequencyFromXDisplay(int nX)
-        {
-            int nWidth = Size.Width - GraphConfig.LeftBorder - GraphConfig.RightBorder;
-            float fFrequencyFraction = ((float)(nX - GraphConfig.LeftBorder)) / nWidth;
-
-            if (fFrequencyFraction < 0.0f)
-                fFrequencyFraction = 0.0f;
-
-            if (fFrequencyFraction > 1.0f)
-                fFrequencyFraction = 1.0f;
-
-            return GraphConfig.nLastDrawingLowFrequency + (Int64)((GraphConfig.nLastDrawingHighFrequency - GraphConfig.nLastDrawingLowFrequency) * fFrequencyFraction);
-        }
 
         
-        float GeDBLevelFromXFrequency(Int64 nFrequency, CurveDef _curve)
-        {
-            if (_curve!= null && _curve.SpectrumValues != null)
-            {
-                if (nFrequency > _curve.nSpectrumHighFrequency)
-                    nFrequency = _curve.nSpectrumHighFrequency;
-
-                if (nFrequency < _curve.nSpectrumLowFrequency)
-                    nFrequency = _curve.nSpectrumLowFrequency;
-
-
-                int nWidth = Size.Width - GraphConfig.LeftBorder - GraphConfig.RightBorder;
-                float fFrequencyFraction = ((float)(nFrequency - _curve.nSpectrumLowFrequency)) / (_curve.nSpectrumHighFrequency - _curve.nSpectrumLowFrequency);
-                int nArrayIndex = (int)(fFrequencyFraction * (_curve.SpectrumValues.Length-1));
-                return _curve.SpectrumValues[nArrayIndex];
-            }
-            else
-            {
-                return 0.0f;
-            }
-        }
         
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
@@ -98,9 +64,21 @@ namespace SNASharp
 
         public void DisplayFrequencyAndLevelOnCorners(int nXMouse)
         {
-            Int64 nFrequency = GetFrequencyFromXDisplay(nXMouse);
+            Int64 nFrequency = GraphConfig.GetFrequencyFromXDisplay(Size.Width,nXMouse);
 
-            double dBLevel = Math.Round(GeDBLevelFromXFrequency(nFrequency,Curve[0]), 2);
+
+            double dBLevel;
+
+            if (Curve[0] != null)
+            {
+                dBLevel = Math.Round(Curve[0].GeDBLevelFromFrequency(nFrequency), 2);
+            }
+            else
+            {
+                dBLevel = 0.0f;
+            }
+
+
             double ImpedanceNorm = (100.0f / ((float)Math.Pow(10.0f, dBLevel / 20.0f)) - 100.0f) / 1.0f;
 
             FreqDisplayLabel.Text = "Frequency : " + Utility.GetStringWithSeparators(nFrequency," ")+"Hz";
@@ -134,7 +112,8 @@ namespace SNASharp
                 Int64 nNewStartFrequency ;
                 Int64 nNewEndFrequency ;
 
-                nCentralFrequency = GetFrequencyFromXDisplay(Event.X);
+
+                nCentralFrequency = GraphConfig.GetFrequencyFromXDisplay(Size.Width, Event.X);
                 nPreviousBW = GraphConfig.nLastDrawingHighFrequency - GraphConfig.nLastDrawingLowFrequency;
 
 
@@ -207,24 +186,12 @@ namespace SNASharp
                 Image.Save(dialog.FileName, ImageFormat.Png);
             }
         }
-/*
-        public void SetNewSpectrumValues(float[] Values, int nLowFrequencyInHz, int nHighFrequencyInHz)
-        {
-            SpectrumValues = new float[Values.Length];
-            Values.CopyTo(SpectrumValues, 0);
-            nSpectrumLowFrequency = nLowFrequencyInHz;
-            nSpectrumHighFrequency = nHighFrequencyInHz;
-        }
-        */
+
         public void ResizeAndRedraw(object sender, EventArgs e)
         {
             GraphicDisplay( GraphConfig,Curve);
         }
 
-        public void GraphicDisplay()
-        {
-//            GraphicDisplay(nSpectrumLowFrequency, nSpectrumHighFrequency,-90,10, Curve);
-        }
 
 
         Int64 GetFrequencyGranularityDisplay(Int64 fBW, int nDisplay = 13)
@@ -323,7 +290,8 @@ namespace SNASharp
 
             for (Int64 nFreqDisplay = nFirst; nFreqDisplay <= _Graph.nLastDrawingHighFrequency; nFreqDisplay += nGranularity)
             {
-                int nXDisplay = GetXFromFrequency(_Graph.nLastDrawingLowFrequency, _Graph.nLastDrawingHighFrequency, nFreqDisplay);
+                //int nXDisplay = GetXFromFrequency(_Graph.nLastDrawingLowFrequency, _Graph.nLastDrawingHighFrequency, nFreqDisplay);
+                int nXDisplay = _Graph.GetXFromFrequency(Size.Width, nFreqDisplay);
 
                 String sFrequency = null;
                 if (nGranularity >= 1000000)
@@ -587,6 +555,27 @@ namespace SNASharp
             return CurveName;
         }
 
+        public float GeDBLevelFromFrequency(Int64 nFrequency)
+        {
+            if (SpectrumValues != null)
+            {
+                if (nFrequency > nSpectrumHighFrequency)
+                    nFrequency = nSpectrumHighFrequency;
+
+                if (nFrequency < nSpectrumLowFrequency)
+                    nFrequency = nSpectrumLowFrequency;
+
+                float fFrequencyFraction = ((float)(nFrequency - nSpectrumLowFrequency)) / (nSpectrumHighFrequency - nSpectrumLowFrequency);
+                int nArrayIndex = (int)(fFrequencyFraction * (SpectrumValues.Length - 1));
+                return SpectrumValues[nArrayIndex];
+            }
+            else
+            {
+                return 0.0f;
+            }
+        }
+
+
     }
 
 
@@ -608,7 +597,32 @@ namespace SNASharp
         // rendering
         public bool AntiAlias = true;
         public bool HighQualityCurves = true;
+
+
+        public Int64 GetFrequencyFromXDisplay(int nSize, int nX)
+        {
+            int nWidth = nSize - LeftBorder - RightBorder;
+            float fFrequencyFraction = ((float)(nX - LeftBorder)) / nWidth;
+
+            if (fFrequencyFraction < 0.0f)
+                fFrequencyFraction = 0.0f;
+
+            if (fFrequencyFraction > 1.0f)
+                fFrequencyFraction = 1.0f;
+
+            return nLastDrawingLowFrequency + (Int64)((nLastDrawingHighFrequency - nLastDrawingLowFrequency) * fFrequencyFraction);
+        }
+
+
+        public int GetXFromFrequency(int nXSize, Int64 nFrequency)
+        {
+            int nWidth = nXSize - LeftBorder - RightBorder;
+
+            if (nLastDrawingHighFrequency == nLastDrawingLowFrequency)
+                return LeftBorder;
+
+            return LeftBorder + (Int32)(((Int64)(nFrequency - nLastDrawingLowFrequency) * nWidth) / (nLastDrawingHighFrequency - nLastDrawingLowFrequency));
+        }
+
     }
-
-
 }
