@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Windows;
 using NWTInterface;
 using System.Globalization;
 using System.IO;
 using System.Xml.Serialization;
 using System.IO.Ports;
+using System.Collections;
 
 namespace SNASharp
 {
@@ -262,21 +259,6 @@ namespace SNASharp
 
         }
 
-        /*
-        public void RestaureSave()
-        {
-
-            if (File.Exists(Program.SaveFullPath))
-            {
-                XmlSerializer xs = new XmlSerializer(typeof(SavePref));
-                using (StreamReader wr = new StreamReader(Program.SaveFullPath))
-                {
-                    Program.Save = xs.Deserialize(wr) as SavePref;
-                }
-            }
-
-        }
-        */
         public bool CheckForCalibration()
         {
             if (!bCalibrationAvailable)
@@ -453,8 +435,6 @@ namespace SNASharp
             LOGDraw(" samples:" + nCount.ToString(), false);
             LOGDraw(" Step:" + nStep.ToString());
             return DeviceInterface.RunSweepMode(nFrequencyStart, nStep, nCount, false,Notifier);
-            //return DeviceInterface.RunSweepModeHybrid(nFrequencyStart, nStep, nCount,Notifier);
-
         }
 
         void SingleCurveDisplay(Int64 nFrequencyBase, int nStep, float [] data)
@@ -695,18 +675,6 @@ namespace SNASharp
 
         }
 
-        /*
-        public class LogDotNotifier : NWTInterface.CBackNotifier
-        {
-
-
-            public override void SendProgress(float fProgress, float fLastValue)
-            {
-                LOGDraw(".", false);
-            }
-        }
-        */
-        //Form2 LogForm = new Form2();
         public NWTDevice DeviceInterface = new NWTDevice();
         FormNotifier MyNotifier = new FormNotifier();
         NWTDevice.RunSweepModeParam CurrentAcquisitionParams = new NWTDevice.RunSweepModeParam();
@@ -733,6 +701,7 @@ namespace SNASharp
         bool bMuteDeviceComboBoxEvent = false;
         NWTCompatibleDeviceDef CurrentDeviceDef = null;
         String[] SerialPortList = null;
+        ArrayList SweepModeCurvesList = new ArrayList();
 
 
 

@@ -67,7 +67,7 @@ namespace SNASharp
 
             double dBLevel;
 
-            if (CurvesList[0] != null)
+            if (CurvesList.Count > 0 && CurvesList[0] != null)
             {
                 dBLevel = Math.Round( ((CurveDef)CurvesList[0]).GeDBLevelFromFrequency(nFrequency), 2);
             }
@@ -216,14 +216,13 @@ namespace SNASharp
             return GraphConfig;
         }
 
-            public void GraphicUpdateScaleRefresh(Int64 nStartFrequency, Int64 nEndFrequency)
+        public void GraphicUpdateScaleRefresh(Int64 nStartFrequency, Int64 nEndFrequency)
         {
             if (nStartFrequency > 0)
                 GraphConfig.nLastDrawingLowFrequency = nStartFrequency;
 
             if (nEndFrequency > 0)
                 GraphConfig.nLastDrawingHighFrequency = nEndFrequency;
-
 
             DrawCurveCollection(CurvesList);
         }
