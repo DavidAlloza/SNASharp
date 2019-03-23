@@ -190,6 +190,12 @@ namespace SNASharp
             DrawCurveCollection(CurvesList);
         }
 
+        public void Redraw()
+        {
+            DrawCurveCollection(CurvesList);
+        }
+
+
         public void DrawSingleCurve(CurveDef _curve)
         {
             if (Size.Width == 0 || Size.Height == 0)
@@ -243,6 +249,11 @@ namespace SNASharp
 
     public class CurveDef
     {
+        public enum YesNo
+        {
+            Yes,
+            No
+        };
         // computed values to the curve
         public Int64 nMaxLevelFrequency = -1;
         public float fMaxLeveldB = 0.0f;
@@ -256,17 +267,37 @@ namespace SNASharp
         public Int64 n60dBBandpassHighFrequency = -1;
         public int nQ = -1;
         public float fShapeFactor = -1.0f;
-
-              // captured data
-        public float[] SpectrumValues = null;
         public Int64 nSpectrumLowFrequency = 0;
         public Int64 nSpectrumHighFrequency = 0;
+        public YesNo Is_Visible = YesNo.Yes;
 
         // infos
-        public String CurveName = null;
- 
+        public String CurveName = "Curve_0";
+
         // rendering specific
         public Color DrawingColor = Color.Blue;
+
+        // captured data
+        public float[] SpectrumValues = null;
+
+        public String Name
+        {
+            get { return CurveName; }
+            set { CurveName = value; }
+        }
+
+        public YesNo Visible
+        {
+            get { return Is_Visible; }
+            set { Is_Visible = value; }
+        }
+
+        public Color Color
+        {
+            get { return DrawingColor; }
+            set { DrawingColor = value; }
+        }
+
 
         public override String ToString()
         {
@@ -372,7 +403,7 @@ namespace SNASharp
 
         public void DrawCurve(CurveDef _curve)
         {
-            if (Picture.Size.Width == 0 || Picture.Size.Height == 0)
+            if (Picture.Size.Width == 0 || Picture.Size.Height == 0 || _curve.Is_Visible == CurveDef.YesNo.No)
                 return;
 
             int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
@@ -629,7 +660,9 @@ namespace SNASharp
                 for (int i = 0; i < curveList.Count; i++)
                 {
                     if (curveList[i] != null)
+                    {
                         DrawCurve((CurveDef)curveList[i]);
+                    }
                 }
             }
         }

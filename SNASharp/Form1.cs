@@ -36,7 +36,14 @@ namespace SNASharp
         {
 
             InitializeComponent();
-          
+            SweepModeCurvesList.Clear();
+            SweepModeCurvesList.Add(new CurveDef());
+
+            CurveListComboBox.DataSource = null;
+            CurveListComboBox.DataSource = SweepModeCurvesList;
+            CurveListComboBox.SelectedItem = SweepModeCurvesList[0];
+            CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[0];
+
             AutodetectCOMcheckBox.Checked = Program.Save.SerialPortAutodetectAtLaunch;
 
             //SerialPortComboBox.SelectedValueChanged -= DevicesComboBox_SelectedValueChanged;

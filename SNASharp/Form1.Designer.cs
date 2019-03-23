@@ -39,6 +39,9 @@
             this.AutodetectButton = new System.Windows.Forms.Button();
             this.OperationsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.AddNewCurveButton = new System.Windows.Forms.Button();
+            this.CurveListComboBox = new System.Windows.Forms.ComboBox();
+            this.CurveConfigPropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.label12 = new System.Windows.Forms.Label();
             this.DetectorCombobox = new System.Windows.Forms.ComboBox();
             this.SweepLoopStopButton = new System.Windows.Forms.Button();
@@ -90,6 +93,9 @@
             this.AutodetectCOMcheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundWorkerSerialCapture = new System.ComponentModel.BackgroundWorker();
             this.SpectrumPictureBox = new SNASharp.SpectrumPictureBoxClass();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.label16 = new System.Windows.Forms.Label();
+            this.DeleteCurveButton = new System.Windows.Forms.Button();
             this.OperationsTabControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -209,6 +215,11 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage2.Controls.Add(this.DeleteCurveButton);
+            this.tabPage2.Controls.Add(this.label16);
+            this.tabPage2.Controls.Add(this.AddNewCurveButton);
+            this.tabPage2.Controls.Add(this.CurveListComboBox);
+            this.tabPage2.Controls.Add(this.CurveConfigPropertyGrid);
             this.tabPage2.Controls.Add(this.label12);
             this.tabPage2.Controls.Add(this.DetectorCombobox);
             this.tabPage2.Controls.Add(this.SweepLoopStopButton);
@@ -222,10 +233,40 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sweepmode";
             // 
+            // AddNewCurveButton
+            // 
+            this.AddNewCurveButton.Location = new System.Drawing.Point(10, 143);
+            this.AddNewCurveButton.Name = "AddNewCurveButton";
+            this.AddNewCurveButton.Size = new System.Drawing.Size(103, 46);
+            this.AddNewCurveButton.TabIndex = 8;
+            this.AddNewCurveButton.Text = "Add new curve";
+            this.AddNewCurveButton.UseVisualStyleBackColor = true;
+            this.AddNewCurveButton.Click += new System.EventHandler(this.AddNewCurveButton_Click);
+            // 
+            // CurveListComboBox
+            // 
+            this.CurveListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CurveListComboBox.FormattingEnabled = true;
+            this.CurveListComboBox.Location = new System.Drawing.Point(167, 145);
+            this.CurveListComboBox.Name = "CurveListComboBox";
+            this.CurveListComboBox.Size = new System.Drawing.Size(121, 21);
+            this.CurveListComboBox.TabIndex = 7;
+            this.CurveListComboBox.SelectedIndexChanged += new System.EventHandler(this.CurveListComboBox_SelectedIndexChanged);
+            // 
+            // CurveConfigPropertyGrid
+            // 
+            this.CurveConfigPropertyGrid.HelpVisible = false;
+            this.CurveConfigPropertyGrid.Location = new System.Drawing.Point(167, 172);
+            this.CurveConfigPropertyGrid.Name = "CurveConfigPropertyGrid";
+            this.CurveConfigPropertyGrid.Size = new System.Drawing.Size(195, 89);
+            this.CurveConfigPropertyGrid.TabIndex = 6;
+            this.CurveConfigPropertyGrid.ToolbarVisible = false;
+            this.CurveConfigPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.CurveConfigPropertyGrid_PropertyValueChanged);
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(122, 83);
+            this.label12.Location = new System.Drawing.Point(164, 78);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(48, 13);
             this.label12.TabIndex = 5;
@@ -235,7 +276,7 @@
             // 
             this.DetectorCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.DetectorCombobox.FormattingEnabled = true;
-            this.DetectorCombobox.Location = new System.Drawing.Point(125, 99);
+            this.DetectorCombobox.Location = new System.Drawing.Point(167, 94);
             this.DetectorCombobox.Name = "DetectorCombobox";
             this.DetectorCombobox.Size = new System.Drawing.Size(121, 21);
             this.DetectorCombobox.TabIndex = 4;
@@ -271,7 +312,7 @@
             "Quality factor",
             "Impedance at serie resonance",
             "-6dB/-60dB shape factor"});
-            this.checkedListBox1.Location = new System.Drawing.Point(125, 6);
+            this.checkedListBox1.Location = new System.Drawing.Point(167, 6);
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(172, 64);
             this.checkedListBox1.TabIndex = 1;
@@ -527,10 +568,12 @@
             // 
             // DeviceProperyGrid
             // 
+            this.DeviceProperyGrid.HelpVisible = false;
             this.DeviceProperyGrid.Location = new System.Drawing.Point(3, 64);
             this.DeviceProperyGrid.Name = "DeviceProperyGrid";
             this.DeviceProperyGrid.Size = new System.Drawing.Size(360, 234);
             this.DeviceProperyGrid.TabIndex = 2;
+            this.DeviceProperyGrid.ToolbarVisible = false;
             this.DeviceProperyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.DeviceProperyGrid_PropertyValueChanged);
             // 
             // NewDeviceButton
@@ -786,6 +829,24 @@
             this.SpectrumPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBox_MouseMove);
             this.SpectrumPictureBox.Resize += new System.EventHandler(this.SpectrumPictureBox_Resize);
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(164, 129);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(67, 13);
+            this.label16.TabIndex = 9;
+            this.label16.Text = "Active curve";
+            // 
+            // DeleteCurveButton
+            // 
+            this.DeleteCurveButton.Location = new System.Drawing.Point(8, 195);
+            this.DeleteCurveButton.Name = "DeleteCurveButton";
+            this.DeleteCurveButton.Size = new System.Drawing.Size(105, 40);
+            this.DeleteCurveButton.TabIndex = 10;
+            this.DeleteCurveButton.Text = "Delete curve";
+            this.DeleteCurveButton.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -891,6 +952,12 @@
         private System.Windows.Forms.Button StartVFOButton;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ComboBox OutputModeComboBox;
+        private System.Windows.Forms.ComboBox CurveListComboBox;
+        private System.Windows.Forms.PropertyGrid CurveConfigPropertyGrid;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.Button AddNewCurveButton;
+        private System.Windows.Forms.Button DeleteCurveButton;
+        private System.Windows.Forms.Label label16;
     }
 }
 

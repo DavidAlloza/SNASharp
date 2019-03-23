@@ -220,7 +220,7 @@ namespace SNASharp
 
              GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
 
-            CurveDef CurveConfig = new CurveDef();
+            CurveDef CurveConfig = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
 
             switch (OutputModeComboBox.SelectedIndex)
             {
@@ -305,8 +305,8 @@ namespace SNASharp
             Graph.fLastDrawingLevelHigh = nUpperScale;
             SpectrumPictureBox.GetGraphConfig().DrawBackGround();
 
-            if (AcquisitionParams.ResultDatas!=null)
-                SpectrumPictureBox.DrawSingleCurve(CurveConfig);
+            CurveConfigPropertyGrid.SelectedObject = CurveConfig;
+            SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
         }
 
         private void backgroundWorkerSerialCapture_DoWork(object sender, DoWorkEventArgs e)
@@ -351,6 +351,32 @@ namespace SNASharp
             ProcessSweepModeDisplayAcquisition(CurrentAcquisitionParams);
 
         }
+
+        private void CurveConfigPropertyGrid_PropertyValueChanged(object s, System.Windows.Forms.PropertyValueChangedEventArgs e)
+        {
+            SpectrumPictureBox.Redraw();
+            CurveListComboBox.DataSource = null;
+            CurveListComboBox.DataSource = SweepModeCurvesList;
+            CurveListComboBox.SelectedItem = CurveConfigPropertyGrid.SelectedObject;
+        }
+
+        private void AddNewCurveButton_Click(object sender, EventArgs e)
+        {
+            CurveDef NewCurve = new CurveDef();
+            NewCurve.Name = "Curve_" + SweepModeCurvesList.Count;
+            SweepModeCurvesList.Add(NewCurve);
+            CurveListComboBox.DataSource = null;
+            CurveListComboBox.DataSource = SweepModeCurvesList;
+            CurveListComboBox.SelectedItem = NewCurve;
+            CurveConfigPropertyGrid.SelectedObject = NewCurve;
+        }
+
+        private void CurveListComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CurveListComboBox.SelectedIndex != -1)
+                CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[CurveListComboBox.SelectedIndex];
+        }
+
 
     }
 }
