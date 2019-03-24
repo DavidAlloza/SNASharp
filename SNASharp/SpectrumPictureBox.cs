@@ -67,13 +67,18 @@ namespace SNASharp
 
             double dBLevel;
 
-            if (CurvesList.Count > 0 && CurvesList[0] != null)
+            String LevelText = null;
+            if (CurvesList.Count > 0 && ActiveCurve != null)
             {
-                dBLevel = Math.Round( ((CurveDef)CurvesList[0]).GeDBLevelFromFrequency(nFrequency), 2);
+                dBLevel = Math.Round(ActiveCurve.GeDBLevelFromFrequency(nFrequency), 2);
+                LevelDisplayLabel.ForeColor = ActiveCurve.Color;
+                LevelText = ActiveCurve.Name+" : ";
             }
             else
             {
                 dBLevel = 0.0f;
+                LevelDisplayLabel.ForeColor = Color.Black;
+                LevelText = "Level : ";
             }
 
 
@@ -81,19 +86,19 @@ namespace SNASharp
 
             FreqDisplayLabel.Text = "Frequency : " + Utility.GetStringWithSeparators(nFrequency," ")+"Hz";
 
+
             if (!GraphConfig.bSWRDisplay)
             {
 
                 if (ImpedanceNorm >= 0)
-                    LevelDisplayLabel.Text = "Level : " + dBLevel.ToString() + "dB " + " |Z|=" + Math.Round(ImpedanceNorm, 0) + " Ohms";
+                    LevelDisplayLabel.Text = LevelText + dBLevel.ToString() + "dB " + " |Z|=" + Math.Round(ImpedanceNorm, 0) + " Ohms";
                 else
-                    LevelDisplayLabel.Text = "Level : " + dBLevel.ToString() + "dB ";
+                    LevelDisplayLabel.Text = LevelText + dBLevel.ToString() + "dB ";
             }
             else
             {
-                LevelDisplayLabel.Text = "Level : " + dBLevel.ToString() ;
+                LevelDisplayLabel.Text = LevelText + dBLevel.ToString() ;
             }
-
 
         }
 
@@ -204,8 +209,8 @@ namespace SNASharp
 
             CurvesList.Clear();
             CurvesList.Add(_curve);
-
-            GraphConfig.GraphicDisplay(CurvesList);
+            ActiveCurve = _curve;
+            GraphConfig.GraphicDisplay(CurvesList, _curve);
 
         }
 
@@ -213,9 +218,14 @@ namespace SNASharp
         public void DrawCurveCollection(ArrayList Curves)
         {
             CurvesList = Curves;
-            GraphConfig.GraphicDisplay(Curves);
+            GraphConfig.GraphicDisplay(Curves,ActiveCurve);
         }
 
+
+        public void SetActiveCurve(CurveDef Active)
+        {
+            ActiveCurve = Active;
+        }
 
         public GraphDef GetGraphConfig()
         {
@@ -237,6 +247,7 @@ namespace SNASharp
        
         private GraphDef GraphConfig = new GraphDef();
         private ArrayList CurvesList = new ArrayList();
+        private CurveDef ActiveCurve = null;
 
   
         private System.Windows.Forms.Label FreqDisplayLabel = new System.Windows.Forms.Label();
@@ -401,7 +412,7 @@ namespace SNASharp
             return 1000000000;
         }
 
-        public void DrawCurve(CurveDef _curve)
+        public void DrawCurve(CurveDef _curve, bool IsActive)
         {
             if (Picture.Size.Width == 0 || Picture.Size.Height == 0 || _curve.Is_Visible == CurveDef.YesNo.No)
                 return;
@@ -473,19 +484,24 @@ namespace SNASharp
                     Mesures[i].X = ((float)i * nPixelToDisplay) / nSpectrumCount + LeftBorder + fXStartOffset;
                 }
 
-                g.DrawLines(mypen, Mesures);
+                if (Mesures.Length > 1)
+                {
+                    g.DrawLines(mypen, Mesures);
+                }
 
-                System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
+                if (IsActive)
+                {
+                    System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
 
-                float fPixelPerSample = (float)Math.Round((float)nWidth / nSpectrumCount, 1);
-                float fSamplePerPixel = (float)Math.Round((float)nSpectrumCount / nWidth, 1);
+                    float fPixelPerSample = (float)Math.Round((float)nWidth / nSpectrumCount, 1);
+                    float fSamplePerPixel = (float)Math.Round((float)nSpectrumCount / nWidth, 1);
 
 
-                if (nSpectrumCount > nWidth)
-                    g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fSamplePerPixel.ToString() + " Samples per pixel)", SampleFont, Brushes.Black, new Point(nWidth - 190, 10));
-                else
-                    g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fPixelPerSample.ToString() + " Pixel per sample)", SampleFont, Brushes.Red, new Point(nWidth - 190, 10));
-
+                    if (nSpectrumCount > nWidth)
+                        g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fSamplePerPixel.ToString() + " Samples per pixel)", SampleFont, Brushes.Black, new Point(nWidth - 180, 10));
+                    else
+                        g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fPixelPerSample.ToString() + " Pixel per sample)", SampleFont, Brushes.Red, new Point(nWidth - 180, 10));
+                }
 
             }
 
@@ -652,7 +668,7 @@ namespace SNASharp
             return 10;
         }
 
-        public void GraphicDisplay(ArrayList curveList)
+        public void GraphicDisplay(ArrayList curveList, CurveDef ActiveCurve)
         {
             DrawBackGround();
             if (curveList != null)
@@ -661,7 +677,8 @@ namespace SNASharp
                 {
                     if (curveList[i] != null)
                     {
-                        DrawCurve((CurveDef)curveList[i]);
+                        bool IsActive = (curveList[i] == ActiveCurve);
+                        DrawCurve((CurveDef)curveList[i], IsActive);
                     }
                 }
             }

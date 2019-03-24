@@ -39,6 +39,8 @@
             this.AutodetectButton = new System.Windows.Forms.Button();
             this.OperationsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.DeleteCurveButton = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
             this.AddNewCurveButton = new System.Windows.Forms.Button();
             this.CurveListComboBox = new System.Windows.Forms.ComboBox();
             this.CurveConfigPropertyGrid = new System.Windows.Forms.PropertyGrid();
@@ -92,10 +94,8 @@
             this.label14 = new System.Windows.Forms.Label();
             this.AutodetectCOMcheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundWorkerSerialCapture = new System.ComponentModel.BackgroundWorker();
-            this.SpectrumPictureBox = new SNASharp.SpectrumPictureBoxClass();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.label16 = new System.Windows.Forms.Label();
-            this.DeleteCurveButton = new System.Windows.Forms.Button();
+            this.SpectrumPictureBox = new SNASharp.SpectrumPictureBoxClass();
             this.OperationsTabControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -233,11 +233,31 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sweepmode";
             // 
+            // DeleteCurveButton
+            // 
+            this.DeleteCurveButton.Enabled = false;
+            this.DeleteCurveButton.Location = new System.Drawing.Point(5, 211);
+            this.DeleteCurveButton.Name = "DeleteCurveButton";
+            this.DeleteCurveButton.Size = new System.Drawing.Size(105, 29);
+            this.DeleteCurveButton.TabIndex = 10;
+            this.DeleteCurveButton.Text = "Delete curve";
+            this.DeleteCurveButton.UseVisualStyleBackColor = true;
+            this.DeleteCurveButton.Click += new System.EventHandler(this.DeleteCurveButton_Click);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(164, 129);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(67, 13);
+            this.label16.TabIndex = 9;
+            this.label16.Text = "Active curve";
+            // 
             // AddNewCurveButton
             // 
-            this.AddNewCurveButton.Location = new System.Drawing.Point(10, 143);
+            this.AddNewCurveButton.Location = new System.Drawing.Point(6, 172);
             this.AddNewCurveButton.Name = "AddNewCurveButton";
-            this.AddNewCurveButton.Size = new System.Drawing.Size(103, 46);
+            this.AddNewCurveButton.Size = new System.Drawing.Size(103, 33);
             this.AddNewCurveButton.TabIndex = 8;
             this.AddNewCurveButton.Text = "Add new curve";
             this.AddNewCurveButton.UseVisualStyleBackColor = true;
@@ -828,24 +848,6 @@
             this.SpectrumPictureBox.MouseEnter += new System.EventHandler(this.SpectrumPictureBox_MouseEnter);
             this.SpectrumPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBox_MouseMove);
             this.SpectrumPictureBox.Resize += new System.EventHandler(this.SpectrumPictureBox_Resize);
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(164, 129);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(67, 13);
-            this.label16.TabIndex = 9;
-            this.label16.Text = "Active curve";
-            // 
-            // DeleteCurveButton
-            // 
-            this.DeleteCurveButton.Location = new System.Drawing.Point(8, 195);
-            this.DeleteCurveButton.Name = "DeleteCurveButton";
-            this.DeleteCurveButton.Size = new System.Drawing.Size(105, 40);
-            this.DeleteCurveButton.TabIndex = 10;
-            this.DeleteCurveButton.Text = "Delete curve";
-            this.DeleteCurveButton.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

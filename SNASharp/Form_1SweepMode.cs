@@ -221,6 +221,8 @@ namespace SNASharp
              GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
 
             CurveDef CurveConfig = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
+            SpectrumPictureBox.SetActiveCurve(CurveConfig);
+
 
             switch (OutputModeComboBox.SelectedIndex)
             {
@@ -305,7 +307,8 @@ namespace SNASharp
             Graph.fLastDrawingLevelHigh = nUpperScale;
             SpectrumPictureBox.GetGraphConfig().DrawBackGround();
 
-            CurveConfigPropertyGrid.SelectedObject = CurveConfig;
+            //CurveConfigPropertyGrid.SelectedObject = CurveConfig;
+
             SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
         }
 
@@ -374,7 +377,15 @@ namespace SNASharp
         private void CurveListComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (CurveListComboBox.SelectedIndex != -1)
+            {
                 CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[CurveListComboBox.SelectedIndex];
+                SpectrumPictureBox.SetActiveCurve((CurveDef)SweepModeCurvesList[CurveListComboBox.SelectedIndex]);
+                SpectrumPictureBox.Redraw();
+            }
+        }
+
+        private void DeleteCurveButton_Click(object sender, EventArgs e)
+        {
         }
 
 
