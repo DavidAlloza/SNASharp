@@ -14,6 +14,8 @@ namespace SNASharp
         public static string SavePath = null;
         public static string SaveFullPath = null;
         public static string CalibrationPath = null;
+        public static string CurvesPath = null;
+
 
 
         public static SavePref Save;
@@ -33,6 +35,7 @@ namespace SNASharp
                 DeviceDefPath = System.IO.Path.Combine(appPath, "DeviceDef");
                 SavePath = System.IO.Path.Combine(appPath, "Save");
                 CalibrationPath = System.IO.Path.Combine(appPath, "Calibration");
+                CurvesPath = System.IO.Path.Combine(SavePath, "Curves");
                 SaveFullPath = System.IO.Path.Combine(SavePath, "SavePref.XML");
 
                 if (!Directory.Exists(DeviceDefPath))
@@ -44,6 +47,8 @@ namespace SNASharp
                 if (!Directory.Exists(CalibrationPath))
                     di = Directory.CreateDirectory(CalibrationPath);
 
+                if (!Directory.Exists(CurvesPath))
+                    di = Directory.CreateDirectory(CurvesPath);
 
                 if (File.Exists(SaveFullPath))
                 {

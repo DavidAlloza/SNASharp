@@ -449,7 +449,7 @@ namespace SNASharp
         {
             int Count = data.Length;
             CurveDef Curve = new CurveDef();
-            Curve.DrawingColor = Color.DeepPink;
+            Curve.Color_ = Color.DeepPink;
 
             GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
             Graph.nLastDrawingLowFrequency = nFrequencyBase;
@@ -1107,5 +1107,4 @@ namespace SNASharp
         }
 
     }
-
 }

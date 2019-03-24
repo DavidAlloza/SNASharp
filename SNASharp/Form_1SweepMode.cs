@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using NWTInterface;
 using System.ComponentModel;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+using System.IO;
+
 
 namespace SNASharp
 {
@@ -367,7 +371,7 @@ namespace SNASharp
         {
             CurveDef NewCurve = new CurveDef();
             NewCurve.Name = "Curve_" + SweepModeCurvesList.Count;
-            NewCurve.Color = GetDefaultCurveColor(SweepModeCurvesList.Count);
+            NewCurve.Color_ = GetDefaultCurveColor(SweepModeCurvesList.Count);
             SweepModeCurvesList.Add(NewCurve);
             CurveListComboBox.DataSource = null;
             CurveListComboBox.DataSource = SweepModeCurvesList;
@@ -387,8 +391,63 @@ namespace SNASharp
 
         private void DeleteCurveButton_Click(object sender, EventArgs e)
         {
+            if (SweepModeCurvesList.Count > 1)
+            {
+                int nIndexToDelete = CurveListComboBox.SelectedIndex;
+                CurveListComboBox.DataSource = null;
+                CurveConfigPropertyGrid.SelectedObject = null;
+                SweepModeCurvesList.RemoveAt(nIndexToDelete);
+                CurveListComboBox.DataSource = SweepModeCurvesList;
+                SpectrumPictureBox.SetActiveCurve((CurveDef)SweepModeCurvesList[0]);
+                SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
+                CurveListComboBox.SelectedIndex = 0;
+            }
         }
 
+
+        private void SaveCurveButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "Curves files (*.xml)|*.xml|all files (*.*)|*.*";
+            CurveDef CurveToSave = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
+            dialog.InitialDirectory = Program.CurvesPath;
+            dialog.FileName = CurveToSave.ToString()+".XML";
+
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(CurveDef));
+                using (StreamWriter wr = new StreamWriter(dialog.FileName))
+                {
+                    xs.Serialize(wr, CurveToSave);
+                }
+            }
+
+        }
+
+        private void LoadCurveButton_Click(object sender, EventArgs e)
+        {
+
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Curves files (*.xml)|*.xml|all files (*.*)|*.*";
+            //CurveDef CurveToLoad = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
+            dialog.InitialDirectory = Program.CurvesPath;
+
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(CurveDef));
+                using (StreamReader wr = new StreamReader(dialog.FileName))
+                {
+                    CurveDef CurveToLoad = xs.Deserialize(wr) as CurveDef;
+                    SweepModeCurvesList.Add(CurveToLoad);
+                    CurveListComboBox.DataSource = null;
+                    CurveListComboBox.DataSource = SweepModeCurvesList;
+                    CurveListComboBox.SelectedIndex = SweepModeCurvesList.Count - 1;
+                }
+            }
+
+        }
 
     }
 }

@@ -9,6 +9,8 @@ using NWTInterface;
 using System.Globalization;
 using System.Drawing.Imaging;
 using System.Collections;
+using System.Xml.Serialization;
+
 
 namespace SNASharp
 {
@@ -71,7 +73,7 @@ namespace SNASharp
             if (CurvesList.Count > 0 && ActiveCurve != null)
             {
                 dBLevel = Math.Round(ActiveCurve.GeDBLevelFromFrequency(nFrequency), 2);
-                LevelDisplayLabel.ForeColor = ActiveCurve.Color;
+                LevelDisplayLabel.ForeColor = ActiveCurve.Color_;
                 LevelText = ActiveCurve.Name+" : ";
             }
             else
@@ -265,6 +267,8 @@ namespace SNASharp
             Yes,
             No
         };
+
+
         // computed values to the curve
         public Int64 nMaxLevelFrequency = -1;
         public float fMaxLeveldB = 0.0f;
@@ -280,13 +284,18 @@ namespace SNASharp
         public float fShapeFactor = -1.0f;
         public Int64 nSpectrumLowFrequency = 0;
         public Int64 nSpectrumHighFrequency = 0;
-        public YesNo Is_Visible = YesNo.Yes;
+        private YesNo Is_Visible = YesNo.Yes;
+        public byte R = 0;
+        public byte G = 0;
+        public byte B = 255;
+
+        [XmlIgnore]
+        public float LineWidth = 1.0f;
+
 
         // infos
-        public String CurveName = "Curve_0";
+        private String CurveName = "Curve_0";
 
-        // rendering specific
-        public Color DrawingColor = Color.Blue;
 
         // captured data
         public float[] SpectrumValues = null;
@@ -303,12 +312,28 @@ namespace SNASharp
             set { Is_Visible = value; }
         }
 
-        public Color Color
+        [XmlIgnore]
+        public Color Color_
         {
-            get { return DrawingColor; }
-            set { DrawingColor = value; }
+            get { return Color.FromArgb(255,R,G,B); }
+
+            set
+            {
+                R = value.R;
+                G = value.G;
+                B = value.B;
+            }
         }
 
+        public String Width
+        {
+            get { return LineWidth.ToString(); }
+            set
+            {
+                value.Replace(',','.');
+                LineWidth = Convert.ToSingle(value,new CultureInfo("en-US"));
+            }
+        }
 
         public override String ToString()
         {
@@ -414,7 +439,7 @@ namespace SNASharp
 
         public void DrawCurve(CurveDef _curve, bool IsActive)
         {
-            if (Picture.Size.Width == 0 || Picture.Size.Height == 0 || _curve.Is_Visible == CurveDef.YesNo.No)
+            if (Picture.Size.Width == 0 || Picture.Size.Height == 0 || _curve.Visible == CurveDef.YesNo.No)
                 return;
 
             int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
@@ -439,7 +464,7 @@ namespace SNASharp
                 float fVerticalScale = nHeight / fVerticalRangedB;
 
 
-                Pen mypen = new Pen(_curve.DrawingColor);
+                Pen mypen = new Pen(_curve.Color_, _curve.LineWidth);
 
 
                 int nFirstSpectrumIndex;
