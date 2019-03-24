@@ -710,8 +710,16 @@ namespace SNASharp
         NWTCompatibleDeviceDef CurrentDeviceDef = null;
         String[] SerialPortList = null;
         ArrayList SweepModeCurvesList = new ArrayList();
+        Color[] DefaultCurveColor = { Color.Blue, Color.Red, Color.Green, Color.Black,Color.Violet,Color.Turquoise };
 
 
+        Color GetDefaultCurveColor(int nIndex)
+        {
+            if (nIndex < DefaultCurveColor.Length)
+                return DefaultCurveColor[nIndex];
+            else
+                return Color.Pink;
+        }
 
         private void AnalyseButton_Click(object sender, EventArgs e)
         {

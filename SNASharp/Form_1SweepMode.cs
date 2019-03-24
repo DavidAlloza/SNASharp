@@ -367,6 +367,7 @@ namespace SNASharp
         {
             CurveDef NewCurve = new CurveDef();
             NewCurve.Name = "Curve_" + SweepModeCurvesList.Count;
+            NewCurve.Color = GetDefaultCurveColor(SweepModeCurvesList.Count);
             SweepModeCurvesList.Add(NewCurve);
             CurveListComboBox.DataSource = null;
             CurveListComboBox.DataSource = SweepModeCurvesList;
