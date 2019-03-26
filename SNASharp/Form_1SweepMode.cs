@@ -41,7 +41,10 @@ namespace SNASharp
 
         private void OutputModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ProcessSweepModeDisplayAcquisition(CurrentAcquisitionParams);
+            if (OutputModeComboBox.SelectedIndex != -1)
+            {
+                SpectrumPictureBox.Redraw();
+            }
         }
 
         private void ComputeCaracteristicsParams(float[] Spectrum, Int64 nFrequencyBase, Int64 nFrequencyStep, CurveDef DisplayConfig)
@@ -218,104 +221,28 @@ namespace SNASharp
         public void ProcessSweepModeDisplayAcquisition(NWTDevice.RunSweepModeParam AcquisitionParams)
         {
 
-            int nUpperScale = 10;
-            int nLowerScale = -90;
-
-
-             GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
-
+            GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
             CurveDef CurveConfig = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
             SpectrumPictureBox.SetActiveCurve(CurveConfig);
 
-
-
-
-            switch (OutputModeComboBox.SelectedIndex)
+            if (AcquisitionParams.ResultDatas != null)
             {
-                case (int)OutputMode.dB:
+                CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
+                CurveConfig.DetermineMinMaxLevels();
 
-                    if (AcquisitionParams.ResultDatas != null)
-                    {
-                        CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
-                        CurveConfig.DetermineMinMaxLevels();
-                        nUpperScale = (int)(CurveConfig.fMaxLeveldB + 10.0f);
-                        nUpperScale /= 10;
-                        nUpperScale *= 10;
+                if (!bLoop)
+                {
+                    LOGDraw("============================");
+                    ComputeCaracteristicsParams(AcquisitionParams.ResultDatas, AcquisitionParams.nBaseFrequency, AcquisitionParams.nFrequencyStep, CurveConfig);
+                    LOGDraw("============================");
+                }
 
-                        nLowerScale = (int)(CurveConfig.fMinLeveldB - 10.0f);
-                        nLowerScale /= 10;
-                        nLowerScale *= 10;
-
-
-
-                        if (!bLoop)
-                        {
-                            LOGDraw("============================");
-                            ComputeCaracteristicsParams(AcquisitionParams.ResultDatas, AcquisitionParams.nBaseFrequency, AcquisitionParams.nFrequencyStep, CurveConfig);
-                            LOGDraw("============================");
-                        }
-
-                        Graph.bSWRDisplay = false;
-                    }
-                    break;
-
-                    case (int)OutputMode.SWR_3:
-                    case (int)OutputMode.SWR_6:
-                    case (int)OutputMode.SWR_10:
-                    Graph.bSWRDisplay = true;
-                    int nUpperBound = 10;
-
-                    switch (OutputModeComboBox.SelectedIndex)
-                    {
-                        case (int)OutputMode.SWR_3:
-                            nUpperBound = 3;
-                            break;
-                        case (int)OutputMode.SWR_6:
-                            nUpperBound = 6;
-                            break;
-
-                        case (int)OutputMode.SWR_10:
-                            nUpperBound = 10;
-                            break;
-
-                    }
-
-
-                    if (AcquisitionParams.ResultDatas != null)
-                    {
-                        // we allocate a buffer for SWR  data
-                        float[] SWRDatas = new float[AcquisitionParams.ResultDatas.Length];
-
-                        for (int i = 0; i < SWRDatas.Length; i++)
-                        {
-                            float fdBValue = AcquisitionParams.ResultDatas[i];
-                            if (fdBValue > 0.0f)
-                                fdBValue = 0.0f;
-
-                            double fReflective = Math.Pow(10, fdBValue / 20.0f);
-                            double WSR = (1.0 + fReflective) / (1.0 - fReflective);
-                            SWRDatas[i] = (float)Math.Max(Math.Min(WSR, nUpperBound), 1.0);
-
-                        }
-                        CurveConfig.SpectrumValues = SWRDatas;
-                    }
-                    nLowerScale = 1;
-                    nUpperScale = nUpperBound;
-
-                    break;
             }
 
             CurveConfig.nSpectrumLowFrequency = AcquisitionParams.nBaseFrequency;
             CurveConfig.nSpectrumHighFrequency = AcquisitionParams.nBaseFrequency + AcquisitionParams.nFrequencyStep * AcquisitionParams.nCount;
-
-            Graph.nLastDrawingLowFrequency = nFrequencyDetectionStart /*CurveConfig.nSpectrumLowFrequency*/;
-            Graph.nLastDrawingHighFrequency = nFrequencyDetectionEnd /*CurveConfig.nSpectrumHighFrequency*/;
-            Graph.fLastDrawingLevelLow = nLowerScale;
-            Graph.fLastDrawingLevelHigh = nUpperScale;
-            SpectrumPictureBox.GetGraphConfig().DrawBackGround();
-
-            //CurveConfigPropertyGrid.SelectedObject = CurveConfig;
-
+            Graph.nLastDrawingLowFrequency = nFrequencyDetectionStart ;
+            Graph.nLastDrawingHighFrequency = nFrequencyDetectionEnd ;
             SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
         }
 
@@ -446,6 +373,7 @@ namespace SNASharp
                     SweepModeCurvesList.Add(CurveToLoad);
                     CurveListComboBox.DataSource = null;
                     CurveListComboBox.DataSource = SweepModeCurvesList;
+                    SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
                     CurveListComboBox.SelectedIndex = SweepModeCurvesList.Count - 1;
                 }
             }

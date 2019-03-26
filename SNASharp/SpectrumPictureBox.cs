@@ -89,7 +89,7 @@ namespace SNASharp
             FreqDisplayLabel.Text = "Frequency : " + Utility.GetStringWithSeparators(nFrequency," ")+"Hz";
 
 
-            if (!GraphConfig.bSWRDisplay)
+            if (GraphConfig.outputMode == OutputMode.dB)
             {
 
                 if (ImpedanceNorm >= 0)
@@ -220,21 +220,58 @@ namespace SNASharp
         public void DrawCurveCollection(ArrayList Curves)
         {
             CurvesList = Curves;
+            int nUpperScale = 10;
+            int nLowerScale = -90;
+            GraphConfig.outputMode = OutputMode.dB;
 
             if (CurvesList.Count > 0 && Owner!= null && Owner.GetOutputMode() == OutputMode.dB)
             {
-                int nUpperScale = (int)(CurvesRetrieveMaximumScale() + 10.0f);
-                nUpperScale /= 10;
-                nUpperScale *= 10;
+                float fMax = CurvesRetrieveMaximumScale();
 
-                int nLowerScale = (int)(CurvesRetrieveMinimumScale() - 10.0f);
-                nLowerScale /= 10;
-                nLowerScale *= 10;
-                GraphConfig.fLastDrawingLevelLow = nLowerScale;
-                GraphConfig.fLastDrawingLevelHigh = nUpperScale;
+                if (fMax != Single.MinValue)
+                {
+                    nUpperScale = (int)(fMax + 10.0f);
+                    nUpperScale /= 10;
+                    nUpperScale *= 10;
+                }
+
+                float fMin = CurvesRetrieveMinimumScale();
+
+                if (fMin != Single.MaxValue)
+                {
+                    nLowerScale = (int)(fMin - 10.0f);
+                    nLowerScale /= 10;
+                    nLowerScale *= 10;
+                }
+
+            }
+            else
+            {
+                if (Owner != null)
+                {
+                    GraphConfig.outputMode = Owner.GetOutputMode();
+
+                    switch (GraphConfig.outputMode)
+                    {
+                        case OutputMode.SWR_3:
+                            nUpperScale = 3;
+                            break;
+                        case OutputMode.SWR_6:
+                            nUpperScale = 6;
+                            break;
+
+                        case OutputMode.SWR_10:
+                            nUpperScale = 10;
+                            break;
+
+                    }
+
+                    nLowerScale = 1;
+                }
             }
 
-
+            GraphConfig.fLastDrawingLevelLow = nLowerScale;
+            GraphConfig.fLastDrawingLevelHigh = nUpperScale;
             GraphConfig.GraphicDisplay(Curves,ActiveCurve);
         }
 
@@ -421,7 +458,6 @@ namespace SNASharp
         public Int64 nLastDrawingHighFrequency = 90000000;
         public float fLastDrawingLevelLow = -90;
         public float fLastDrawingLevelHigh = 10;
-        public bool bSWRDisplay = false;
 
         // drawing surfaces
         public  int LeftBorder = 50;
@@ -435,6 +471,8 @@ namespace SNASharp
 
         // where to draw
         System.Windows.Forms.PictureBox Picture = null;
+
+        public OutputMode outputMode = OutputMode.dB;
 
         public Int64 GetFrequencyFromXDisplay(int nX)
         {
@@ -545,8 +583,23 @@ namespace SNASharp
 
                 for (int i = 0; i < nSpectrumCount; i++)
                 {
+                    float fMesure = 0.0f; 
+                    if ( outputMode == OutputMode.dB)
+                    {
+                        fMesure = _curve.SpectrumValues[i + nFirstSpectrumIndex];
+                    }
+                    else
+                    {
+                        float fdBValue = _curve.SpectrumValues[i + nFirstSpectrumIndex];
+                        if (fdBValue > 0.0f)
+                            fdBValue = 0.0f;
 
-                    Mesures[i].Y = ((fLastDrawingLevelHigh - _curve.SpectrumValues[i + nFirstSpectrumIndex]) * fVerticalScale) + UpBorder;
+                        double fReflective = Math.Pow(10, fdBValue / 20.0f);
+                        double WSR = (1.0 + fReflective) / (1.0 - fReflective);
+                        fMesure = (float)Math.Max(Math.Min(WSR,fLastDrawingLevelHigh), 1.0);
+                    }
+
+                    Mesures[i].Y = ((fLastDrawingLevelHigh - fMesure) * fVerticalScale) + UpBorder;
                     Mesures[i].X = ((float)i * nPixelToDisplay) / nSpectrumCount + LeftBorder + fXStartOffset;
                 }
 
@@ -615,7 +668,7 @@ namespace SNASharp
             System.Drawing.Font FreqFont = new Font("Times New Roman", 10.0f);
 
 
-            if (!bSWRDisplay)
+            if (outputMode == OutputMode.dB)
                 dBFont = new Font("Times New Roman", 10.0f);
             else
                 dBFont = new Font("Times New Roman", 15.0f);
@@ -689,7 +742,7 @@ namespace SNASharp
                 int nY = (int)((fLastDrawingLevelHigh - ndB) * fVerticalScale) + UpBorder;
                 g.DrawLine(mypenHLines, LeftBorder, nY,LeftBorder + nWidth, nY);
 
-                if (!bSWRDisplay)
+                if (outputMode == OutputMode.dB)
                 {
                     float fX = 5.0f;
 
