@@ -228,21 +228,24 @@ namespace SNASharp
             SpectrumPictureBox.SetActiveCurve(CurveConfig);
 
 
+
+
             switch (OutputModeComboBox.SelectedIndex)
             {
                 case (int)OutputMode.dB:
 
                     if (AcquisitionParams.ResultDatas != null)
                     {
-                        nUpperScale = (int)(AcquisitionParams.ResultDatas[Utility.RetrieveMaxValueIndex(AcquisitionParams.ResultDatas)] + 10.0f);
+                        CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
+                        CurveConfig.DetermineMinMaxLevels();
+                        nUpperScale = (int)(CurveConfig.fMaxLeveldB + 10.0f);
                         nUpperScale /= 10;
                         nUpperScale *= 10;
 
-                        nLowerScale = (int)(AcquisitionParams.ResultDatas[Utility.RetrieveMinValueIndex(AcquisitionParams.ResultDatas)] - 10.0f);
+                        nLowerScale = (int)(CurveConfig.fMinLeveldB - 10.0f);
                         nLowerScale /= 10;
                         nLowerScale *= 10;
 
-                        CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
 
 
                         if (!bLoop)
@@ -411,7 +414,7 @@ namespace SNASharp
             dialog.Filter = "Curves files (*.xml)|*.xml|all files (*.*)|*.*";
             CurveDef CurveToSave = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
             dialog.InitialDirectory = Program.CurvesPath;
-            dialog.FileName = CurveToSave.ToString()+".XML";
+            dialog.FileName = CurveToSave.ToString()+".xml";
 
 
             if (dialog.ShowDialog() == DialogResult.OK)

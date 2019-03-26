@@ -1106,5 +1106,9 @@ namespace SNASharp
             int nVersion = DeviceInterface.GetVersion();
         }
 
+        public OutputMode GetOutputMode()
+        {
+            return (OutputMode)OutputModeComboBox.SelectedItem;
+        }
     }
 }

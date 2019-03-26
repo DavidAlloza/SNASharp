@@ -220,6 +220,21 @@ namespace SNASharp
         public void DrawCurveCollection(ArrayList Curves)
         {
             CurvesList = Curves;
+
+            if (CurvesList.Count > 0 && Owner!= null && Owner.GetOutputMode() == OutputMode.dB)
+            {
+                int nUpperScale = (int)(CurvesRetrieveMaximumScale() + 10.0f);
+                nUpperScale /= 10;
+                nUpperScale *= 10;
+
+                int nLowerScale = (int)(CurvesRetrieveMinimumScale() - 10.0f);
+                nLowerScale /= 10;
+                nLowerScale *= 10;
+                GraphConfig.fLastDrawingLevelLow = nLowerScale;
+                GraphConfig.fLastDrawingLevelHigh = nUpperScale;
+            }
+
+
             GraphConfig.GraphicDisplay(Curves,ActiveCurve);
         }
 
@@ -245,8 +260,28 @@ namespace SNASharp
             DrawCurveCollection(CurvesList);
         }
 
+        public float CurvesRetrieveMinimumScale()
+        {
+            float fMin = Single.MaxValue;
+            foreach ( CurveDef Curve in CurvesList)
+            {
+                if (Curve.fMinLeveldB < fMin && Curve.SpectrumValues != null)
+                    fMin = Curve.fMinLeveldB;
+            }
+            return fMin;
+        }
 
-       
+        public float CurvesRetrieveMaximumScale()
+        {
+            float fMax = Single.MinValue;
+            foreach (CurveDef Curve in CurvesList)
+            {
+                if (Curve.fMaxLeveldB > fMax && Curve.SpectrumValues != null)
+                    fMax = Curve.fMaxLeveldB;
+            }
+            return fMax;
+        }
+
         private GraphDef GraphConfig = new GraphDef();
         private ArrayList CurvesList = new ArrayList();
         private CurveDef ActiveCurve = null;
@@ -358,6 +393,12 @@ namespace SNASharp
             {
                 return 0.0f;
             }
+        }
+
+        public void DetermineMinMaxLevels()
+        {
+            fMinLeveldB = SpectrumValues[Utility.RetrieveMinValueIndex(SpectrumValues)];
+            fMaxLeveldB = SpectrumValues[Utility.RetrieveMaxValueIndex(SpectrumValues)];
         }
     }
 
