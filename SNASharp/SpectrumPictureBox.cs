@@ -208,11 +208,15 @@ namespace SNASharp
             if (Size.Width == 0 || Size.Height == 0)
                 return;
 
+            if (_curve.SpectrumValues != null)
+            {
+                _curve.DetermineMinMaxLevels();
+            }
 
             CurvesList.Clear();
             CurvesList.Add(_curve);
             ActiveCurve = _curve;
-            GraphConfig.GraphicDisplay(CurvesList, _curve);
+            DrawCurveCollection(CurvesList);
 
         }
 

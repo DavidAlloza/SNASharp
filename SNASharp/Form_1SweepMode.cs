@@ -306,6 +306,7 @@ namespace SNASharp
             CurveListComboBox.DataSource = null;
             CurveListComboBox.DataSource = SweepModeCurvesList;
             CurveListComboBox.SelectedItem = NewCurve;
+            SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
             CurveConfigPropertyGrid.SelectedObject = NewCurve;
         }
 
