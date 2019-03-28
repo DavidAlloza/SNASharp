@@ -26,9 +26,6 @@ namespace SNASharp
             SweepLoopStopButton.Enabled = true;
 
             ProcessSweepModeStartAcquisition();
-
-            //bSweepLoop = true;
-
         }
 
         private void SweepLoopStopButton_Click(object sender, EventArgs e)
@@ -243,7 +240,7 @@ namespace SNASharp
             CurveConfig.nSpectrumHighFrequency = AcquisitionParams.nBaseFrequency + AcquisitionParams.nFrequencyStep * AcquisitionParams.nCount;
             Graph.nLastDrawingLowFrequency = nFrequencyDetectionStart ;
             Graph.nLastDrawingHighFrequency = nFrequencyDetectionEnd ;
-            SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
+            SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList, bLoop);
         }
 
         private void backgroundWorkerSerialCapture_DoWork(object sender, DoWorkEventArgs e)

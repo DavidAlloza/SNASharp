@@ -221,7 +221,7 @@ namespace SNASharp
         }
 
 
-        public void DrawCurveCollection(ArrayList Curves)
+        public void DrawCurveCollection(ArrayList Curves, bool bLoopMode = false)
         {
             CurvesList = Curves;
             int nUpperScale = 10;
@@ -231,6 +231,7 @@ namespace SNASharp
             if (CurvesList.Count > 0 && Owner!= null && Owner.GetOutputMode() == OutputMode.dB)
             {
                 float fMax = CurvesRetrieveMaximumScale();
+
 
                 if (fMax != Single.MinValue)
                 {
@@ -246,6 +247,23 @@ namespace SNASharp
                     nLowerScale = (int)(fMin - 10.0f);
                     nLowerScale /= 10;
                     nLowerScale *= 10;
+                }
+
+
+                if (bLoopMode)
+                {
+                    if (GraphConfig.fLastDrawingLevelHigh - nUpperScale <= 20 
+                        && GraphConfig.fLastDrawingLevelHigh - nUpperScale > 0)
+                    {
+                        nUpperScale = (int)GraphConfig.fLastDrawingLevelHigh;
+                    }
+
+                    if (nLowerScale - GraphConfig.fLastDrawingLevelLow  <= 20
+                        && nLowerScale - GraphConfig.fLastDrawingLevelLow > 0)
+                    {
+                        nLowerScale = (int)GraphConfig.fLastDrawingLevelLow;
+                    }
+
                 }
 
             }
@@ -467,7 +485,7 @@ namespace SNASharp
         public  int LeftBorder = 50;
         public  int UpBorder = 50;
         public  int RightBorder = 40;
-        public  int LowBorder = 50;
+        public  int LowBorder = 150;
 
         // rendering
         public bool AntiAlias = true;

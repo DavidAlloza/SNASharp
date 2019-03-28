@@ -85,7 +85,8 @@ namespace SNASharp
 
             bMuteDeviceComboBoxEvent = false;
 
-            SetAnalyzer(SelectecDeviceComboBox.SelectedIndex);
+            SetAnalyzer(SelectecDeviceComboBox.SelectedIndex,true);
+
 
             if (Program.Save.LastUsedCOMPort != null)
             {
@@ -113,6 +114,7 @@ namespace SNASharp
             TransformerComboBox.SelectedIndex = 0;
             SpectrumPictureBox.SetOwnedForm(this);
 
+            SetSampleCount(Program.Save.SampleCount);
 
         }
 
@@ -191,7 +193,7 @@ namespace SNASharp
 
         }
 
-        void SetAnalyzer(int Index)
+        void SetAnalyzer(int Index, bool TakeAcountOfSave = false)
         {
             if (DeviceArray.Count > 0)
             {
@@ -199,13 +201,40 @@ namespace SNASharp
                 CurrentDeviceDef = DeviceDef;
                 DeviceInterface.SetDevice(DeviceDef);
                 LoadCalibrationFile();
-                SetSweepFrequencies(DeviceInterface.MinFrequency, DeviceInterface.MaxFrequency);
+
+                Int64 LowRange;
+                Int64 HighRange;
+
+                if (TakeAcountOfSave == true)
+                {
+                    if (Program.Save.LowFrequency >= DeviceInterface.MinFrequency
+                        && Program.Save.LowFrequency <= DeviceInterface.MaxFrequency)
+                        LowRange = Program.Save.LowFrequency;
+                    else
+                        LowRange = DeviceInterface.MinFrequency;
+
+                    if ( Program.Save.HighFrequency <=  DeviceInterface.MaxFrequency 
+                        && Program.Save.HighFrequency >= DeviceInterface.MinFrequency)
+                        HighRange = Program.Save.HighFrequency;
+                    else
+                        HighRange = DeviceInterface.MaxFrequency;
+                }
+                else
+                {
+                    LowRange = DeviceInterface.MinFrequency;
+                    HighRange = DeviceInterface.MaxFrequency;
+                }
+
+                SetSweepFrequencies(LowRange, HighRange);
+                SetSweepFrequencies(LowRange, HighRange);
+
+
                 GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
 
                 Graph.fLastDrawingLevelLow = -90;
                 Graph.fLastDrawingLevelHigh = 10;
-                Graph.nLastDrawingLowFrequency = DeviceInterface.MinFrequency;
-                Graph.nLastDrawingHighFrequency = DeviceInterface.MaxFrequency;
+                Graph.nLastDrawingLowFrequency = LowRange;
+                Graph.nLastDrawingHighFrequency = HighRange;
                 SpectrumPictureBox.GetGraphConfig().DrawBackGround();
 
                 if (!DeviceDef.Attenuator)
@@ -993,6 +1022,13 @@ namespace SNASharp
             Program.Save.LastUsedDevice = GetDevice(SelectecDeviceComboBox.SelectedIndex).ToString();
             Program.Save.LastUsedCOMPort = (String)SerialPortComboBox.SelectedItem;
             Program.Save.Output = (OutputMode)OutputModeComboBox.SelectedItem;
+            Program.Save.LowFrequency = nFrequencyDetectionStart;
+            Program.Save.HighFrequency = nFrequencyDetectionEnd;
+
+            if (GetSampleCount() > 0)
+                Program.Save.SampleCount = GetSampleCount();
+
+
 
             XmlSerializer xs = new XmlSerializer(typeof(SavePref));
             using (StreamWriter wr = new StreamWriter(Program.SaveFullPath))
@@ -1111,5 +1147,19 @@ namespace SNASharp
         {
             return (OutputMode)OutputModeComboBox.SelectedItem;
         }
+
+        private void ControlResetButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentDeviceDef != null)
+            {
+                SetSweepFrequencies(CurrentDeviceDef.MinFrequencyInHz, CurrentDeviceDef.MaxFrequencyInHz);
+                SetSweepFrequencies(CurrentDeviceDef.MinFrequencyInHz, CurrentDeviceDef.MaxFrequencyInHz);
+                LOGPrint("Reset frequencies to analyser range");
+            }
+
+            LOGPrint("Reset sample count to default");
+            SetSampleCount(2000);
+        }
+
     }
 }

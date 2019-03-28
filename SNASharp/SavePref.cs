@@ -22,6 +22,9 @@ namespace SNASharp
         String _LastUsedCOMPort = null;
         String _LastUsedAttLevel = null;
         OutputMode _Output = OutputMode.dB;
+        Int64 _LowFrequencyRange = -1;
+        Int64 _HighFrequencyRange = -1;
+        int _SampleCount = 2000;
 
 
         public bool DisplayDisclaimer
@@ -58,6 +61,26 @@ namespace SNASharp
         {
             get { return _Output; }
             set { _Output = value; }
+        }
+
+
+        public Int64 LowFrequency
+        {
+            get { return _LowFrequencyRange; }
+            set { _LowFrequencyRange = value; }
+        }
+
+        public Int64 HighFrequency
+        {
+            get { return _HighFrequencyRange; }
+            set { _HighFrequencyRange = value; }
+        }
+
+        public int SampleCount
+        {
+            get { return _SampleCount; }
+            set { _SampleCount = value; }
+
         }
 
     }

@@ -81,6 +81,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.TransformerComboBox = new System.Windows.Forms.ComboBox();
             this.ControlgroupBox = new System.Windows.Forms.GroupBox();
+            this.ControlResetButton = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.OutputModeComboBox = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -127,9 +128,9 @@
             // 
             // CalibrationButton
             // 
-            this.CalibrationButton.Location = new System.Drawing.Point(116, 23);
+            this.CalibrationButton.Location = new System.Drawing.Point(159, 27);
             this.CalibrationButton.Name = "CalibrationButton";
-            this.CalibrationButton.Size = new System.Drawing.Size(95, 46);
+            this.CalibrationButton.Size = new System.Drawing.Size(139, 41);
             this.CalibrationButton.TabIndex = 13;
             this.CalibrationButton.Text = "Run calibration";
             this.CalibrationButton.UseVisualStyleBackColor = true;
@@ -138,7 +139,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(138, 75);
+            this.label5.Location = new System.Drawing.Point(159, 77);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(101, 13);
             this.label5.TabIndex = 13;
@@ -147,11 +148,11 @@
             // 
             // SweepEndFrequencyTextbox
             // 
-            this.SweepEndFrequencyTextbox.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SweepEndFrequencyTextbox.Location = new System.Drawing.Point(141, 91);
+            this.SweepEndFrequencyTextbox.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SweepEndFrequencyTextbox.Location = new System.Drawing.Point(159, 93);
             this.SweepEndFrequencyTextbox.MaxLength = 12;
             this.SweepEndFrequencyTextbox.Name = "SweepEndFrequencyTextbox";
-            this.SweepEndFrequencyTextbox.Size = new System.Drawing.Size(123, 26);
+            this.SweepEndFrequencyTextbox.Size = new System.Drawing.Size(139, 27);
             this.SweepEndFrequencyTextbox.TabIndex = 12;
             this.SweepEndFrequencyTextbox.Text = "30 000 000";
             this.SweepEndFrequencyTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -160,11 +161,11 @@
             // 
             // SweepStartFrequencyTextbox
             // 
-            this.SweepStartFrequencyTextbox.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SweepStartFrequencyTextbox.Location = new System.Drawing.Point(12, 91);
+            this.SweepStartFrequencyTextbox.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SweepStartFrequencyTextbox.Location = new System.Drawing.Point(12, 93);
             this.SweepStartFrequencyTextbox.MaxLength = 12;
             this.SweepStartFrequencyTextbox.Name = "SweepStartFrequencyTextbox";
-            this.SweepStartFrequencyTextbox.Size = new System.Drawing.Size(123, 26);
+            this.SweepStartFrequencyTextbox.Size = new System.Drawing.Size(141, 27);
             this.SweepStartFrequencyTextbox.TabIndex = 11;
             this.SweepStartFrequencyTextbox.Text = "50 000";
             this.SweepStartFrequencyTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -174,7 +175,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 75);
+            this.label4.Location = new System.Drawing.Point(9, 77);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 13);
             this.label4.TabIndex = 11;
@@ -183,19 +184,19 @@
             // SweepProgressBar
             // 
             this.SweepProgressBar.Enabled = false;
-            this.SweepProgressBar.Location = new System.Drawing.Point(217, 23);
+            this.SweepProgressBar.Location = new System.Drawing.Point(13, 17);
             this.SweepProgressBar.MarqueeAnimationSpeed = 10;
             this.SweepProgressBar.Name = "SweepProgressBar";
-            this.SweepProgressBar.Size = new System.Drawing.Size(115, 46);
+            this.SweepProgressBar.Size = new System.Drawing.Size(354, 4);
             this.SweepProgressBar.Step = 100;
             this.SweepProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.SweepProgressBar.TabIndex = 4;
             // 
             // AutodetectButton
             // 
-            this.AutodetectButton.Location = new System.Drawing.Point(6, 23);
+            this.AutodetectButton.Location = new System.Drawing.Point(12, 27);
             this.AutodetectButton.Name = "AutodetectButton";
-            this.AutodetectButton.Size = new System.Drawing.Size(107, 46);
+            this.AutodetectButton.Size = new System.Drawing.Size(141, 41);
             this.AutodetectButton.TabIndex = 2;
             this.AutodetectButton.Text = "COM Port Autodetect";
             this.AutodetectButton.UseVisualStyleBackColor = true;
@@ -643,7 +644,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(267, 75);
+            this.label6.Location = new System.Drawing.Point(301, 77);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 15;
@@ -651,11 +652,11 @@
             // 
             // SamplesTextBox
             // 
-            this.SamplesTextBox.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SamplesTextBox.Location = new System.Drawing.Point(270, 91);
+            this.SamplesTextBox.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SamplesTextBox.Location = new System.Drawing.Point(304, 93);
             this.SamplesTextBox.MaxLength = 5;
             this.SamplesTextBox.Name = "SamplesTextBox";
-            this.SamplesTextBox.Size = new System.Drawing.Size(55, 26);
+            this.SamplesTextBox.Size = new System.Drawing.Size(62, 27);
             this.SamplesTextBox.TabIndex = 14;
             this.SamplesTextBox.Text = "2000";
             this.SamplesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -665,11 +666,11 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 120);
+            this.label8.Location = new System.Drawing.Point(9, 123);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(86, 13);
+            this.label8.Size = new System.Drawing.Size(63, 13);
             this.label8.TabIndex = 15;
-            this.label8.Text = "Transformer ratio";
+            this.label8.Text = "Transformer";
             // 
             // TransformerComboBox
             // 
@@ -680,15 +681,16 @@
             "1:4 ",
             "1:9",
             "1:16"});
-            this.TransformerComboBox.Location = new System.Drawing.Point(9, 136);
+            this.TransformerComboBox.Location = new System.Drawing.Point(12, 139);
             this.TransformerComboBox.Name = "TransformerComboBox";
-            this.TransformerComboBox.Size = new System.Drawing.Size(86, 21);
+            this.TransformerComboBox.Size = new System.Drawing.Size(63, 21);
             this.TransformerComboBox.TabIndex = 14;
             this.TransformerComboBox.SelectedIndexChanged += new System.EventHandler(this.TransformerComboBox_SelectedIndexChanged);
             // 
             // ControlgroupBox
             // 
             this.ControlgroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlgroupBox.Controls.Add(this.ControlResetButton);
             this.ControlgroupBox.Controls.Add(this.label15);
             this.ControlgroupBox.Controls.Add(this.OutputModeComboBox);
             this.ControlgroupBox.Controls.Add(this.label10);
@@ -711,10 +713,21 @@
             this.ControlgroupBox.TabStop = false;
             this.ControlgroupBox.Text = "Controls";
             // 
+            // ControlResetButton
+            // 
+            this.ControlResetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ControlResetButton.Location = new System.Drawing.Point(301, 27);
+            this.ControlResetButton.Name = "ControlResetButton";
+            this.ControlResetButton.Size = new System.Drawing.Size(66, 41);
+            this.ControlResetButton.TabIndex = 23;
+            this.ControlResetButton.Text = "Reset";
+            this.ControlResetButton.UseVisualStyleBackColor = true;
+            this.ControlResetButton.Click += new System.EventHandler(this.ControlResetButton_Click);
+            // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(269, 120);
+            this.label15.Location = new System.Drawing.Point(299, 123);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(68, 13);
             this.label15.TabIndex = 19;
@@ -724,16 +737,16 @@
             // 
             this.OutputModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OutputModeComboBox.FormattingEnabled = true;
-            this.OutputModeComboBox.Location = new System.Drawing.Point(270, 136);
+            this.OutputModeComboBox.Location = new System.Drawing.Point(304, 139);
             this.OutputModeComboBox.Name = "OutputModeComboBox";
-            this.OutputModeComboBox.Size = new System.Drawing.Size(86, 21);
+            this.OutputModeComboBox.Size = new System.Drawing.Size(62, 21);
             this.OutputModeComboBox.TabIndex = 18;
             this.OutputModeComboBox.SelectedIndexChanged += new System.EventHandler(this.OutputModeComboBox_SelectedIndexChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(138, 120);
+            this.label10.Location = new System.Drawing.Point(156, 123);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(56, 13);
             this.label10.TabIndex = 17;
@@ -742,9 +755,9 @@
             // AttLevelcomboBox
             // 
             this.AttLevelcomboBox.FormattingEnabled = true;
-            this.AttLevelcomboBox.Location = new System.Drawing.Point(141, 136);
+            this.AttLevelcomboBox.Location = new System.Drawing.Point(159, 139);
             this.AttLevelcomboBox.Name = "AttLevelcomboBox";
-            this.AttLevelcomboBox.Size = new System.Drawing.Size(86, 21);
+            this.AttLevelcomboBox.Size = new System.Drawing.Size(68, 21);
             this.AttLevelcomboBox.TabIndex = 16;
             this.AttLevelcomboBox.SelectedIndexChanged += new System.EventHandler(this.AttLevelcomboBox_SelectedIndexChanged);
             // 
@@ -985,6 +998,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button SaveCurveButton;
         private System.Windows.Forms.Button LoadCurveButton;
+        private System.Windows.Forms.Button ControlResetButton;
     }
 }
 
