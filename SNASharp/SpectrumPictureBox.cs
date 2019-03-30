@@ -483,9 +483,9 @@ namespace SNASharp
 
         // drawing surfaces
         public  int LeftBorder = 50;
-        public  int UpBorder = 50;
+        public  int UpBorder = 80;
         public  int RightBorder = 40;
-        public  int LowBorder = 150;
+        public  int LowBorder = 50;
 
         // rendering
         public bool AntiAlias = true;
@@ -647,10 +647,6 @@ namespace SNASharp
             }
 
 
-            System.Drawing.Font MsgFont = new Font("Verdana", 8.0f);
-            String Msg = "Generated with " + Program.Version;
-
-            g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 230, Picture.Size.Height - 33));
 
             /*
             if (_curve != null)
@@ -668,7 +664,81 @@ namespace SNASharp
 
         }
 
-        public void DrawBackGround()
+        void DrawTopBox(ArrayList curveList = null)
+        {
+            Graphics g = Graphics.FromImage(Picture.Image);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            float nFontSize = 12.0f;
+            float nFontVerticalPos = UpBorder / 2 - 8;
+
+
+            // display curve name
+            System.Drawing.Font CurveFont = new Font("Verdana", nFontSize);
+
+            if (curveList != null && curveList.Count > 0)
+            {
+                int HCurveGranularity = Picture.Size.Width / (1+curveList.Count);
+
+                for (int nCurve = 0; nCurve < curveList.Count; nCurve++)
+                {
+                    CurveDef Curve = (CurveDef)curveList[nCurve];
+                    SolidBrush CurveBrush = new SolidBrush(Curve.Color_);
+                    Pen mypen = new Pen(Curve.Color_, Curve.LineWidth+1);
+
+                    int nXStart =   (nCurve + 1) * HCurveGranularity;
+
+                    g.DrawLine(mypen, nXStart-15, nFontVerticalPos + 10, nXStart, nFontVerticalPos + 10);
+                    g.DrawString(Curve.Name, CurveFont, CurveBrush, new PointF(nXStart+2, nFontVerticalPos));
+                }
+            }
+            g.Dispose();
+        }
+
+        void DrawBottomBox(ArrayList curveList= null)
+        {
+            Graphics g = Graphics.FromImage(Picture.Image);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            Pen mypenHLines = new Pen(Brushes.Black);
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            int BoxMarging = 5;
+            int TextMarging = 5;
+            int nCurveVerticalStep = 15;
+
+
+
+
+            g.DrawLine(mypenHLines, LeftBorder, UpBorder + nHeight + BoxMarging, LeftBorder + nWidth, UpBorder + nHeight + BoxMarging);
+            g.DrawLine(mypenHLines, LeftBorder, UpBorder + nHeight + LowBorder- BoxMarging, LeftBorder + nWidth, UpBorder + nHeight + LowBorder- BoxMarging);
+            g.DrawLine(mypenHLines, LeftBorder , UpBorder + nHeight + BoxMarging, LeftBorder , UpBorder + nHeight + LowBorder - BoxMarging);
+            g.DrawLine(mypenHLines, LeftBorder + nWidth, UpBorder + nHeight + BoxMarging, LeftBorder + nWidth, UpBorder + nHeight + LowBorder - BoxMarging);
+
+            /*
+            // display curve name
+            System.Drawing.Font CurveFont = new Font("Times New Roman", 10.0f);
+
+            if (curveList != null && curveList.Count>0)
+            {
+                for (int nCurve = 0; nCurve < curveList.Count; nCurve++)
+                {
+                    CurveDef Curve = (CurveDef)curveList[nCurve];
+                    g.DrawString(Curve.Name, CurveFont, new SolidBrush(Curve.Color_), new PointF(LeftBorder + TextMarging, UpBorder + nHeight + BoxMarging + TextMarging+ nCurve* nCurveVerticalStep));
+                }
+
+            }
+            */
+            System.Drawing.Font MsgFont = new Font("Verdana", 8.0f);
+            String Msg = "Generated with " + Program.Version;
+
+            g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 240, Picture.Size.Height - 20));
+
+
+            g.Dispose();
+        }
+
+        public void DrawBackGround(ArrayList curveList=null)
         {
             if (Picture.Size.Width == 0 || Picture.Size.Height == 0)
                 return;
@@ -744,7 +814,7 @@ namespace SNASharp
                 int nXTextDisplay = nXDisplay - (int)(StringSize / 2);
                 if (nXTextDisplay + StringSize < Picture.Size.Width)
                 {
-                    g.DrawString(sFrequency, FreqFont, Brushes.Black, new Point(nXTextDisplay, 30));
+                    g.DrawString(sFrequency, FreqFont, Brushes.Black, new Point(nXTextDisplay, UpBorder-15));
                 }
 
                 g.DrawLine(mypenHLines, nXDisplay, UpBorder, nXDisplay, UpBorder + nHeight);
@@ -796,6 +866,8 @@ namespace SNASharp
 
             g.Dispose();
 
+            DrawTopBox(curveList);
+            DrawBottomBox(curveList);
         }
 
         int GetVerticalScaleIncrementFromDelta(int nDelta)
@@ -811,7 +883,7 @@ namespace SNASharp
 
         public void GraphicDisplay(ArrayList curveList, CurveDef ActiveCurve)
         {
-            DrawBackGround();
+            DrawBackGround(curveList);
             if (curveList != null)
             {
                 for (int i = 0; i < curveList.Count; i++)
