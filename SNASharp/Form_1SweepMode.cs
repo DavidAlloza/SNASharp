@@ -44,108 +44,6 @@ namespace SNASharp
             }
         }
 
-        private void ComputeCaracteristicsParams(float[] Spectrum, Int64 nFrequencyBase, Int64 nFrequencyStep, CurveDef DisplayConfig)
-        {
-            int nMaxLevelIndex = Utility.RetrieveMaxValueIndex(Spectrum);
-            int nMinLevelIndex = Utility.RetrieveMinValueIndex(Spectrum);
-
-            float nMaxLevel = Spectrum[nMaxLevelIndex];
-            float nMinLevel = Spectrum[nMinLevelIndex];
-
-
-            int nSpectrumLeftValidityIndex = Spectrum.Length / 20;
-            int nSpectrumRightValidityIndex = (Spectrum.Length - Spectrum.Length / 20);
-
-            Int64 nMaxLevelFrequency = nFrequencyBase + nMaxLevelIndex * nFrequencyStep;
-            Int64 nMinLevelFrequency = nFrequencyBase + nMinLevelIndex * nFrequencyStep;
-
-
-            LOGDraw("Min:"+ Math.Round(nMinLevel, 2).ToString() + "dB ("+ Utility.GetStringWithSeparators(nMinLevelFrequency, " ") + " Hz)");
-            LOGDraw("Max:" + Math.Round(nMaxLevel, 2).ToString() + "dB (" + Utility.GetStringWithSeparators(nMaxLevelFrequency, " ") + " Hz)");
-
-            DisplayConfig.nMaxLevelFrequency = nMaxLevelFrequency;
-            DisplayConfig.fMaxLeveldB = nMaxLevel;
-            DisplayConfig.fMinLeveldB = nMinLevel;
-
-            if (nMaxLevelIndex > nSpectrumLeftValidityIndex && nMaxLevelIndex < nSpectrumRightValidityIndex)
-            {
-                int nLeft3dBIndex = Utility.FindLevelIndex(Spectrum, nMaxLevelIndex, -1, nMaxLevel - 3.0f);
-                int nRight3dBIndex = Utility.FindLevelIndex(Spectrum, nMaxLevelIndex, 1, nMaxLevel - 3.0f);
-
-                if (    nLeft3dBIndex > nSpectrumLeftValidityIndex && nLeft3dBIndex < nSpectrumRightValidityIndex
-                    &&  nRight3dBIndex > nSpectrumLeftValidityIndex && nRight3dBIndex < nSpectrumRightValidityIndex
-                    && nLeft3dBIndex!= nRight3dBIndex)
-                {
-
-                    DisplayConfig.n3dBBandpassLowFrequency = nFrequencyBase + nLeft3dBIndex * nFrequencyStep;
-                    DisplayConfig.n3dBBandpassHighFrequency = nFrequencyBase + nRight3dBIndex * nFrequencyStep;
-
-
-                    int n3dBBandPass = (int)((nRight3dBIndex - nLeft3dBIndex) * nFrequencyStep);
-                    LOGDraw("Q factor:" + (nMaxLevelFrequency / n3dBBandPass).ToString());
-                    LOGDraw("3dB bandpass:" + Utility.GetStringWithSeparators(n3dBBandPass, " ") + "Hz");
-
-                    int nLeft6dBIndex = Utility.FindLevelIndex(Spectrum, nMaxLevelIndex, -1, nMaxLevel - 6.0f);
-                    int nRight6dBIndex = Utility.FindLevelIndex(Spectrum, nMaxLevelIndex, 1, nMaxLevel - 6.0f);
-
-
-                    if (nLeft6dBIndex > nSpectrumLeftValidityIndex && nLeft6dBIndex < nSpectrumRightValidityIndex
-                        && nRight6dBIndex > nSpectrumLeftValidityIndex && nRight6dBIndex < nSpectrumRightValidityIndex)
-                    {
-                        DisplayConfig.n6dBBandpassLowFrequency = nFrequencyBase + nLeft6dBIndex * nFrequencyStep;
-                        DisplayConfig.n6dBBandpassHighFrequency = nFrequencyBase + nRight6dBIndex * nFrequencyStep;
-
-
-                        int n6dBBandPass = (int)((nRight6dBIndex - nLeft6dBIndex) * nFrequencyStep);
-                        LOGDraw("6dB bandpass:" + Utility.GetStringWithSeparators(n6dBBandPass, " ") + "Hz");
-
-                        int nLeft60dBIndex = Utility.FindLevelIndex(Spectrum, nMaxLevelIndex, -1, nMaxLevel - 60.0f);
-                        int nRight60dBIndex = Utility.FindLevelIndex(Spectrum, nMaxLevelIndex, 1, nMaxLevel - 60.0f);
-
-                        if (nLeft60dBIndex > nSpectrumLeftValidityIndex && nLeft60dBIndex < nSpectrumRightValidityIndex
-                            && nRight60dBIndex > nSpectrumLeftValidityIndex && nRight60dBIndex < nSpectrumRightValidityIndex)
-                        {
-                            DisplayConfig.n60dBBandpassLowFrequency = nFrequencyBase + nLeft60dBIndex * nFrequencyStep;
-                            DisplayConfig.n60dBBandpassHighFrequency = nFrequencyBase + nRight60dBIndex * nFrequencyStep;
-
-
-                            int n60dBBandPass = (int)((nRight60dBIndex - nLeft60dBIndex) * nFrequencyStep);
-                            LOGDraw("60dB bandpass:" + Utility.GetStringWithSeparators(n60dBBandPass, " ") + "Hz");
-
-                            float fShapeFactor = ((float)n60dBBandPass / n6dBBandPass);
-                            LOGDraw("-6dB/-60dB shape factor:" + Math.Round(fShapeFactor, 2).ToString());
-
-                        }
-                        else
-                        {
-                            LOGDraw("60dB bandpass: NA", true);
-                        }
-
-                    }
-                    else
-                    {
-                        LOGDraw("6dB bandpass: NA", true);
-                    }
-
-
-                }
-                else
-                {
-                    LOGDraw("3dB bandpass: NA", true);
-                }
-
-
-
-
-            }
-            else
-            {
-                LOGDraw("Serie resonance: NA", true);
-            }
-
-
-
-        }
 
         public void ProcessSweepModeStartAcquisition()
         {
@@ -219,25 +117,20 @@ namespace SNASharp
         {
 
             GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
-            CurveDef CurveConfig = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
+            CCurve CurveConfig = (CCurve)CurveConfigPropertyGrid.SelectedObject;
             SpectrumPictureBox.SetActiveCurve(CurveConfig);
+
+            CurveConfig.nSpectrumLowFrequency = AcquisitionParams.nBaseFrequency;
+            CurveConfig.nSpectrumHighFrequency = AcquisitionParams.nBaseFrequency + AcquisitionParams.nFrequencyStep * AcquisitionParams.nCount;
+
 
             if (AcquisitionParams.ResultDatas != null)
             {
                 CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
                 CurveConfig.DetermineMinMaxLevels();
-
-                if (!bLoop)
-                {
-                    LOGDraw("============================");
-                    ComputeCaracteristicsParams(AcquisitionParams.ResultDatas, AcquisitionParams.nBaseFrequency, AcquisitionParams.nFrequencyStep, CurveConfig);
-                    LOGDraw("============================");
-                }
-
+                CurveConfig.ComputeCaracteristicsParams();
             }
 
-            CurveConfig.nSpectrumLowFrequency = AcquisitionParams.nBaseFrequency;
-            CurveConfig.nSpectrumHighFrequency = AcquisitionParams.nBaseFrequency + AcquisitionParams.nFrequencyStep * AcquisitionParams.nCount;
             Graph.nLastDrawingLowFrequency = nFrequencyDetectionStart ;
             Graph.nLastDrawingHighFrequency = nFrequencyDetectionEnd ;
             SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList, bLoop);
@@ -296,7 +189,7 @@ namespace SNASharp
 
         private void AddNewCurveButton_Click(object sender, EventArgs e)
         {
-            CurveDef NewCurve = new CurveDef();
+            CCurve NewCurve = new CCurve();
             NewCurve.Name = "Curve_" + SweepModeCurvesList.Count;
             NewCurve.Color_ = GetDefaultCurveColor(SweepModeCurvesList.Count);
             SweepModeCurvesList.Add(NewCurve);
@@ -312,7 +205,7 @@ namespace SNASharp
             if (CurveListComboBox.SelectedIndex != -1)
             {
                 CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[CurveListComboBox.SelectedIndex];
-                SpectrumPictureBox.SetActiveCurve((CurveDef)SweepModeCurvesList[CurveListComboBox.SelectedIndex]);
+                SpectrumPictureBox.SetActiveCurve((CCurve)SweepModeCurvesList[CurveListComboBox.SelectedIndex]);
                 SpectrumPictureBox.Redraw();
             }
         }
@@ -326,7 +219,7 @@ namespace SNASharp
                 CurveConfigPropertyGrid.SelectedObject = null;
                 SweepModeCurvesList.RemoveAt(nIndexToDelete);
                 CurveListComboBox.DataSource = SweepModeCurvesList;
-                SpectrumPictureBox.SetActiveCurve((CurveDef)SweepModeCurvesList[0]);
+                SpectrumPictureBox.SetActiveCurve((CCurve)SweepModeCurvesList[0]);
                 SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
                 CurveListComboBox.SelectedIndex = 0;
             }
@@ -337,14 +230,14 @@ namespace SNASharp
         {
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Curves files (*.xml)|*.xml|all files (*.*)|*.*";
-            CurveDef CurveToSave = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
+            CCurve CurveToSave = (CCurve)CurveConfigPropertyGrid.SelectedObject;
             dialog.InitialDirectory = Program.CurvesPath;
             dialog.FileName = CurveToSave.ToString()+".xml";
 
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                XmlSerializer xs = new XmlSerializer(typeof(CurveDef));
+                XmlSerializer xs = new XmlSerializer(typeof(CCurve));
                 using (StreamWriter wr = new StreamWriter(dialog.FileName))
                 {
                     xs.Serialize(wr, CurveToSave);
@@ -364,10 +257,10 @@ namespace SNASharp
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                XmlSerializer xs = new XmlSerializer(typeof(CurveDef));
+                XmlSerializer xs = new XmlSerializer(typeof(CCurve));
                 using (StreamReader wr = new StreamReader(dialog.FileName))
                 {
-                    CurveDef CurveToLoad = xs.Deserialize(wr) as CurveDef;
+                    CCurve CurveToLoad = xs.Deserialize(wr) as CCurve;
                     SweepModeCurvesList.Add(CurveToLoad);
                     CurveListComboBox.DataSource = null;
                     CurveListComboBox.DataSource = SweepModeCurvesList;

@@ -136,7 +136,7 @@ namespace SNASharp
                 }
             }
 
-            return nIndex;
+            return nIndex- nIncrement;
         }
     }
 }

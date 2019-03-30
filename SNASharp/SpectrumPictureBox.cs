@@ -203,7 +203,7 @@ namespace SNASharp
         }
 
 
-        public void DrawSingleCurve(CurveDef _curve)
+        public void DrawSingleCurve(CCurve _curve)
         {
             if (Size.Width == 0 || Size.Height == 0)
                 return;
@@ -292,13 +292,14 @@ namespace SNASharp
                 }
             }
 
+
             GraphConfig.fLastDrawingLevelLow = nLowerScale;
             GraphConfig.fLastDrawingLevelHigh = nUpperScale;
             GraphConfig.GraphicDisplay(Curves,ActiveCurve);
         }
 
 
-        public void SetActiveCurve(CurveDef Active)
+        public void SetActiveCurve(CCurve Active)
         {
             ActiveCurve = Active;
         }
@@ -322,7 +323,7 @@ namespace SNASharp
         public float CurvesRetrieveMinimumScale()
         {
             float fMin = Single.MaxValue;
-            foreach ( CurveDef Curve in CurvesList)
+            foreach ( CCurve Curve in CurvesList)
             {
                 if (Curve.fMinLeveldB < fMin && Curve.SpectrumValues != null)
                     fMin = Curve.fMinLeveldB;
@@ -333,7 +334,7 @@ namespace SNASharp
         public float CurvesRetrieveMaximumScale()
         {
             float fMax = Single.MinValue;
-            foreach (CurveDef Curve in CurvesList)
+            foreach (CCurve Curve in CurvesList)
             {
                 if (Curve.fMaxLeveldB > fMax && Curve.SpectrumValues != null)
                     fMax = Curve.fMaxLeveldB;
@@ -343,7 +344,7 @@ namespace SNASharp
 
         private GraphDef GraphConfig = new GraphDef();
         private ArrayList CurvesList = new ArrayList();
-        private CurveDef ActiveCurve = null;
+        private CCurve ActiveCurve = null;
 
   
         private System.Windows.Forms.Label FreqDisplayLabel = new System.Windows.Forms.Label();
@@ -354,7 +355,7 @@ namespace SNASharp
 
     }
 
-    public class CurveDef
+    public class CCurve
     {
         public enum YesNo
         {
@@ -362,26 +363,44 @@ namespace SNASharp
             No
         };
 
+        public enum DeviceTested
+        {
+            LPF,
+            HPF,
+            BPF,
+            FLAT,
+            UNDERTERMINED
+        };
+
 
         // computed values to the curve
         public Int64 nMaxLevelFrequency = -1;
+        public Int64 nMinLevelFrequency = -1;
+
         public float fMaxLeveldB = 0.0f;
         public float fMinLeveldB = -90.0f;
 
+        public Int64 n3dBBandpass = -1;
         public Int64 n3dBBandpassLowFrequency = -1;
         public Int64 n3dBBandpassHighFrequency = -1;
+
+        public Int64 n6dBBandpass = -1;
         public Int64 n6dBBandpassLowFrequency = -1;
         public Int64 n6dBBandpassHighFrequency = -1;
+
+        public Int64 n60dBBandpass = -1;
         public Int64 n60dBBandpassLowFrequency = -1;
         public Int64 n60dBBandpassHighFrequency = -1;
         public int nQ = -1;
-        public float fShapeFactor = -1.0f;
+        public float n6dB60dBfShapeFactor = -1.0f;
         public Int64 nSpectrumLowFrequency = 0;
         public Int64 nSpectrumHighFrequency = 0;
         private YesNo Is_Visible = YesNo.Yes;
         public byte R = 0;
         public byte G = 0;
         public byte B = 255;
+
+        DeviceTested DipoleDetected = DeviceTested.UNDERTERMINED;
 
         [XmlIgnore]
         public float LineWidth = 1.0f;
@@ -459,6 +478,102 @@ namespace SNASharp
             fMinLeveldB = SpectrumValues[Utility.RetrieveMinValueIndex(SpectrumValues)];
             fMaxLeveldB = SpectrumValues[Utility.RetrieveMaxValueIndex(SpectrumValues)];
         }
+
+        private DeviceTested DetermineDipoleType(int LowIndex, int nHighIndex, int nCount)
+        {
+            if (LowIndex == 0 && nHighIndex == SpectrumValues.Length - 1)
+                return DeviceTested.FLAT;
+
+            if (LowIndex == 0)
+                return DeviceTested.LPF;
+
+            if (nHighIndex == SpectrumValues.Length - 1)
+                return DeviceTested.HPF;
+
+             return DeviceTested.BPF;
+        }
+
+        public void ComputeCaracteristicsParams()
+        {
+            if (SpectrumValues == null || SpectrumValues.Length == 0)
+                return;
+
+            int nMaxLevelIndex = Utility.RetrieveMaxValueIndex(SpectrumValues);
+            int nMinLevelIndex = Utility.RetrieveMinValueIndex(SpectrumValues);
+
+             fMaxLeveldB = SpectrumValues[nMaxLevelIndex];
+             fMinLeveldB = SpectrumValues[nMinLevelIndex];
+
+            int nSpectrumLeftValidityIndex = SpectrumValues.Length / 20;
+            int nSpectrumRightValidityIndex = (SpectrumValues.Length - SpectrumValues.Length / 20);
+
+            Int64 nFrequencyStep = (nSpectrumHighFrequency - nSpectrumLowFrequency) / SpectrumValues.Length;
+            nMaxLevelFrequency = nSpectrumLowFrequency + nMaxLevelIndex * nFrequencyStep;
+            nMinLevelFrequency = nSpectrumLowFrequency + nMinLevelIndex * nFrequencyStep;
+
+
+            if (true /*nMaxLevelIndex > nSpectrumLeftValidityIndex && nMaxLevelIndex < nSpectrumRightValidityIndex*/)
+            {
+                int nLeft3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 3.0f);
+                int nRight3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 3.0f);
+                DipoleDetected = DetermineDipoleType(nLeft3dBIndex, nRight3dBIndex, SpectrumValues.Length);
+
+
+
+                if (true /*nLeft3dBIndex > nSpectrumLeftValidityIndex && nLeft3dBIndex < nSpectrumRightValidityIndex
+                    && nRight3dBIndex > nSpectrumLeftValidityIndex && nRight3dBIndex < nSpectrumRightValidityIndex
+                    && nLeft3dBIndex != nRight3dBIndex*/)
+                {
+
+                    n3dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft3dBIndex * nFrequencyStep;
+                    n3dBBandpassHighFrequency = nSpectrumLowFrequency + nRight3dBIndex * nFrequencyStep;
+                    n3dBBandpass = (int)((nRight3dBIndex - nLeft3dBIndex) * nFrequencyStep);
+
+
+
+                    int nLeft6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 6.0f);
+                    int nRight6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 6.0f);
+
+
+                    if (true /*nLeft6dBIndex > nSpectrumLeftValidityIndex && nLeft6dBIndex < nSpectrumRightValidityIndex
+                        && nRight6dBIndex > nSpectrumLeftValidityIndex && nRight6dBIndex < nSpectrumRightValidityIndex*/)
+                    {
+                        n6dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft6dBIndex * nFrequencyStep;
+                        n6dBBandpassHighFrequency = nSpectrumLowFrequency + nRight6dBIndex * nFrequencyStep;
+
+
+                        n6dBBandpass = (int)((nRight6dBIndex - nLeft6dBIndex) * nFrequencyStep);
+
+                        int nLeft60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 60.0f);
+                        int nRight60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 60.0f);
+
+                        if (true/*nLeft60dBIndex > nSpectrumLeftValidityIndex && nLeft60dBIndex < nSpectrumRightValidityIndex
+                            && nRight60dBIndex > nSpectrumLeftValidityIndex && nRight60dBIndex < nSpectrumRightValidityIndex*/)
+                        {
+                            n60dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft60dBIndex * nFrequencyStep;
+                            n60dBBandpassHighFrequency = nSpectrumLowFrequency + nRight60dBIndex * nFrequencyStep;
+
+                            n60dBBandpass = (int)((nRight60dBIndex - nLeft60dBIndex) * nFrequencyStep);
+                            n6dB60dBfShapeFactor = ((float)n60dBBandpass / n6dBBandpass);
+                        }
+                        else
+                        {
+                        }
+
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+            }
+        }
+
     }
 
 
@@ -538,9 +653,9 @@ namespace SNASharp
             return 1000000000;
         }
 
-        public void DrawCurve(CurveDef _curve, bool IsActive)
+        public void DrawCurve(CCurve _curve, bool IsActive)
         {
-            if (Picture.Size.Width == 0 || Picture.Size.Height == 0 || _curve.Visible == CurveDef.YesNo.No)
+            if (Picture.Size.Width == 0 || Picture.Size.Height == 0 || _curve.Visible == CCurve.YesNo.No)
                 return;
 
             int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
@@ -646,20 +761,6 @@ namespace SNASharp
 
             }
 
-
-
-            /*
-            if (_curve != null)
-            {
-                // now we can trace all additionals graphics
-                if (_curve.n3dBBandpassLowFrequency > 0 || _curve.n3dBBandpassHighFrequency > 0)
-                {
-                    float fTopReferenceLevel = _curve.fMaxLeveldB;
-
-                    //g.DrawLine(mypen,)
-                }
-            }
-            */
             g.Dispose();
 
         }
@@ -683,7 +784,7 @@ namespace SNASharp
 
                 for (int nCurve = 0; nCurve < curveList.Count; nCurve++)
                 {
-                    CurveDef Curve = (CurveDef)curveList[nCurve];
+                    CCurve Curve = (CCurve)curveList[nCurve];
                     SolidBrush CurveBrush = new SolidBrush(Curve.Color_);
                     Pen mypen = new Pen(Curve.Color_, Curve.LineWidth+1);
 
@@ -881,7 +982,7 @@ namespace SNASharp
             return 10;
         }
 
-        public void GraphicDisplay(ArrayList curveList, CurveDef ActiveCurve)
+        public void GraphicDisplay(ArrayList curveList, CCurve ActiveCurve)
         {
             DrawBackGround(curveList);
             if (curveList != null)
@@ -891,7 +992,7 @@ namespace SNASharp
                     if (curveList[i] != null)
                     {
                         bool IsActive = (curveList[i] == ActiveCurve);
-                        DrawCurve((CurveDef)curveList[i], IsActive);
+                        DrawCurve((CCurve)curveList[i], IsActive);
                     }
                 }
             }

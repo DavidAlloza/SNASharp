@@ -37,7 +37,7 @@ namespace SNASharp
 
             InitializeComponent();
             SweepModeCurvesList.Clear();
-            SweepModeCurvesList.Add(new CurveDef());
+            SweepModeCurvesList.Add(new CCurve());
 
             CurveListComboBox.DataSource = null;
             CurveListComboBox.DataSource = SweepModeCurvesList;
@@ -477,7 +477,7 @@ namespace SNASharp
         void SingleCurveDisplay(Int64 nFrequencyBase, int nStep, float [] data)
         {
             int Count = data.Length;
-            CurveDef Curve = new CurveDef();
+            CCurve Curve = new CCurve();
             Curve.Color_ = Color.DeepPink;
 
             GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
@@ -507,7 +507,7 @@ namespace SNASharp
             int nserieIndex;
             Int64 nserieFrequency;
 
-            CurveDef Curve = new CurveDef();
+            CCurve Curve = new CCurve();
 
             // first scan 
             MyNotifier.SetProgressBar(SweepProgressBar);
