@@ -129,6 +129,11 @@ namespace SNASharp
                 CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
                 CurveConfig.DetermineMinMaxLevels();
                 CurveConfig.ComputeCaracteristicsParams();
+                if (bLoop == false)
+                {
+                    LOGDraw("*** ----- RESULTS----- ***");
+                    LOGDraw(CurveConfig.GetCurveDescription());
+                }
             }
 
             Graph.nLastDrawingLowFrequency = nFrequencyDetectionStart ;
@@ -207,6 +212,12 @@ namespace SNASharp
                 CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[CurveListComboBox.SelectedIndex];
                 SpectrumPictureBox.SetActiveCurve((CCurve)SweepModeCurvesList[CurveListComboBox.SelectedIndex]);
                 SpectrumPictureBox.Redraw();
+                CCurve Curve = (CCurve)SweepModeCurvesList[CurveListComboBox.SelectedIndex];
+                if (Curve.SpectrumValues != null && Curve.SpectrumValues.Length > 0)
+                {
+                    LOGDraw("***------ SELECTED CURVE ----------***");
+                    LOGDraw(Curve.GetCurveDescription());
+                }
             }
         }
 
@@ -263,6 +274,8 @@ namespace SNASharp
                     try
                     {
                         CCurve CurveToLoad = xs.Deserialize(wr) as CCurve;
+                        CurveToLoad.ComputeCaracteristicsParams();
+
                         SweepModeCurvesList.Add(CurveToLoad);
                         CurveListComboBox.DataSource = null;
                         CurveListComboBox.DataSource = SweepModeCurvesList;

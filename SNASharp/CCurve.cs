@@ -255,6 +255,68 @@ namespace SNASharp
             return DipoleDetected.BPF;
         }
 
+        public String GetCurveDescription()
+        {
+
+            String NL = Environment.NewLine;
+
+            String Result = "Name : " + Name + NL;
+            Result += "Max Level : " + fMaxLeveldB + "dB";
+            Result += " at " + Utility.GetStringWithSeparators(nMaxLevelFrequency, " ") + "Hz"+ NL;
+            Result += "Min Level : " + fMinLeveldB + "dB";
+            Result += " at " + Utility.GetStringWithSeparators(nMinLevelFrequency, " ") + "Hz"+ NL;
+
+            Result += "DUT detected as ";
+
+            switch (DipoleD)
+            {
+                case DipoleDetected.UNDERTERMINED:                   
+                    break;
+                case DipoleDetected.FLAT:
+                    Result += " Flat caracteristic";
+                    break;
+                case DipoleDetected.LPF:
+                    Result += "LPF "+ NL;
+                    Result += "3dB cut off : " + Utility.GetStringWithSeparators(n3dBBandpassHighFrequency," ")+"Hz";
+                    if (n6dBBandpassHighFrequency != -1)
+                    {
+                        Result += NL+"6dB cut off : " + Utility.GetStringWithSeparators(n6dBBandpassHighFrequency, " ") + "Hz";
+                    }
+
+                    break;
+                case DipoleDetected.HPF:
+                    Result += "HPF "+ NL;
+                    Result += "3dB cut off : " + Utility.GetStringWithSeparators(n3dBBandpassLowFrequency, " ") + "Hz";
+                    if (n6dBBandpassLowFrequency != -1)
+                    {
+                        Result += NL + "6dB cut off : " + Utility.GetStringWithSeparators(n6dBBandpassLowFrequency, " ") + "Hz";
+                    }
+
+                    break;
+                case DipoleDetected.BPF:
+                    Result += "BPF "+ NL;
+                    Result += "3dB Low : " + Utility.GetStringWithSeparators(n3dBBandpassLowFrequency, " ") + "Hz"+ NL;
+                    Result += "3dB high : " + Utility.GetStringWithSeparators(n3dBBandpassHighFrequency, " ") + "Hz"+ NL;
+                    Result += "3dB BP : " + Utility.GetStringWithSeparators(n3dBBandpass, " ") + "Hz";
+
+                    if (n6dBBandpass != -1)
+                    {
+                        Result += NL+"6dB Low : " + Utility.GetStringWithSeparators(n6dBBandpassLowFrequency, " ") + "Hz" + NL;
+                        Result += "6dB high : " + Utility.GetStringWithSeparators(n6dBBandpassHighFrequency, " ") + "Hz" + NL;
+                        Result += "6dB BP : " + Utility.GetStringWithSeparators(n6dBBandpass, " ") + "Hz";
+                    }
+
+                    if (n6dB60dBfShapeFactor != -1)
+                    {
+                        Result += NL + "6/60dB Shape factor : " + n6dB60dBfShapeFactor.ToString();
+
+                    }
+
+                    break;
+            }
+            return Result;
+        }
+
         public void ComputeCaracteristicsParams()
         {
             if (SpectrumValues == null || SpectrumValues.Length == 0)
@@ -284,7 +346,13 @@ namespace SNASharp
             n3dBBandpassHighFrequency = nSpectrumLowFrequency + nRight3dBIndex * nFrequencyStep;
 
             if (DipoleD == DipoleDetected.BPF)
+            {
                 n3dBBandpass = (int)((nRight3dBIndex - nLeft3dBIndex) * nFrequencyStep);
+            }
+            else
+            {
+                n3dBBandpass = -1;
+            }
 
             int nLeft6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 6.0f);
             int nRight6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 6.0f);
@@ -295,7 +363,13 @@ namespace SNASharp
             n6dBBandpassHighFrequency = nSpectrumLowFrequency + nRight6dBIndex * nFrequencyStep;
 
             if (DipoleAt6dB == DipoleDetected.BPF)
+            {
                 n6dBBandpass = (int)((nRight6dBIndex - nLeft6dBIndex) * nFrequencyStep);
+            }
+            else
+            {
+                n6dBBandpass = -1;
+            }
 
             int nLeft60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 60.0f);
             int nRight60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 60.0f);
@@ -310,6 +384,11 @@ namespace SNASharp
             {
                 n60dBBandpass = (int)((nRight60dBIndex - nLeft60dBIndex) * nFrequencyStep);
                 n6dB60dBfShapeFactor = ((float)n60dBBandpass / n6dBBandpass);
+            }
+            else
+            {
+                n60dBBandpass = -1;
+                n6dB60dBfShapeFactor = -1;
             }
 
         }
