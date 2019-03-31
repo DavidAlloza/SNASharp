@@ -229,7 +229,7 @@ namespace SNASharp
                 SetSweepFrequencies(LowRange, HighRange);
 
 
-                GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
+                CGraph Graph = SpectrumPictureBox.GetGraphConfig();
 
                 Graph.fLastDrawingLevelLow = -90;
                 Graph.fLastDrawingLevelHigh = 10;
@@ -480,7 +480,7 @@ namespace SNASharp
             CCurve Curve = new CCurve();
             Curve.Color_ = Color.DeepPink;
 
-            GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
+            CGraph Graph = SpectrumPictureBox.GetGraphConfig();
             Graph.nLastDrawingLowFrequency = nFrequencyBase;
             Graph.nLastDrawingHighFrequency = nFrequencyBase + nStep * Count;
             Graph.fLastDrawingLevelLow = -90;

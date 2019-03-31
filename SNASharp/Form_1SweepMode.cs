@@ -116,7 +116,7 @@ namespace SNASharp
         public void ProcessSweepModeDisplayAcquisition(NWTDevice.RunSweepModeParam AcquisitionParams)
         {
 
-            GraphDef Graph = SpectrumPictureBox.GetGraphConfig();
+            CGraph Graph = SpectrumPictureBox.GetGraphConfig();
             CCurve CurveConfig = (CCurve)CurveConfigPropertyGrid.SelectedObject;
             SpectrumPictureBox.SetActiveCurve(CurveConfig);
 
@@ -260,12 +260,19 @@ namespace SNASharp
                 XmlSerializer xs = new XmlSerializer(typeof(CCurve));
                 using (StreamReader wr = new StreamReader(dialog.FileName))
                 {
-                    CCurve CurveToLoad = xs.Deserialize(wr) as CCurve;
-                    SweepModeCurvesList.Add(CurveToLoad);
-                    CurveListComboBox.DataSource = null;
-                    CurveListComboBox.DataSource = SweepModeCurvesList;
-                    SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
-                    CurveListComboBox.SelectedIndex = SweepModeCurvesList.Count - 1;
+                    try
+                    {
+                        CCurve CurveToLoad = xs.Deserialize(wr) as CCurve;
+                        SweepModeCurvesList.Add(CurveToLoad);
+                        CurveListComboBox.DataSource = null;
+                        CurveListComboBox.DataSource = SweepModeCurvesList;
+                        SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
+                        CurveListComboBox.SelectedIndex = SweepModeCurvesList.Count - 1;
+                    }
+                    catch(Exception)
+                    {
+                        LOGError("sorry, your curve file format is incompatible with this software version");
+                    }
                 }
             }
 
