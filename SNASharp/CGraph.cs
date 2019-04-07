@@ -112,6 +112,7 @@ namespace SNASharp
             g.Dispose();
         }
 
+
         void DrawBottomBox(ArrayList curveList = null)
         {
             Graphics g = Graphics.FromImage(Picture.Image);
@@ -295,6 +296,58 @@ namespace SNASharp
                 return 5;
 
             return 10;
+        }
+
+        public PointF GetCoords(Int64 Frequency, float fLevel, ref bool bCliped)
+        {
+            PointF Result = new PointF();
+            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            bCliped = false;
+
+            if (Frequency > nLastDrawingHighFrequency)
+            {
+                Result.X = nWidth + LeftBorder ;
+                bCliped = true;
+            }
+            else
+            {
+                if (Frequency < nLastDrawingLowFrequency)
+                {
+                    Result.X = LeftBorder;
+                    bCliped = true;
+
+                }
+                else
+                {
+                    double fHRatio = ((double)(Frequency - nLastDrawingLowFrequency)) / (nLastDrawingHighFrequency - nLastDrawingLowFrequency);
+                    Result.X = (float)(LeftBorder + nWidth * fHRatio);
+                }
+
+            }
+                
+
+            if ( fLevel > fLastDrawingLevelHigh )
+            {
+                Result.Y = UpBorder;
+                bCliped = true;
+
+            }
+            else
+            {
+                if (fLevel < fLastDrawingLevelLow)
+                {
+                    Result.Y = UpBorder+ nHeight;
+                    bCliped = true;
+
+                }
+                else
+                {
+                    double fVRatio = (fLevel - fLastDrawingLevelHigh) / (fLastDrawingLevelHigh - fLastDrawingLevelLow);
+                    Result.Y = (float)(UpBorder - nHeight * fVRatio);
+                }
+            }
+            return Result;
         }
 
         public void GraphicDisplay(ArrayList curveList, CCurve ActiveCurve)

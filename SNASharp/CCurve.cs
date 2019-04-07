@@ -104,6 +104,73 @@ namespace SNASharp
             return CurveName;
         }
 
+        void DrawMarker(String Text, PointF Coords, Graphics g, System.Drawing.Font SampleFont, Pen MyPen, bool bAtRight)
+        {
+            const float ArrowSize = 5.0f;
+            PointF MarkerLeft = new PointF(Coords.X - ArrowSize, Coords.Y);
+            PointF MarkerRight = new PointF(Coords.X + ArrowSize, Coords.Y);
+            PointF MarkerUp = new PointF(Coords.X, Coords.Y- ArrowSize);
+            PointF MarkerDown = new PointF(Coords.X, Coords.Y + ArrowSize);
+
+            g.DrawLine(MyPen, MarkerLeft, MarkerRight);
+            g.DrawLine(MyPen, MarkerUp, MarkerDown);
+
+            g.DrawString(" "+Text, SampleFont, Brushes.Black, Coords);
+        }
+
+        void DrawAdditionnalsInfos(Graphics g, CGraph Graph)
+        {
+            System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
+            
+            Pen mypen = new Pen(Color.Black, LineWidth);
+            bool bCliped = false;
+
+            if (n3dBBandpassHighFrequency > 0)
+            {
+                PointF Coords = Graph.GetCoords(n3dBBandpassHighFrequency, fMaxLeveldB-3.0f, ref bCliped);
+                if (!bCliped) DrawMarker("-3dB",Coords, g, SampleFont, mypen,true);
+            }
+
+            if (n3dBBandpassLowFrequency > 0)
+            {
+                PointF Coords = Graph.GetCoords(n3dBBandpassLowFrequency, fMaxLeveldB - 3.0f, ref bCliped);
+                if (!bCliped) DrawMarker("-3dB", Coords, g, SampleFont, mypen, false);
+            }
+
+            if (n6dBBandpassHighFrequency > 0)
+            {
+                PointF Coords = Graph.GetCoords(n6dBBandpassHighFrequency, fMaxLeveldB - 6.0f, ref bCliped);
+                if (!bCliped) DrawMarker("-6dB", Coords, g, SampleFont, mypen, true);
+            }
+
+            if (n6dBBandpassLowFrequency > 0)
+            {
+                PointF Coords = Graph.GetCoords(n6dBBandpassLowFrequency, fMaxLeveldB - 6.0f, ref bCliped);
+                if (!bCliped) DrawMarker("-6dB", Coords, g, SampleFont, mypen, false);
+            }
+
+            if (n60dBBandpassHighFrequency > 0)
+            {
+                PointF Coords = Graph.GetCoords(n60dBBandpassHighFrequency, fMaxLeveldB - 60.0f, ref bCliped);
+                if (!bCliped) DrawMarker("-60dB", Coords, g, SampleFont, mypen, true);
+            }
+
+            if (n60dBBandpassLowFrequency > 0)
+            {
+                PointF Coords = Graph.GetCoords(n60dBBandpassLowFrequency, fMaxLeveldB - 60.0f, ref bCliped);
+                if ( !bCliped) DrawMarker("-60dB", Coords, g, SampleFont, mypen, false);
+            }
+
+            if (n60dBBandpassHighFrequency > 0 && n60dBBandpassLowFrequency > 0)
+            {
+                PointF Coords1 = Graph.GetCoords(n60dBBandpassLowFrequency, fMaxLeveldB - 60.0f, ref bCliped);
+                PointF Coords2 = Graph.GetCoords(n60dBBandpassHighFrequency, fMaxLeveldB - 60.0f, ref bCliped);
+                g.DrawLine(mypen, Coords1, Coords2);
+
+
+            }
+
+        }
 
         public void Draw(CGraph Graph, bool IsActive)
         {
@@ -210,7 +277,9 @@ namespace SNASharp
                     else
                         g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fPixelPerSample.ToString() + " Pixel per sample)", SampleFont, Brushes.Red, new Point(nWidth - 180, 10));
                 }
+                DrawAdditionnalsInfos(g, Graph);
             }
+
             g.Dispose();
         }
 
@@ -276,7 +345,7 @@ namespace SNASharp
                     Result += " Flat caracteristic";
                     break;
                 case DipoleDetected.LPF:
-                    Result += "LPF "+ NL;
+                    Result += "Low pass "+ NL;
                     Result += "3dB cut off : " + Utility.GetStringWithSeparators(n3dBBandpassHighFrequency," ")+"Hz";
                     if (n6dBBandpassHighFrequency != -1)
                     {
@@ -285,7 +354,7 @@ namespace SNASharp
 
                     break;
                 case DipoleDetected.HPF:
-                    Result += "HPF "+ NL;
+                    Result += "High pass "+ NL;
                     Result += "3dB cut off : " + Utility.GetStringWithSeparators(n3dBBandpassLowFrequency, " ") + "Hz";
                     if (n6dBBandpassLowFrequency != -1)
                     {
@@ -294,7 +363,7 @@ namespace SNASharp
 
                     break;
                 case DipoleDetected.BPF:
-                    Result += "BPF "+ NL;
+                    Result += "Band pass "+ NL;
                     Result += "3dB Low : " + Utility.GetStringWithSeparators(n3dBBandpassLowFrequency, " ") + "Hz"+ NL;
                     Result += "3dB high : " + Utility.GetStringWithSeparators(n3dBBandpassHighFrequency, " ") + "Hz"+ NL;
                     Result += "3dB BP : " + Utility.GetStringWithSeparators(n3dBBandpass, " ") + "Hz";
@@ -337,13 +406,13 @@ namespace SNASharp
 
 
             int nLeft3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 3.0f);
+            n3dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft3dBIndex * nFrequencyStep;
+
             int nRight3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 3.0f);
+            n3dBBandpassHighFrequency = nSpectrumLowFrequency + nRight3dBIndex * nFrequencyStep;
 
             DipoleD = DetermineDipoleType(nLeft3dBIndex, nRight3dBIndex, SpectrumValues.Length);
 
-
-            n3dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft3dBIndex * nFrequencyStep;
-            n3dBBandpassHighFrequency = nSpectrumLowFrequency + nRight3dBIndex * nFrequencyStep;
 
             if (DipoleD == DipoleDetected.BPF)
             {
@@ -352,17 +421,37 @@ namespace SNASharp
             else
             {
                 n3dBBandpass = -1;
+                if (nLeft3dBIndex == 0)
+                    n3dBBandpassLowFrequency = -1;
+
+                if (nRight3dBIndex >= SpectrumValues.Length - 2)
+                    n3dBBandpassHighFrequency = -1;
             }
 
             int nLeft6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 6.0f);
+            if (nLeft6dBIndex != 0)
+            {
+                n6dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft6dBIndex * nFrequencyStep;
+            }
+            else
+            {
+                n6dBBandpassLowFrequency = -1;
+            }
+
             int nRight6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 6.0f);
+            if (nRight6dBIndex < SpectrumValues.Length - 1)
+            {
+                n6dBBandpassHighFrequency = nSpectrumLowFrequency + nRight6dBIndex * nFrequencyStep;
+            }
+            else
+            {
+                n6dBBandpassHighFrequency = -1;
+            }
 
-            DipoleDetected DipoleAt6dB = DetermineDipoleType(nLeft6dBIndex, nRight6dBIndex, SpectrumValues.Length);
+//            DipoleDetected DipoleAt6dB = DetermineDipoleType(nLeft6dBIndex, nRight6dBIndex, SpectrumValues.Length);
 
-            n6dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft6dBIndex * nFrequencyStep;
-            n6dBBandpassHighFrequency = nSpectrumLowFrequency + nRight6dBIndex * nFrequencyStep;
 
-            if (DipoleAt6dB == DipoleDetected.BPF)
+            if (n6dBBandpassHighFrequency != -1 && n6dBBandpassLowFrequency != -1)
             {
                 n6dBBandpass = (int)((nRight6dBIndex - nLeft6dBIndex) * nFrequencyStep);
             }
@@ -372,15 +461,26 @@ namespace SNASharp
             }
 
             int nLeft60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 60.0f);
+
+            if (nLeft60dBIndex != 0)
+                n60dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft60dBIndex * nFrequencyStep;
+            else
+                n60dBBandpassLowFrequency = -1;
+
+
+
             int nRight60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 60.0f);
+            if (nRight60dBIndex < SpectrumValues.Length - 1)
+                n60dBBandpassHighFrequency = nSpectrumLowFrequency + nRight60dBIndex * nFrequencyStep;
+            else
+                n60dBBandpassHighFrequency = -1;
 
-            DipoleDetected DipoleAt60dB = DetermineDipoleType(nLeft60dBIndex, nRight60dBIndex, SpectrumValues.Length);
+
+            //DipoleDetected DipoleAt60dB = DetermineDipoleType(nLeft60dBIndex, nRight60dBIndex, SpectrumValues.Length);
 
 
-            n60dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft60dBIndex * nFrequencyStep;
-            n60dBBandpassHighFrequency = nSpectrumLowFrequency + nRight60dBIndex * nFrequencyStep;
 
-            if (DipoleAt60dB == DipoleDetected.BPF)
+            if (n60dBBandpassHighFrequency != -1 && n60dBBandpassLowFrequency!=-1)
             {
                 n60dBBandpass = (int)((nRight60dBIndex - nLeft60dBIndex) * nFrequencyStep);
                 n6dB60dBfShapeFactor = ((float)n60dBBandpass / n6dBBandpass);

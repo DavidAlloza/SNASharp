@@ -6,7 +6,7 @@
   <AD8309>true</AD8309>
   <AD8361>false</AD8361>
   <Firmware>119</Firmware>
-  <MinFrequencyInHz>33000000</MinFrequencyInHz>
+  <MinFrequencyInHz>35000000</MinFrequencyInHz>
   <MaxFrequencyInHz>4400000000</MaxFrequencyInHz>
   <FrequencyDivisor>10</FrequencyDivisor>
   <VerticalResolutiondB>0.1923</VerticalResolutiondB>
