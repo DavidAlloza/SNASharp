@@ -203,15 +203,15 @@ namespace SNASharp
 
 
                 int nFirstSpectrumIndex;
-                float fXStartOffset = 0;
-                float fXEndOffset = 0;
+                double fXStartOffset = 0;
+                double fXEndOffset = 0;
 
-                float fSpectrumHRes = (Graph.nLastDrawingHighFrequency - Graph.nLastDrawingLowFrequency) / nWidth;
+                double fSpectrumHRes = (double)(Graph.nLastDrawingHighFrequency - Graph.nLastDrawingLowFrequency) / nWidth;
                 Int64 nCurveBW = nSpectrumHighFrequency - nSpectrumLowFrequency;
 
                 if (nSpectrumLowFrequency < Graph.nLastDrawingLowFrequency)
                 {
-                    nFirstSpectrumIndex = (Int32)(((Int64)(Graph.nLastDrawingLowFrequency - nSpectrumLowFrequency) * SpectrumValues.Length) / nCurveBW);
+                    nFirstSpectrumIndex = (Int32)(((double)(Graph.nLastDrawingLowFrequency - nSpectrumLowFrequency) * SpectrumValues.Length) / nCurveBW);
                 }
                 else
                 {
@@ -223,7 +223,7 @@ namespace SNASharp
 
                 if (nSpectrumHighFrequency > Graph.nLastDrawingHighFrequency)
                 {
-                    nLastSpectrumIndex = (Int32)(((Int64)(Graph.nLastDrawingHighFrequency - nSpectrumLowFrequency) * SpectrumValues.Length) / nCurveBW);
+                    nLastSpectrumIndex = (Int32)(((double)(Graph.nLastDrawingHighFrequency - nSpectrumLowFrequency) * SpectrumValues.Length) / nCurveBW);
                 }
                 else
                 {
@@ -256,7 +256,7 @@ namespace SNASharp
                     }
 
                     Mesures[i].Y = ((Graph.fLastDrawingLevelHigh - fMesure) * fVerticalScale) + Graph.UpBorder;
-                    Mesures[i].X = ((float)i * nPixelToDisplay) / nSpectrumCount + Graph.LeftBorder + fXStartOffset;
+                    Mesures[i].X = (float)(((double)i * nPixelToDisplay) / nSpectrumCount + Graph.LeftBorder + fXStartOffset);
                 }
 
                 if (Mesures.Length > 1)
@@ -396,9 +396,6 @@ namespace SNASharp
 
             fMaxLeveldB = SpectrumValues[nMaxLevelIndex];
             fMinLeveldB = SpectrumValues[nMinLevelIndex];
-
-            int nSpectrumLeftValidityIndex = SpectrumValues.Length / 20;
-            int nSpectrumRightValidityIndex = (SpectrumValues.Length - SpectrumValues.Length / 20);
 
             Int64 nFrequencyStep = (nSpectrumHighFrequency - nSpectrumLowFrequency) / SpectrumValues.Length;
             nMaxLevelFrequency = nSpectrumLowFrequency + nMaxLevelIndex * nFrequencyStep;

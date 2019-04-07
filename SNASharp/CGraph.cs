@@ -41,7 +41,7 @@ namespace SNASharp
         public Int64 GetFrequencyFromXDisplay(int nX)
         {
             int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
-            float fFrequencyFraction = ((float)(nX - LeftBorder)) / nWidth;
+            double fFrequencyFraction = ((double)(nX - LeftBorder)) / nWidth;
 
             if (fFrequencyFraction < 0.0f)
                 fFrequencyFraction = 0.0f;
@@ -49,7 +49,7 @@ namespace SNASharp
             if (fFrequencyFraction > 1.0f)
                 fFrequencyFraction = 1.0f;
 
-            return nLastDrawingLowFrequency + (Int64)((nLastDrawingHighFrequency - nLastDrawingLowFrequency) * fFrequencyFraction);
+            return nLastDrawingLowFrequency + (Int64)((double)(nLastDrawingHighFrequency - nLastDrawingLowFrequency) * fFrequencyFraction);
         }
 
 
@@ -60,7 +60,7 @@ namespace SNASharp
             if (nLastDrawingHighFrequency == nLastDrawingLowFrequency)
                 return LeftBorder;
 
-            return LeftBorder + (Int32)(((Int64)(nFrequency - nLastDrawingLowFrequency) * nWidth) / (nLastDrawingHighFrequency - nLastDrawingLowFrequency));
+            return LeftBorder + (Int32)(((double)(nFrequency - nLastDrawingLowFrequency) * nWidth) / (nLastDrawingHighFrequency - nLastDrawingLowFrequency));
         }
 
         public Int64 GetFrequencyGranularityDisplay(Int64 fBW, int nDisplay = 13)
