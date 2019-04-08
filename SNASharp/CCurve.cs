@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Globalization;
 using System.Xml.Serialization;
+using System.Drawing.Drawing2D;
 
 
 namespace SNASharp
@@ -104,71 +105,76 @@ namespace SNASharp
             return CurveName;
         }
 
-        void DrawMarker(String Text, PointF Coords, Graphics g, System.Drawing.Font SampleFont, Pen MyPen, bool bAtRight)
+        void DrawMarker(String Text, PointF Coords, Graphics g, System.Drawing.Font SampleFont, Pen MyPen, bool bAtRight, bool bDrawArrow = true)
         {
             const float ArrowSize = 5.0f;
-            PointF MarkerLeft = new PointF(Coords.X - ArrowSize, Coords.Y);
-            PointF MarkerRight = new PointF(Coords.X + ArrowSize, Coords.Y);
-            PointF MarkerUp = new PointF(Coords.X, Coords.Y- ArrowSize);
-            PointF MarkerDown = new PointF(Coords.X, Coords.Y + ArrowSize);
 
-            g.DrawLine(MyPen, MarkerLeft, MarkerRight);
-            g.DrawLine(MyPen, MarkerUp, MarkerDown);
+            if (bDrawArrow)
+            {
+                PointF MarkerUpLeft = new PointF(Coords.X - ArrowSize, Coords.Y- ArrowSize);
+                PointF MarkerLowRight = new PointF(Coords.X + ArrowSize, Coords.Y+ ArrowSize);
+                PointF MarkerUpRight = new PointF(Coords.X+ ArrowSize, Coords.Y - ArrowSize);
+                PointF MarkerDownLeft = new PointF(Coords.X- ArrowSize, Coords.Y + ArrowSize);
 
+                g.DrawLine(MyPen, MarkerUpLeft, MarkerLowRight);
+                g.DrawLine(MyPen, MarkerUpRight, MarkerDownLeft);
+            }
             g.DrawString(" "+Text, SampleFont, Brushes.Black, Coords);
+        }
+
+
+        void DrawLevel(float dB,Int64 LowFrequency, Int64 HighFrequency, Graphics g, CGraph Graph)
+        {
+            Pen mypenArrow = new Pen(Color.Black, LineWidth);
+            Pen mypenHline = new Pen(Color.Black, LineWidth);
+            System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
+            String ndB =((int)dB).ToString()+"dB";
+
+            bool bCliped = false;
+
+            if (HighFrequency > 0 && LowFrequency > 0)
+            {
+                PointF Coords1 = Graph.GetCoords(LowFrequency, fMaxLeveldB + dB, ref bCliped);
+                if (!bCliped) mypenHline.CustomStartCap = new AdjustableArrowCap(4.0f, 4.0f);
+                if (!bCliped) DrawMarker(ndB, Coords1, g, SampleFont, mypenArrow, true, false);
+
+
+                PointF Coords2 = Graph.GetCoords(HighFrequency, fMaxLeveldB + dB, ref bCliped);
+                if (!bCliped) mypenHline.CustomEndCap = new AdjustableArrowCap(4.0f, 4.0f);
+                if (!bCliped) DrawMarker(ndB, Coords2, g, SampleFont, mypenArrow, true, false);
+
+                g.DrawLine(mypenHline, Coords1, Coords2);
+            }
+            else
+            {
+
+                if (HighFrequency > 0)
+                {
+                    PointF Coords = Graph.GetCoords(HighFrequency, fMaxLeveldB + dB, ref bCliped);
+                    if (!bCliped) DrawMarker(ndB, Coords, g, SampleFont, mypenArrow, true);
+                }
+
+                if (LowFrequency > 0)
+                {
+                    PointF Coords = Graph.GetCoords(LowFrequency, fMaxLeveldB + dB, ref bCliped);
+                    if (!bCliped) DrawMarker(ndB, Coords, g, SampleFont, mypenArrow, false);
+                }
+            }
+
+
         }
 
         void DrawAdditionnalsInfos(Graphics g, CGraph Graph)
         {
             System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
             
-            Pen mypen = new Pen(Color.Black, LineWidth);
-            bool bCliped = false;
-
-            if (n3dBBandpassHighFrequency > 0)
-            {
-                PointF Coords = Graph.GetCoords(n3dBBandpassHighFrequency, fMaxLeveldB-3.0f, ref bCliped);
-                if (!bCliped) DrawMarker("-3dB",Coords, g, SampleFont, mypen,true);
-            }
-
-            if (n3dBBandpassLowFrequency > 0)
-            {
-                PointF Coords = Graph.GetCoords(n3dBBandpassLowFrequency, fMaxLeveldB - 3.0f, ref bCliped);
-                if (!bCliped) DrawMarker("-3dB", Coords, g, SampleFont, mypen, false);
-            }
-
-            if (n6dBBandpassHighFrequency > 0)
-            {
-                PointF Coords = Graph.GetCoords(n6dBBandpassHighFrequency, fMaxLeveldB - 6.0f, ref bCliped);
-                if (!bCliped) DrawMarker("-6dB", Coords, g, SampleFont, mypen, true);
-            }
-
-            if (n6dBBandpassLowFrequency > 0)
-            {
-                PointF Coords = Graph.GetCoords(n6dBBandpassLowFrequency, fMaxLeveldB - 6.0f, ref bCliped);
-                if (!bCliped) DrawMarker("-6dB", Coords, g, SampleFont, mypen, false);
-            }
-
-            if (n60dBBandpassHighFrequency > 0)
-            {
-                PointF Coords = Graph.GetCoords(n60dBBandpassHighFrequency, fMaxLeveldB - 60.0f, ref bCliped);
-                if (!bCliped) DrawMarker("-60dB", Coords, g, SampleFont, mypen, true);
-            }
-
-            if (n60dBBandpassLowFrequency > 0)
-            {
-                PointF Coords = Graph.GetCoords(n60dBBandpassLowFrequency, fMaxLeveldB - 60.0f, ref bCliped);
-                if ( !bCliped) DrawMarker("-60dB", Coords, g, SampleFont, mypen, false);
-            }
-
-            if (n60dBBandpassHighFrequency > 0 && n60dBBandpassLowFrequency > 0)
-            {
-                PointF Coords1 = Graph.GetCoords(n60dBBandpassLowFrequency, fMaxLeveldB - 60.0f, ref bCliped);
-                PointF Coords2 = Graph.GetCoords(n60dBBandpassHighFrequency, fMaxLeveldB - 60.0f, ref bCliped);
-                g.DrawLine(mypen, Coords1, Coords2);
+            //Pen mypenArrow = new Pen(Color.Black, LineWidth);
+            //Pen mypenHline = new Pen(Color.Black, LineWidth);
 
 
-            }
+            DrawLevel(-3.0f, n3dBBandpassLowFrequency, n3dBBandpassHighFrequency, g, Graph);
+            DrawLevel(-6.0f, n6dBBandpassLowFrequency, n6dBBandpassHighFrequency, g, Graph);
+            DrawLevel(-60.0f, n60dBBandpassLowFrequency, n60dBBandpassHighFrequency, g, Graph);
 
         }
 
