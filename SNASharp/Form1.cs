@@ -940,10 +940,6 @@ namespace SNASharp
         }
 
 
-        private void MenuSavePicture_Click(object sender, EventArgs e)
-        {
-            SpectrumPictureBox.SavePicture();
-        }
 
         private void LogOutputTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -1161,5 +1157,16 @@ namespace SNASharp
             SetSampleCount(2000);
         }
 
+        private void MenuSavePicture_Click(object sender, EventArgs e)
+        {
+            SpectrumPictureBox.SavePicture();
+        }
+
+
+
+        private void copyToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpectrumPictureBox.CopyPictureToclipboard();
+        }
     }
 }

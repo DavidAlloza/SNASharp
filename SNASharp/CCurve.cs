@@ -583,7 +583,7 @@ namespace SNASharp
             return Result;
         }
 
-        public void ComputeMarkerFrequencies(int nIndex,
+        public void ComputeMarkerFrequencies(ref MarkersValues dest,
                                              float fLevelToFind, 
                                              bool BandPassToChek,
                                              int nMaxLevelIndex)
@@ -591,22 +591,22 @@ namespace SNASharp
             int nLeftIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fLevelToFind);
 
             if (nLeftIndex != 0)
-                MarkerArrayValues[nIndex].LowFreq = nSpectrumLowFrequency + nLeftIndex * nFrequencyStep;
+                dest.LowFreq = nSpectrumLowFrequency + nLeftIndex * nFrequencyStep;
             else
-                MarkerArrayValues[nIndex].LowFreq = -1;
+                dest.LowFreq = -1;
 
             int nRightIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fLevelToFind);
 
             if (nRightIndex < SpectrumValues.Length - 1)
-                MarkerArrayValues[nIndex].HighFreq = nSpectrumLowFrequency + nRightIndex * nFrequencyStep;
+                dest.HighFreq = nSpectrumLowFrequency + nRightIndex * nFrequencyStep;
             else
-                MarkerArrayValues[nIndex].HighFreq = -1;
+                dest.HighFreq = -1;
 
 
-            if (n6dBBandpassHighFrequency != -1 && n6dBBandpassLowFrequency != -1 && BandPassToChek)
-                MarkerArrayValues[nIndex].BandPass = MarkerArrayValues[nIndex].HighFreq - MarkerArrayValues[nIndex].LowFreq;
+            if (dest.LowFreq != -1 && dest.HighFreq != -1 && BandPassToChek)
+                dest.BandPass = dest.HighFreq - dest.LowFreq;
             else
-                n6dBBandpass = -1;
+                dest.BandPass = -1;
 
         }
 
@@ -646,13 +646,13 @@ namespace SNASharp
                             MarkerArrayValues[nIndex].BandPass = -1;
                             break;
                         case CurveBPMarker.BP_3dB_TO_MIN:
-                            ComputeMarkerFrequencies(nIndex, (fMinLeveldB + 3.0f), true, nMaxLevelIndex);
+                            ComputeMarkerFrequencies(ref MarkerArrayValues[nIndex], (fMinLeveldB + 3.0f), true, nMaxLevelIndex);
                             break;
                         case CurveBPMarker.BP_6dB_TO_MIN:
-                            ComputeMarkerFrequencies(nIndex, (fMinLeveldB + 6.0f), true, nMaxLevelIndex);
+                            ComputeMarkerFrequencies(ref MarkerArrayValues[nIndex], (fMinLeveldB + 6.0f), true, nMaxLevelIndex);
                             break;
                         default:
-                            ComputeMarkerFrequencies(nIndex, (fMaxLeveldB - ((int)Marker)), true, nMaxLevelIndex);
+                            ComputeMarkerFrequencies(ref MarkerArrayValues[nIndex], (fMaxLeveldB - ((int)Marker)), true, nMaxLevelIndex);
                             break;
                     }
                 }

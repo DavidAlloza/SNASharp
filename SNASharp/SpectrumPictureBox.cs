@@ -208,6 +208,12 @@ namespace SNASharp
             }
         }
 
+        public void CopyPictureToclipboard()
+        {
+            Clipboard.SetImage(Image);
+        }
+
+
         public void ResizeAndRedraw(object sender, EventArgs e)
         {
             if (PictureBoxBitmap != null)
