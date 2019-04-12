@@ -50,7 +50,6 @@
             this.DetectorCombobox = new System.Windows.Forms.ComboBox();
             this.SweepLoopStopButton = new System.Windows.Forms.Button();
             this.SweepLoopProcessButton = new System.Windows.Forms.Button();
-            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.SweepProcessButton = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.StopVFOButton = new System.Windows.Forms.Button();
@@ -229,7 +228,6 @@
             this.tabPage2.Controls.Add(this.DetectorCombobox);
             this.tabPage2.Controls.Add(this.SweepLoopStopButton);
             this.tabPage2.Controls.Add(this.SweepLoopProcessButton);
-            this.tabPage2.Controls.Add(this.checkedListBox1);
             this.tabPage2.Controls.Add(this.SweepProcessButton);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -271,7 +269,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(156, 129);
+            this.label16.Location = new System.Drawing.Point(156, 59);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(67, 13);
             this.label16.TabIndex = 9;
@@ -291,7 +289,7 @@
             // 
             this.CurveListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CurveListComboBox.FormattingEnabled = true;
-            this.CurveListComboBox.Location = new System.Drawing.Point(155, 145);
+            this.CurveListComboBox.Location = new System.Drawing.Point(156, 75);
             this.CurveListComboBox.Name = "CurveListComboBox";
             this.CurveListComboBox.Size = new System.Drawing.Size(207, 21);
             this.CurveListComboBox.TabIndex = 7;
@@ -300,9 +298,9 @@
             // CurveConfigPropertyGrid
             // 
             this.CurveConfigPropertyGrid.HelpVisible = false;
-            this.CurveConfigPropertyGrid.Location = new System.Drawing.Point(155, 172);
+            this.CurveConfigPropertyGrid.Location = new System.Drawing.Point(155, 112);
             this.CurveConfigPropertyGrid.Name = "CurveConfigPropertyGrid";
-            this.CurveConfigPropertyGrid.Size = new System.Drawing.Size(207, 123);
+            this.CurveConfigPropertyGrid.Size = new System.Drawing.Size(207, 183);
             this.CurveConfigPropertyGrid.TabIndex = 6;
             this.CurveConfigPropertyGrid.ToolbarVisible = false;
             this.CurveConfigPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.CurveConfigPropertyGrid_PropertyValueChanged);
@@ -310,7 +308,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(155, 78);
+            this.label12.Location = new System.Drawing.Point(155, 11);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(48, 13);
             this.label12.TabIndex = 5;
@@ -320,7 +318,7 @@
             // 
             this.DetectorCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.DetectorCombobox.FormattingEnabled = true;
-            this.DetectorCombobox.Location = new System.Drawing.Point(155, 94);
+            this.DetectorCombobox.Location = new System.Drawing.Point(155, 27);
             this.DetectorCombobox.Name = "DetectorCombobox";
             this.DetectorCombobox.Size = new System.Drawing.Size(207, 21);
             this.DetectorCombobox.TabIndex = 4;
@@ -328,9 +326,9 @@
             // SweepLoopStopButton
             // 
             this.SweepLoopStopButton.Enabled = false;
-            this.SweepLoopStopButton.Location = new System.Drawing.Point(6, 86);
+            this.SweepLoopStopButton.Location = new System.Drawing.Point(6, 112);
             this.SweepLoopStopButton.Name = "SweepLoopStopButton";
-            this.SweepLoopStopButton.Size = new System.Drawing.Size(107, 34);
+            this.SweepLoopStopButton.Size = new System.Drawing.Size(143, 34);
             this.SweepLoopStopButton.TabIndex = 3;
             this.SweepLoopStopButton.Text = "Stop";
             this.SweepLoopStopButton.UseVisualStyleBackColor = true;
@@ -338,36 +336,20 @@
             // 
             // SweepLoopProcessButton
             // 
-            this.SweepLoopProcessButton.Location = new System.Drawing.Point(6, 46);
+            this.SweepLoopProcessButton.Location = new System.Drawing.Point(6, 62);
             this.SweepLoopProcessButton.Name = "SweepLoopProcessButton";
-            this.SweepLoopProcessButton.Size = new System.Drawing.Size(107, 34);
+            this.SweepLoopProcessButton.Size = new System.Drawing.Size(143, 34);
             this.SweepLoopProcessButton.TabIndex = 2;
             this.SweepLoopProcessButton.Text = "Start loop";
             this.SweepLoopProcessButton.UseVisualStyleBackColor = true;
             this.SweepLoopProcessButton.Click += new System.EventHandler(this.SweepLoopProcessButton_Click);
             // 
-            // checkedListBox1
-            // 
-            this.checkedListBox1.CheckOnClick = true;
-            this.checkedListBox1.Enabled = false;
-            this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Items.AddRange(new object[] {
-            "3dB bandpass",
-            "Quality factor",
-            "Impedance at serie resonance",
-            "-6dB/-60dB shape factor"});
-            this.checkedListBox1.Location = new System.Drawing.Point(159, 3);
-            this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(172, 64);
-            this.checkedListBox1.TabIndex = 1;
-            this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
-            // 
             // SweepProcessButton
             // 
             this.SweepProcessButton.BackColor = System.Drawing.Color.Chartreuse;
-            this.SweepProcessButton.Location = new System.Drawing.Point(6, 6);
+            this.SweepProcessButton.Location = new System.Drawing.Point(6, 14);
             this.SweepProcessButton.Name = "SweepProcessButton";
-            this.SweepProcessButton.Size = new System.Drawing.Size(107, 34);
+            this.SweepProcessButton.Size = new System.Drawing.Size(143, 34);
             this.SweepProcessButton.TabIndex = 0;
             this.SweepProcessButton.Text = "Start single";
             this.SweepProcessButton.UseVisualStyleBackColor = false;
@@ -963,7 +945,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsPNGToolStripMenuItem;
-        private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox AttLevelcomboBox;
         private System.Windows.Forms.TabPage tabPage3;

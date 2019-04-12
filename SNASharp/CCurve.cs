@@ -3,12 +3,53 @@ using System.Drawing;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Drawing.Drawing2D;
-
+using System.ComponentModel;
+using System.Collections;
 
 namespace SNASharp
 {
     public class CCurve
     {
+        public CCurve()
+        {
+            for ( int i = 0; i < MarkerArrayValues.Length;i++)
+            {
+                MarkerArrayValues[i] = new MarkersValues();
+            }
+        }
+        /*
+        public class MyArraylist : ArrayList
+        {
+            public override String ToString()
+            {
+                return null;
+            }
+        };*/
+        /*
+        public class AttEntry
+        {
+            public int Value;
+
+            public int _Value
+            {
+                get { return Value; }
+                set { Value = value; }
+            }
+
+            public override String ToString()
+            {
+                return Value.ToString();
+            }
+        }
+        */
+
+        public class MarkersValues
+        {
+            public Int64 LowFreq = -1;
+            public Int64 HighFreq = -1;
+            public Int64 BandPass = -1;
+        };
+
         public enum YesNo
         {
             Yes,
@@ -24,6 +65,40 @@ namespace SNASharp
             UNDERTERMINED
         };
 
+        public enum CurveBPMarker
+        {
+            OFF = -1,
+            MAX_LEVEL = 0,
+            BP_3dB = 3,
+            BP_6dB = 6,
+            BP_10dB = 10,
+            BP_20dB = 20,
+            BP_30dB = 30,
+            BP_40dB = 40,
+            BP_50dB = 50,
+            BP_60dB = 60,
+            BP_70dB = 70,
+            BP_80dB = 80,
+            BP_90dB = 90,
+            BP_100dB = 100,
+            BP_6dB_TO_MIN,
+            BP_3dB_TO_MIN,
+            MIN_LEVEL    
+        };
+
+        private CurveBPMarker [] MarkerArray = new []{  CurveBPMarker.OFF,
+                                                    CurveBPMarker.OFF,
+                                                    CurveBPMarker.OFF,
+                                                    CurveBPMarker.OFF,
+                                                    CurveBPMarker.OFF,
+                                                    CurveBPMarker.OFF };
+
+        private MarkersValues[] MarkerArrayValues = new MarkersValues[6];
+
+        //        MyArraylist MarkersList = new MyArraylist();
+
+
+        //  private AttEntry[] BPW = new AttEntry[] { };
 
         // computed values to the curve
         public Int64 nMaxLevelFrequency = -1;
@@ -47,6 +122,8 @@ namespace SNASharp
         public float n6dB60dBfShapeFactor = -1.0f;
         public Int64 nSpectrumLowFrequency = 0;
         public Int64 nSpectrumHighFrequency = 0;
+        public Int64 nFrequencyStep = -1;
+
         private YesNo Is_Visible = YesNo.Yes;
         public byte R = 0;
         public byte G = 0;
@@ -100,6 +177,65 @@ namespace SNASharp
             }
         }
 
+        [Category("Markers")]
+        public CurveBPMarker Marker_1
+        {
+            get { return MarkerArray[0]; }
+            set { MarkerArray[0] = value; }
+        }
+
+        [Category("Markers")]
+        public CurveBPMarker Marker_2
+        {
+            get { return MarkerArray[1]; }
+            set { MarkerArray[1] = value; }
+        }
+
+        [Category("Markers")]
+        public CurveBPMarker Marker_3
+        {
+            get { return MarkerArray[2]; }
+            set { MarkerArray[2] = value; }
+        }
+
+        [Category("Markers")]
+        public CurveBPMarker Marker_4
+        {
+            get { return MarkerArray[3]; }
+            set { MarkerArray[3] = value; }
+        }
+
+        [Category("Markers")]
+        public CurveBPMarker Marker_5
+        {
+            get { return MarkerArray[4]; }
+            set { MarkerArray[4] = value; }
+        }
+
+        [Category("Markers")]
+        public CurveBPMarker Marker_6
+        {
+            get { return MarkerArray[5]; }
+            set { MarkerArray[5] = value; }
+        }
+
+        /*
+        [DisplayName("Markers list")]
+        public CurveBPMarker [] Markers
+        {
+            get { return MarkerArray; }
+            set { MarkerArray = value; }
+        }
+
+        [DisplayName("Markers_")]
+        public AttEntry[] MarkersList_
+        {
+            get { return BPW; }
+            set { BPW = value; }
+        }
+        
+    */
+
         public override String ToString()
         {
             return CurveName;
@@ -127,23 +263,51 @@ namespace SNASharp
         {
             Pen mypenArrow = new Pen(Color.Black, LineWidth);
             Pen mypenHline = new Pen(Color.Black, LineWidth);
+            mypenHline.DashStyle = DashStyle.Dash;
+
+            Pen mypenVline = new Pen(Color.Black, LineWidth);
+            mypenVline.DashStyle = DashStyle.DashDot;
+
+
             System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
             String ndB =((int)dB).ToString()+"dB";
 
             bool bCliped = false;
 
+
+
             if (HighFrequency > 0 && LowFrequency > 0)
             {
-                PointF Coords1 = Graph.GetCoords(LowFrequency, fMaxLeveldB + dB, ref bCliped);
+
+
+                // bandpass
+                PointF HCoords1 = Graph.GetCoords(LowFrequency, fMaxLeveldB + dB, ref bCliped);
                 if (!bCliped) mypenHline.CustomStartCap = new AdjustableArrowCap(4.0f, 4.0f);
-                if (!bCliped) DrawMarker(ndB, Coords1, g, SampleFont, mypenArrow, true, false);
+                if (!bCliped)
+                {
+                    PointF VCoords1 = new PointF(HCoords1.X, Graph.UpBorder);
+                    PointF VCoords2 = new PointF(HCoords1.X,  Graph.BitmapWhereDraw.Height- Graph.LowBorder);
+                    g.DrawLine(mypenVline, VCoords1, VCoords2);
+                }
 
 
-                PointF Coords2 = Graph.GetCoords(HighFrequency, fMaxLeveldB + dB, ref bCliped);
+                //if (!bCliped) DrawMarker(ndB, Coords1, g, SampleFont, mypenArrow, true, false);
+
+
+                PointF HCoords2 = Graph.GetCoords(HighFrequency, fMaxLeveldB + dB, ref bCliped);
                 if (!bCliped) mypenHline.CustomEndCap = new AdjustableArrowCap(4.0f, 4.0f);
-                if (!bCliped) DrawMarker(ndB, Coords2, g, SampleFont, mypenArrow, true, false);
+                if (!bCliped)
+                {
+                    PointF VCoords1 = new PointF(HCoords2.X, Graph.UpBorder);
+                    PointF VCoords2 = new PointF(HCoords2.X, Graph.BitmapWhereDraw.Height - Graph.LowBorder);
+                    g.DrawLine(mypenVline, VCoords1, VCoords2);
+                }
 
-                g.DrawLine(mypenHline, Coords1, Coords2);
+                g.DrawLine(mypenHline, HCoords1, HCoords2);
+
+                PointF CoordCenter = new PointF(0.5f * (HCoords1.X + HCoords2.X), HCoords1.Y);
+                g.DrawString(" " + ndB, SampleFont, Brushes.Black, CoordCenter);
+
             }
             else
             {
@@ -168,25 +332,52 @@ namespace SNASharp
         {
             System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
             
-            //Pen mypenArrow = new Pen(Color.Black, LineWidth);
-            //Pen mypenHline = new Pen(Color.Black, LineWidth);
+            //foreach  (CurveBPMarker Marker in MarkerArray)
+            for ( int nIndex = 0; nIndex < MarkerArray.Length; nIndex++)
+            {
+                CurveBPMarker Marker = MarkerArray[nIndex];
+                float fdB = 0.0f;
+                if (Marker != CurveBPMarker.OFF)
+                {
+                    switch (Marker)
+                    {
+                        case CurveBPMarker.MAX_LEVEL:
+                            fdB = 0.0f;
+                            break;
+                        case CurveBPMarker.MIN_LEVEL:
+                            fdB =  fMinLeveldB - fMaxLeveldB;
+                            break;
+                        case CurveBPMarker.BP_3dB_TO_MIN:
+                            fdB = fMinLeveldB - fMaxLeveldB + 3.0f;
+                            break;
+                        case CurveBPMarker.BP_6dB_TO_MIN:
+                            fdB = fMinLeveldB - fMaxLeveldB + 6.0f;
+                            break;
+                        default:
+                            fdB =  - ((int)Marker);
+                            break;
+                    }
+                    DrawLevel(fdB, MarkerArrayValues[nIndex].LowFreq, MarkerArrayValues[nIndex].HighFreq, g, Graph);
 
 
-            DrawLevel(-3.0f, n3dBBandpassLowFrequency, n3dBBandpassHighFrequency, g, Graph);
-            DrawLevel(-6.0f, n6dBBandpassLowFrequency, n6dBBandpassHighFrequency, g, Graph);
-            DrawLevel(-60.0f, n60dBBandpassLowFrequency, n60dBBandpassHighFrequency, g, Graph);
+                }
+            }
+
+//            DrawLevel(-3.0f, n3dBBandpassLowFrequency, n3dBBandpassHighFrequency, g, Graph);
+//            DrawLevel(-6.0f, n6dBBandpassLowFrequency, n6dBBandpassHighFrequency, g, Graph);
+//            DrawLevel(-60.0f, n60dBBandpassLowFrequency, n60dBBandpassHighFrequency, g, Graph);
 
         }
 
         public void Draw(CGraph Graph, bool IsActive)
         {
-            if (Graph.Picture.Size.Width == 0 || Graph.Picture.Size.Height == 0 || Visible == CCurve.YesNo.No)
+            if (Graph.BitmapWhereDraw.Size.Width == 0 || Graph.BitmapWhereDraw.Size.Height == 0 || Visible == CCurve.YesNo.No)
                 return;
 
-            int nWidth = Graph.Picture.Size.Width - Graph.LeftBorder - Graph.RightBorder;
-            int nHeight = Graph.Picture.Size.Height - Graph.UpBorder - Graph.LowBorder;
+            int nWidth = Graph.BitmapWhereDraw.Size.Width - Graph.LeftBorder - Graph.RightBorder;
+            int nHeight = Graph.BitmapWhereDraw.Size.Height - Graph.UpBorder - Graph.LowBorder;
 
-            Graphics g = Graphics.FromImage(Graph.Picture.Image);
+            Graphics g = Graphics.FromImage(Graph.BitmapWhereDraw);
 
             if (Graph.AntiAlias)
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -392,10 +583,38 @@ namespace SNASharp
             return Result;
         }
 
+        public void ComputeMarkerFrequencies(int nIndex,
+                                             float fLevelToFind, 
+                                             bool BandPassToChek,
+                                             int nMaxLevelIndex)
+        {
+            int nLeftIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fLevelToFind);
+
+            if (nLeftIndex != 0)
+                MarkerArrayValues[nIndex].LowFreq = nSpectrumLowFrequency + nLeftIndex * nFrequencyStep;
+            else
+                MarkerArrayValues[nIndex].LowFreq = -1;
+
+            int nRightIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fLevelToFind);
+
+            if (nRightIndex < SpectrumValues.Length - 1)
+                MarkerArrayValues[nIndex].HighFreq = nSpectrumLowFrequency + nRightIndex * nFrequencyStep;
+            else
+                MarkerArrayValues[nIndex].HighFreq = -1;
+
+
+            if (n6dBBandpassHighFrequency != -1 && n6dBBandpassLowFrequency != -1 && BandPassToChek)
+                MarkerArrayValues[nIndex].BandPass = MarkerArrayValues[nIndex].HighFreq - MarkerArrayValues[nIndex].LowFreq;
+            else
+                n6dBBandpass = -1;
+
+        }
+
         public void ComputeCaracteristicsParams()
         {
             if (SpectrumValues == null || SpectrumValues.Length == 0)
                 return;
+
 
             int nMaxLevelIndex = Utility.RetrieveMaxValueIndex(SpectrumValues);
             int nMinLevelIndex = Utility.RetrieveMinValueIndex(SpectrumValues);
@@ -403,9 +622,41 @@ namespace SNASharp
             fMaxLeveldB = SpectrumValues[nMaxLevelIndex];
             fMinLeveldB = SpectrumValues[nMinLevelIndex];
 
-            Int64 nFrequencyStep = (nSpectrumHighFrequency - nSpectrumLowFrequency) / SpectrumValues.Length;
+            nFrequencyStep = (nSpectrumHighFrequency - nSpectrumLowFrequency) / SpectrumValues.Length;
             nMaxLevelFrequency = nSpectrumLowFrequency + nMaxLevelIndex * nFrequencyStep;
             nMinLevelFrequency = nSpectrumLowFrequency + nMinLevelIndex * nFrequencyStep;
+
+            //foreach  (CurveBPMarker Marker in MarkerArray)
+            for ( int nIndex = 0; nIndex < MarkerArray.Length; nIndex++)
+            {
+                CurveBPMarker Marker = MarkerArray[nIndex];
+
+                if (Marker != CurveBPMarker.OFF)
+                {
+                    switch (Marker)
+                    {
+                        case CurveBPMarker.MAX_LEVEL:
+                            MarkerArrayValues[nIndex].LowFreq = nMaxLevelFrequency;
+                            MarkerArrayValues[nIndex].HighFreq = -1;
+                            MarkerArrayValues[nIndex].BandPass = -1;
+                            break;
+                        case CurveBPMarker.MIN_LEVEL:
+                            MarkerArrayValues[nIndex].LowFreq = nMinLevelFrequency;
+                            MarkerArrayValues[nIndex].HighFreq = -1;
+                            MarkerArrayValues[nIndex].BandPass = -1;
+                            break;
+                        case CurveBPMarker.BP_3dB_TO_MIN:
+                            ComputeMarkerFrequencies(nIndex, (fMinLeveldB + 3.0f), true, nMaxLevelIndex);
+                            break;
+                        case CurveBPMarker.BP_6dB_TO_MIN:
+                            ComputeMarkerFrequencies(nIndex, (fMinLeveldB + 6.0f), true, nMaxLevelIndex);
+                            break;
+                        default:
+                            ComputeMarkerFrequencies(nIndex, (fMaxLeveldB - ((int)Marker)), true, nMaxLevelIndex);
+                            break;
+                    }
+                }
+            }
 
 
             int nLeft3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 3.0f);

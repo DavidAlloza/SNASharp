@@ -48,8 +48,6 @@ namespace SNASharp
             FreqDisplayLabel.Font = Font;
             LevelDisplayLabel.Font = Font;
 
-            GraphConfig.SetPictureBox(this);
-
         }
 
         public void SetOwnedForm(Form1 _Owner )
@@ -59,11 +57,19 @@ namespace SNASharp
         
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
+            //Image.Dispose();
+            //Image = new Bitmap(BackGroundBackup);
+
             DisplayFrequencyAndLevelOnCorners(e.X);
+            //Graphics g = Graphics.FromImage(Image);
+
+            //g.DrawLine(new Pen(Color.Black), new Point(0, 0), new Point(e.X, e.Y));
+            //g.Dispose();
         }
 
         public void DisplayFrequencyAndLevelOnCorners(int nXMouse)
         {
+
             Int64 nFrequency = GraphConfig.GetFrequencyFromXDisplay(nXMouse);
 
 
@@ -188,17 +194,41 @@ namespace SNASharp
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                /*
+                PictureBoxBitmap.Dispose();
+                PictureBoxBitmap = new Bitmap(2000,2000);
+                DrawCurveCollection(CurvesList);
+                PictureBoxBitmap.Save(dialog.FileName, ImageFormat.Png);
+                PictureBoxBitmap.Dispose();
+                PictureBoxBitmap = new Bitmap(Size.Width, Size.Height);
+                Image = PictureBoxBitmap;
+                */
+
                 Image.Save(dialog.FileName, ImageFormat.Png);
             }
         }
 
         public void ResizeAndRedraw(object sender, EventArgs e)
         {
+            if (PictureBoxBitmap != null)
+                PictureBoxBitmap.Dispose();
+
+            if (Size.Width > 0 && Size.Height > 0)
+            {
+                PictureBoxBitmap = new Bitmap(Size.Width, Size.Height);
+            }
+            else
+            {
+                PictureBoxBitmap = new Bitmap(1, 1);
+            }
+
+  //          Image = PictureBoxBitmap;
             DrawCurveCollection(CurvesList);
         }
 
         public void Redraw()
         {
+            Image = PictureBoxBitmap;
             DrawCurveCollection(CurvesList);
         }
 
@@ -227,6 +257,13 @@ namespace SNASharp
             int nUpperScale = 10;
             int nLowerScale = -90;
             GraphConfig.outputMode = OutputMode.dB;
+
+
+            if (PictureBoxBitmap == null)
+            {
+                PictureBoxBitmap = new Bitmap(this.Width, this.Height);
+                Image = PictureBoxBitmap;
+            }
 
             if (CurvesList.Count > 0 && Owner!= null && Owner.GetOutputMode() == OutputMode.dB)
             {
@@ -295,7 +332,15 @@ namespace SNASharp
 
             GraphConfig.fLastDrawingLevelLow = nLowerScale;
             GraphConfig.fLastDrawingLevelHigh = nUpperScale;
-            GraphConfig.GraphicDisplay(Curves,ActiveCurve);
+
+            Image = PictureBoxBitmap;
+            GraphConfig.GraphicDisplay(Curves,ActiveCurve, PictureBoxBitmap);
+            
+            //if (BackGroundBackup != null)
+            //    BackGroundBackup.Dispose();
+            //
+            //BackGroundBackup = new Bitmap(PictureBoxBitmap);
+            
         }
 
 
@@ -345,8 +390,10 @@ namespace SNASharp
         private CGraph GraphConfig = new CGraph();
         private ArrayList CurvesList = new ArrayList();
         private CCurve ActiveCurve = null;
+        //Bitmap BackGroundBackup = null;
+        Bitmap PictureBoxBitmap = null;
 
-  
+
         private System.Windows.Forms.Label FreqDisplayLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.Label LevelDisplayLabel = new System.Windows.Forms.Label();
 

@@ -122,7 +122,7 @@ namespace SNASharp
 
             CurveConfig.nSpectrumLowFrequency = AcquisitionParams.nBaseFrequency;
             CurveConfig.nSpectrumHighFrequency = AcquisitionParams.nBaseFrequency + AcquisitionParams.nFrequencyStep * AcquisitionParams.nCount;
-
+            CurveConfig.nFrequencyStep = AcquisitionParams.nFrequencyStep;
 
             if (AcquisitionParams.ResultDatas != null)
             {
@@ -186,6 +186,8 @@ namespace SNASharp
 
         private void CurveConfigPropertyGrid_PropertyValueChanged(object s, System.Windows.Forms.PropertyValueChangedEventArgs e)
         {
+            CCurve Curve= (CCurve)CurveConfigPropertyGrid.SelectedObject;
+            Curve.ComputeCaracteristicsParams();
             SpectrumPictureBox.Redraw();
             CurveListComboBox.DataSource = null;
             CurveListComboBox.DataSource = SweepModeCurvesList;

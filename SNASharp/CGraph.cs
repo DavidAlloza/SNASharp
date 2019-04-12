@@ -12,10 +12,6 @@ namespace SNASharp
 
         }
 
-        public void SetPictureBox(System.Windows.Forms.PictureBox _PictureBox)
-        {
-            Picture = _PictureBox;
-        }
 
         // AXES
         public Int64 nLastDrawingLowFrequency = 50000;
@@ -34,13 +30,14 @@ namespace SNASharp
         public bool HighQualityCurves = true;
 
         // where to draw
-        public System.Windows.Forms.PictureBox Picture = null;
+
+        public Bitmap BitmapWhereDraw = null;
 
         public OutputMode outputMode = OutputMode.dB;
 
         public Int64 GetFrequencyFromXDisplay(int nX)
         {
-            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
             double fFrequencyFraction = ((double)(nX - LeftBorder)) / nWidth;
 
             if (fFrequencyFraction < 0.0f)
@@ -55,7 +52,7 @@ namespace SNASharp
 
         public int GetXFromFrequency(Int64 nFrequency)
         {
-            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
 
             if (nLastDrawingHighFrequency == nLastDrawingLowFrequency)
                 return LeftBorder;
@@ -82,10 +79,10 @@ namespace SNASharp
 
         void DrawTopBox(ArrayList curveList = null)
         {
-            Graphics g = Graphics.FromImage(Picture.Image);
+            Graphics g = Graphics.FromImage(BitmapWhereDraw);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
-            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
+            int nHeight = BitmapWhereDraw.Size.Height - UpBorder - LowBorder;
             float nFontSize = 12.0f;
             float nFontVerticalPos = UpBorder / 2 - 8;
 
@@ -95,7 +92,7 @@ namespace SNASharp
 
             if (curveList != null && curveList.Count > 0)
             {
-                int HCurveGranularity = Picture.Size.Width / (1 + curveList.Count);
+                int HCurveGranularity = BitmapWhereDraw.Size.Width / (1 + curveList.Count);
 
                 for (int nCurve = 0; nCurve < curveList.Count; nCurve++)
                 {
@@ -115,11 +112,11 @@ namespace SNASharp
 
         void DrawBottomBox(ArrayList curveList = null)
         {
-            Graphics g = Graphics.FromImage(Picture.Image);
+            Graphics g = Graphics.FromImage(BitmapWhereDraw);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             Pen mypenHLines = new Pen(Brushes.Black);
-            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
-            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
+            int nHeight = BitmapWhereDraw.Size.Height - UpBorder - LowBorder;
             int BoxMarging = 5;
             int TextMarging = 5;
             int nCurveVerticalStep = 15;
@@ -149,7 +146,7 @@ namespace SNASharp
             System.Drawing.Font MsgFont = new Font("Verdana", 8.0f);
             String Msg = "Generated with " + Program.Version;
 
-            g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 240, Picture.Size.Height - 20));
+            g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 240, BitmapWhereDraw.Size.Height - 20));
 
 
             g.Dispose();
@@ -157,18 +154,19 @@ namespace SNASharp
 
         public void DrawBackGround(ArrayList curveList = null)
         {
-            if (Picture.Size.Width == 0 || Picture.Size.Height == 0)
+
+            if (BitmapWhereDraw.Size.Width == 0 || BitmapWhereDraw.Size.Height == 0)
                 return;
 
 
-            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
-            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            //            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
+            //            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+
+            int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
+            int nHeight = BitmapWhereDraw.Size.Height - UpBorder - LowBorder;
 
 
-            Bitmap DrawArea = new Bitmap(Picture.Size.Width, Picture.Size.Height);
-            Picture.Image = DrawArea;
-
-            Graphics g = Graphics.FromImage(Picture.Image);
+            Graphics g = Graphics.FromImage(BitmapWhereDraw);
             g.Clear(Color.White);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
@@ -229,7 +227,7 @@ namespace SNASharp
 
                 float StringSize = g.MeasureString(sFrequency, FreqFont).Width;
                 int nXTextDisplay = nXDisplay - (int)(StringSize / 2);
-                if (nXTextDisplay + StringSize < Picture.Size.Width)
+                if (nXTextDisplay + StringSize < BitmapWhereDraw.Size.Width)
                 {
                     g.DrawString(sFrequency, FreqFont, Brushes.Black, new Point(nXTextDisplay, UpBorder - 15));
                 }
@@ -301,8 +299,8 @@ namespace SNASharp
         public PointF GetCoords(Int64 Frequency, float fLevel, ref bool bCliped)
         {
             PointF Result = new PointF();
-            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
-            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
+            int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
+            int nHeight = BitmapWhereDraw.Size.Height - UpBorder - LowBorder;
             bCliped = false;
 
             if (Frequency > nLastDrawingHighFrequency)
@@ -350,8 +348,9 @@ namespace SNASharp
             return Result;
         }
 
-        public void GraphicDisplay(ArrayList curveList, CCurve ActiveCurve)
+        public void GraphicDisplay(ArrayList curveList, CCurve ActiveCurve, Bitmap PictureBoxBitmap)
         {
+            BitmapWhereDraw = PictureBoxBitmap;
             DrawBackGround(curveList);
             if (curveList != null)
             {
