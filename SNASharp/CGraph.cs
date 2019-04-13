@@ -118,8 +118,6 @@ namespace SNASharp
             int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
             int nHeight = BitmapWhereDraw.Size.Height - UpBorder - LowBorder;
             int BoxMarging = 5;
-            int TextMarging = 5;
-            int nCurveVerticalStep = 15;
 
 
 
@@ -129,20 +127,6 @@ namespace SNASharp
             g.DrawLine(mypenHLines, LeftBorder, UpBorder + nHeight + BoxMarging, LeftBorder, UpBorder + nHeight + LowBorder - BoxMarging);
             g.DrawLine(mypenHLines, LeftBorder + nWidth, UpBorder + nHeight + BoxMarging, LeftBorder + nWidth, UpBorder + nHeight + LowBorder - BoxMarging);
 
-            /*
-            // display curve name
-            System.Drawing.Font CurveFont = new Font("Times New Roman", 10.0f);
-
-            if (curveList != null && curveList.Count>0)
-            {
-                for (int nCurve = 0; nCurve < curveList.Count; nCurve++)
-                {
-                    CurveDef Curve = (CurveDef)curveList[nCurve];
-                    g.DrawString(Curve.Name, CurveFont, new SolidBrush(Curve.Color_), new PointF(LeftBorder + TextMarging, UpBorder + nHeight + BoxMarging + TextMarging+ nCurve* nCurveVerticalStep));
-                }
-
-            }
-            */
             System.Drawing.Font MsgFont = new Font("Verdana", 8.0f);
             String Msg = "Generated with " + Program.Version;
 
@@ -157,10 +141,6 @@ namespace SNASharp
 
             if (BitmapWhereDraw.Size.Width == 0 || BitmapWhereDraw.Size.Height == 0)
                 return;
-
-
-            //            int nWidth = Picture.Size.Width - LeftBorder - RightBorder;
-            //            int nHeight = Picture.Size.Height - UpBorder - LowBorder;
 
             int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
             int nHeight = BitmapWhereDraw.Size.Height - UpBorder - LowBorder;

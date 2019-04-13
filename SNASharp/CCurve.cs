@@ -12,9 +12,9 @@ namespace SNASharp
     {
         public CCurve()
         {
-            for ( int i = 0; i < MarkerArrayValues.Length;i++)
+            for ( int i = 0; i < UserMarkerArrayValues.Length;i++)
             {
-                MarkerArrayValues[i] = new MarkersValues();
+                UserMarkerArrayValues[i] = new MarkersValues();
             }
         }
         /*
@@ -86,50 +86,42 @@ namespace SNASharp
             MIN_LEVEL    
         };
 
-        private CurveBPMarker [] MarkerArray = new []{  CurveBPMarker.OFF,
+        private CurveBPMarker [] UserMarkerArray = new []{  CurveBPMarker.OFF,
                                                     CurveBPMarker.OFF,
                                                     CurveBPMarker.OFF,
                                                     CurveBPMarker.OFF,
                                                     CurveBPMarker.OFF,
                                                     CurveBPMarker.OFF };
 
-        private MarkersValues[] MarkerArrayValues = new MarkersValues[6];
-
-        //        MyArraylist MarkersList = new MyArraylist();
-
-
-        //  private AttEntry[] BPW = new AttEntry[] { };
+        private MarkersValues[] UserMarkerArrayValues = new MarkersValues[6];
+       
 
         // computed values to the curve
-        public Int64 nMaxLevelFrequency = -1;
-        public Int64 nMinLevelFrequency = -1;
+        private Int64 nMaxLevelFrequency = -1;
+        private Int64 nMinLevelFrequency = -1;
 
-        public float fMaxLeveldB = 0.0f;
-        public float fMinLeveldB = -90.0f;
 
-        public Int64 n3dBBandpass = -1;
-        public Int64 n3dBBandpassLowFrequency = -1;
-        public Int64 n3dBBandpassHighFrequency = -1;
+        private MarkersValues Marker3dB = new MarkersValues();
+        private MarkersValues Marker6dB = new MarkersValues();
+        private MarkersValues Marker60dB = new MarkersValues();
+        private float n6dB60dBfShapeFactor = -1.0f;
+        private YesNo Is_Visible = YesNo.Yes;
 
-        public Int64 n6dBBandpass = -1;
-        public Int64 n6dBBandpassLowFrequency = -1;
-        public Int64 n6dBBandpassHighFrequency = -1;
+        private DipoleDetected DipoleD = DipoleDetected.UNDERTERMINED;
 
-        public Int64 n60dBBandpass = -1;
-        public Int64 n60dBBandpassLowFrequency = -1;
-        public Int64 n60dBBandpassHighFrequency = -1;
-        public int nQ = -1;
-        public float n6dB60dBfShapeFactor = -1.0f;
+
         public Int64 nSpectrumLowFrequency = 0;
         public Int64 nSpectrumHighFrequency = 0;
         public Int64 nFrequencyStep = -1;
 
-        private YesNo Is_Visible = YesNo.Yes;
+
+        public float fMaxLeveldB = 0.0f;
+        public float fMinLeveldB = -90.0f;
+
         public byte R = 0;
         public byte G = 0;
         public byte B = 255;
 
-        DipoleDetected DipoleD = DipoleDetected.UNDERTERMINED;
 
         [XmlIgnore]
         public float LineWidth = 1.0f;
@@ -180,61 +172,45 @@ namespace SNASharp
         [Category("Markers")]
         public CurveBPMarker Marker_1
         {
-            get { return MarkerArray[0]; }
-            set { MarkerArray[0] = value; }
+            get { return UserMarkerArray[0]; }
+            set { UserMarkerArray[0] = value; }
         }
 
         [Category("Markers")]
         public CurveBPMarker Marker_2
         {
-            get { return MarkerArray[1]; }
-            set { MarkerArray[1] = value; }
+            get { return UserMarkerArray[1]; }
+            set { UserMarkerArray[1] = value; }
         }
 
         [Category("Markers")]
         public CurveBPMarker Marker_3
         {
-            get { return MarkerArray[2]; }
-            set { MarkerArray[2] = value; }
+            get { return UserMarkerArray[2]; }
+            set { UserMarkerArray[2] = value; }
         }
 
         [Category("Markers")]
         public CurveBPMarker Marker_4
         {
-            get { return MarkerArray[3]; }
-            set { MarkerArray[3] = value; }
+            get { return UserMarkerArray[3]; }
+            set { UserMarkerArray[3] = value; }
         }
 
         [Category("Markers")]
         public CurveBPMarker Marker_5
         {
-            get { return MarkerArray[4]; }
-            set { MarkerArray[4] = value; }
+            get { return UserMarkerArray[4]; }
+            set { UserMarkerArray[4] = value; }
         }
 
         [Category("Markers")]
         public CurveBPMarker Marker_6
         {
-            get { return MarkerArray[5]; }
-            set { MarkerArray[5] = value; }
+            get { return UserMarkerArray[5]; }
+            set { UserMarkerArray[5] = value; }
         }
 
-        /*
-        [DisplayName("Markers list")]
-        public CurveBPMarker [] Markers
-        {
-            get { return MarkerArray; }
-            set { MarkerArray = value; }
-        }
-
-        [DisplayName("Markers_")]
-        public AttEntry[] MarkersList_
-        {
-            get { return BPW; }
-            set { BPW = value; }
-        }
-        
-    */
 
         public override String ToString()
         {
@@ -259,7 +235,7 @@ namespace SNASharp
         }
 
 
-        void DrawLevel(float dB,Int64 LowFrequency, Int64 HighFrequency, Graphics g, CGraph Graph)
+        void DrawLevel(float dB, MarkersValues Marker, Graphics g, CGraph Graph)
         {
             Pen mypenArrow = new Pen(Color.Black, LineWidth);
             Pen mypenHline = new Pen(Color.Black, LineWidth);
@@ -268,6 +244,9 @@ namespace SNASharp
             Pen mypenVline = new Pen(Color.Black, LineWidth);
             mypenVline.DashStyle = DashStyle.DashDot;
 
+            System.Drawing.StringFormat VerticalTextDrawFormat = new System.Drawing.StringFormat();
+            VerticalTextDrawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
+
 
             System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
             String ndB =((int)dB).ToString()+"dB";
@@ -275,53 +254,97 @@ namespace SNASharp
             bool bCliped = false;
 
 
-
-            if (HighFrequency > 0 && LowFrequency > 0)
+            // bandpass
+            if (Marker.HighFreq > 0 && Marker.LowFreq > 0)
             {
 
 
                 // bandpass
-                PointF HCoords1 = Graph.GetCoords(LowFrequency, fMaxLeveldB + dB, ref bCliped);
+                PointF HCoords1 = Graph.GetCoords(Marker.LowFreq, fMaxLeveldB + dB, ref bCliped);
                 if (!bCliped) mypenHline.CustomStartCap = new AdjustableArrowCap(4.0f, 4.0f);
                 if (!bCliped)
                 {
                     PointF VCoords1 = new PointF(HCoords1.X, Graph.UpBorder);
                     PointF VCoords2 = new PointF(HCoords1.X,  Graph.BitmapWhereDraw.Height- Graph.LowBorder);
                     g.DrawLine(mypenVline, VCoords1, VCoords2);
+
+                    PointF CoordVCenter = new PointF(VCoords1.X, 0.5f * (VCoords1.Y + VCoords2.Y));
+                    g.DrawString(Utility.GetFrequencyStringAtBest(Marker.LowFreq), SampleFont, Brushes.Black, CoordVCenter, VerticalTextDrawFormat);
                 }
 
-
-                //if (!bCliped) DrawMarker(ndB, Coords1, g, SampleFont, mypenArrow, true, false);
-
-
-                PointF HCoords2 = Graph.GetCoords(HighFrequency, fMaxLeveldB + dB, ref bCliped);
+                PointF HCoords2 = Graph.GetCoords(Marker.HighFreq, fMaxLeveldB + dB, ref bCliped);
                 if (!bCliped) mypenHline.CustomEndCap = new AdjustableArrowCap(4.0f, 4.0f);
                 if (!bCliped)
                 {
                     PointF VCoords1 = new PointF(HCoords2.X, Graph.UpBorder);
                     PointF VCoords2 = new PointF(HCoords2.X, Graph.BitmapWhereDraw.Height - Graph.LowBorder);
                     g.DrawLine(mypenVline, VCoords1, VCoords2);
+
+                    PointF CoordVCenter = new PointF(VCoords1.X, 0.5f * (VCoords1.Y + VCoords2.Y));
+                    g.DrawString(Utility.GetFrequencyStringAtBest(Marker.HighFreq), SampleFont, Brushes.Black, CoordVCenter, VerticalTextDrawFormat);
+
                 }
 
                 g.DrawLine(mypenHline, HCoords1, HCoords2);
 
                 PointF CoordCenter = new PointF(0.5f * (HCoords1.X + HCoords2.X), HCoords1.Y);
-                g.DrawString(" " + ndB, SampleFont, Brushes.Black, CoordCenter);
+                g.DrawString(" " + ndB+ " ("+Utility.GetFrequencyStringAtBest(Marker.BandPass)+")", SampleFont, Brushes.Black, CoordCenter);
 
             }
             else
             {
-
-                if (HighFrequency > 0)
+                if (Marker.BandPass == 0)
                 {
-                    PointF Coords = Graph.GetCoords(HighFrequency, fMaxLeveldB + dB, ref bCliped);
-                    if (!bCliped) DrawMarker(ndB, Coords, g, SampleFont, mypenArrow, true);
+                    // Hline ( min or max)
+                    PointF Coords0 = Graph.GetCoords(this.nSpectrumLowFrequency, fMaxLeveldB + dB, ref bCliped);
+                    PointF Coords1 = Graph.GetCoords(this.nSpectrumHighFrequency, fMaxLeveldB + dB, ref bCliped);
+                    g.DrawLine(mypenHline, Coords0, Coords1);
                 }
-
-                if (LowFrequency > 0)
+                else
                 {
-                    PointF Coords = Graph.GetCoords(LowFrequency, fMaxLeveldB + dB, ref bCliped);
-                    if (!bCliped) DrawMarker(ndB, Coords, g, SampleFont, mypenArrow, false);
+                    if (Marker.HighFreq > 0)
+                    {
+                        // low pass
+                        PointF Coords0 = Graph.GetCoords(this.nSpectrumLowFrequency, fMaxLeveldB + dB, ref bCliped);
+                        PointF Coords1 = Graph.GetCoords(Marker.HighFreq, fMaxLeveldB + dB, ref bCliped);
+                        PointF Coords2 = new PointF(Coords1.X, Graph.BitmapWhereDraw.Height - Graph.LowBorder);
+
+                        g.DrawLine(mypenHline, Coords0, Coords1);
+                        g.DrawLine(mypenVline, Coords1, Coords2);
+
+
+                        PointF CoordHCenter = new PointF(0.5f * (Coords0.X + Coords1.X), Coords0.Y);
+                        PointF CoordVCenter = new PointF(Coords1.X , 0.5f*(Coords1.Y+ Coords2.Y));
+
+                        g.DrawString(Utility.GetFrequencyStringAtBest(Marker.HighFreq), SampleFont, Brushes.Black, CoordVCenter,VerticalTextDrawFormat);
+                        g.DrawString(ndB , SampleFont, Brushes.Black, CoordHCenter);
+
+                    }
+
+                    if (Marker.LowFreq > 0)
+                    {
+                        // high pass
+                        //PointF Coords = Graph.GetCoords(Marker.LowFreq, fMaxLeveldB + dB, ref bCliped);
+                        //if (!bCliped) DrawMarker(ndB, Coords, g, SampleFont, mypenArrow, false);
+
+
+                        PointF Coords0 = Graph.GetCoords(this.nSpectrumHighFrequency, fMaxLeveldB + dB, ref bCliped);
+                        PointF Coords1 = Graph.GetCoords(Marker.LowFreq, fMaxLeveldB + dB, ref bCliped);
+                        PointF Coords2 = new PointF(Coords1.X, Graph.BitmapWhereDraw.Height - Graph.LowBorder);
+
+
+                        g.DrawLine(mypenHline, Coords0, Coords1);
+                        g.DrawLine(mypenVline, Coords1, Coords2);
+
+
+                        PointF CoordCenter = new PointF(0.5f * (Coords0.X + Coords1.X), Coords0.Y);
+                        PointF CoordVCenter = new PointF(Coords1.X, 0.5f * (Coords1.Y + Coords2.Y));
+
+                        g.DrawString(Utility.GetFrequencyStringAtBest(Marker.LowFreq), SampleFont, Brushes.Black, CoordVCenter, VerticalTextDrawFormat);
+
+                        g.DrawString(ndB, SampleFont, Brushes.Black, CoordCenter);
+
+                    }
                 }
             }
 
@@ -333,9 +356,9 @@ namespace SNASharp
             System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
             
             //foreach  (CurveBPMarker Marker in MarkerArray)
-            for ( int nIndex = 0; nIndex < MarkerArray.Length; nIndex++)
+            for ( int nIndex = 0; nIndex < UserMarkerArray.Length; nIndex++)
             {
-                CurveBPMarker Marker = MarkerArray[nIndex];
+                CurveBPMarker Marker = UserMarkerArray[nIndex];
                 float fdB = 0.0f;
                 if (Marker != CurveBPMarker.OFF)
                 {
@@ -357,7 +380,7 @@ namespace SNASharp
                             fdB =  - ((int)Marker);
                             break;
                     }
-                    DrawLevel(fdB, MarkerArrayValues[nIndex].LowFreq, MarkerArrayValues[nIndex].HighFreq, g, Graph);
+                    DrawLevel(fdB, UserMarkerArrayValues[nIndex], g, Graph);
 
 
                 }
@@ -474,7 +497,11 @@ namespace SNASharp
                     else
                         g.DrawString("Samples: " + nSpectrumCount.ToString() + " (" + fPixelPerSample.ToString() + " Pixel per sample)", SampleFont, Brushes.Red, new Point(nWidth - 180, 10));
                 }
-                DrawAdditionnalsInfos(g, Graph);
+
+                if (Graph.outputMode == OutputMode.dB)
+                {
+                    DrawAdditionnalsInfos(g, Graph);
+                }
             }
 
             g.Dispose();
@@ -507,15 +534,15 @@ namespace SNASharp
             fMaxLeveldB = SpectrumValues[Utility.RetrieveMaxValueIndex(SpectrumValues)];
         }
 
-        private DipoleDetected DetermineDipoleType(int LowIndex, int nHighIndex, int nCount)
+        private DipoleDetected DetermineDipoleType(ref MarkersValues Marker)
         {
-            if (LowIndex == 0 && nHighIndex == SpectrumValues.Length - 1)
+            if (Marker.LowFreq == -1 && Marker.HighFreq == - 1)
                 return DipoleDetected.FLAT;
 
-            if (LowIndex == 0)
+            if (Marker.LowFreq == -1)
                 return DipoleDetected.LPF;
 
-            if (nHighIndex == SpectrumValues.Length - 1)
+            if (Marker.HighFreq == - 1)
                 return DipoleDetected.HPF;
 
             return DipoleDetected.BPF;
@@ -543,33 +570,33 @@ namespace SNASharp
                     break;
                 case DipoleDetected.LPF:
                     Result += "Low pass "+ NL;
-                    Result += "3dB cut off : " + Utility.GetStringWithSeparators(n3dBBandpassHighFrequency," ")+"Hz";
-                    if (n6dBBandpassHighFrequency != -1)
+                    Result += "3dB cut off : " + Utility.GetStringWithSeparators(Marker3dB.HighFreq, " ")+"Hz";
+                    if (Marker6dB.HighFreq != -1)
                     {
-                        Result += NL+"6dB cut off : " + Utility.GetStringWithSeparators(n6dBBandpassHighFrequency, " ") + "Hz";
+                        Result += NL+"6dB cut off : " + Utility.GetStringWithSeparators(Marker6dB.HighFreq, " ") + "Hz";
                     }
 
                     break;
                 case DipoleDetected.HPF:
                     Result += "High pass "+ NL;
-                    Result += "3dB cut off : " + Utility.GetStringWithSeparators(n3dBBandpassLowFrequency, " ") + "Hz";
-                    if (n6dBBandpassLowFrequency != -1)
+                    Result += "3dB cut off : " + Utility.GetStringWithSeparators(Marker3dB.LowFreq, " ") + "Hz";
+                    if (Marker6dB.LowFreq != -1)
                     {
-                        Result += NL + "6dB cut off : " + Utility.GetStringWithSeparators(n6dBBandpassLowFrequency, " ") + "Hz";
+                        Result += NL + "6dB cut off : " + Utility.GetStringWithSeparators(Marker6dB.LowFreq, " ") + "Hz";
                     }
 
                     break;
                 case DipoleDetected.BPF:
                     Result += "Band pass "+ NL;
-                    Result += "3dB Low : " + Utility.GetStringWithSeparators(n3dBBandpassLowFrequency, " ") + "Hz"+ NL;
-                    Result += "3dB high : " + Utility.GetStringWithSeparators(n3dBBandpassHighFrequency, " ") + "Hz"+ NL;
-                    Result += "3dB BP : " + Utility.GetStringWithSeparators(n3dBBandpass, " ") + "Hz";
+                    Result += "3dB Low : " + Utility.GetStringWithSeparators(Marker3dB.LowFreq, " ") + "Hz"+ NL;
+                    Result += "3dB high : " + Utility.GetStringWithSeparators(Marker3dB.HighFreq, " ") + "Hz"+ NL;
+                    Result += "3dB BP : " + Utility.GetStringWithSeparators(Marker3dB.BandPass, " ") + "Hz";
 
-                    if (n6dBBandpass != -1)
+                    if (Marker6dB.BandPass != -1)
                     {
-                        Result += NL+"6dB Low : " + Utility.GetStringWithSeparators(n6dBBandpassLowFrequency, " ") + "Hz" + NL;
-                        Result += "6dB high : " + Utility.GetStringWithSeparators(n6dBBandpassHighFrequency, " ") + "Hz" + NL;
-                        Result += "6dB BP : " + Utility.GetStringWithSeparators(n6dBBandpass, " ") + "Hz";
+                        Result += NL+"6dB Low : " + Utility.GetStringWithSeparators(Marker6dB.LowFreq, " ") + "Hz" + NL;
+                        Result += "6dB high : " + Utility.GetStringWithSeparators(Marker6dB.HighFreq, " ") + "Hz" + NL;
+                        Result += "6dB BP : " + Utility.GetStringWithSeparators(Marker6dB.BandPass, " ") + "Hz";
                     }
 
                     if (n6dB60dBfShapeFactor != -1)
@@ -580,12 +607,15 @@ namespace SNASharp
 
                     break;
             }
+            //Result += "USER MARKERS"+ NL;
+
+
+
             return Result;
         }
 
         public void ComputeMarkerFrequencies(ref MarkersValues dest,
                                              float fLevelToFind, 
-                                             bool BandPassToChek,
                                              int nMaxLevelIndex)
         {
             int nLeftIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fLevelToFind);
@@ -603,7 +633,7 @@ namespace SNASharp
                 dest.HighFreq = -1;
 
 
-            if (dest.LowFreq != -1 && dest.HighFreq != -1 && BandPassToChek)
+            if (dest.LowFreq != -1 && dest.HighFreq != -1 )
                 dest.BandPass = dest.HighFreq - dest.LowFreq;
             else
                 dest.BandPass = -1;
@@ -626,122 +656,48 @@ namespace SNASharp
             nMaxLevelFrequency = nSpectrumLowFrequency + nMaxLevelIndex * nFrequencyStep;
             nMinLevelFrequency = nSpectrumLowFrequency + nMinLevelIndex * nFrequencyStep;
 
-            //foreach  (CurveBPMarker Marker in MarkerArray)
-            for ( int nIndex = 0; nIndex < MarkerArray.Length; nIndex++)
+            for ( int nIndex = 0; nIndex < UserMarkerArray.Length; nIndex++)
             {
-                CurveBPMarker Marker = MarkerArray[nIndex];
+                CurveBPMarker Marker = UserMarkerArray[nIndex];
 
                 if (Marker != CurveBPMarker.OFF)
                 {
                     switch (Marker)
                     {
                         case CurveBPMarker.MAX_LEVEL:
-                            MarkerArrayValues[nIndex].LowFreq = nMaxLevelFrequency;
-                            MarkerArrayValues[nIndex].HighFreq = -1;
-                            MarkerArrayValues[nIndex].BandPass = -1;
+                            UserMarkerArrayValues[nIndex].LowFreq = nMaxLevelFrequency;
+                            UserMarkerArrayValues[nIndex].HighFreq = -1;
+                            UserMarkerArrayValues[nIndex].BandPass = 0;
                             break;
                         case CurveBPMarker.MIN_LEVEL:
-                            MarkerArrayValues[nIndex].LowFreq = nMinLevelFrequency;
-                            MarkerArrayValues[nIndex].HighFreq = -1;
-                            MarkerArrayValues[nIndex].BandPass = -1;
+                            UserMarkerArrayValues[nIndex].LowFreq = nMinLevelFrequency;
+                            UserMarkerArrayValues[nIndex].HighFreq = -1;
+                            UserMarkerArrayValues[nIndex].BandPass = 0;
                             break;
                         case CurveBPMarker.BP_3dB_TO_MIN:
-                            ComputeMarkerFrequencies(ref MarkerArrayValues[nIndex], (fMinLeveldB + 3.0f), true, nMaxLevelIndex);
+                            ComputeMarkerFrequencies(ref UserMarkerArrayValues[nIndex], (fMinLeveldB + 3.0f), nMaxLevelIndex);
                             break;
                         case CurveBPMarker.BP_6dB_TO_MIN:
-                            ComputeMarkerFrequencies(ref MarkerArrayValues[nIndex], (fMinLeveldB + 6.0f), true, nMaxLevelIndex);
+                            ComputeMarkerFrequencies(ref UserMarkerArrayValues[nIndex], (fMinLeveldB + 6.0f), nMaxLevelIndex);
                             break;
                         default:
-                            ComputeMarkerFrequencies(ref MarkerArrayValues[nIndex], (fMaxLeveldB - ((int)Marker)), true, nMaxLevelIndex);
+                            ComputeMarkerFrequencies(ref UserMarkerArrayValues[nIndex], (fMaxLeveldB - ((int)Marker)), nMaxLevelIndex);
                             break;
                     }
                 }
             }
 
+            ComputeMarkerFrequencies(ref Marker3dB, fMaxLeveldB - 3.0f, nMaxLevelIndex);
+            DipoleD = DetermineDipoleType(ref Marker3dB);
+            ComputeMarkerFrequencies(ref Marker6dB, fMaxLeveldB - 6.0f, nMaxLevelIndex);
+            ComputeMarkerFrequencies(ref Marker60dB, fMaxLeveldB - 60.0f, nMaxLevelIndex);
 
-            int nLeft3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 3.0f);
-            n3dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft3dBIndex * nFrequencyStep;
-
-            int nRight3dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 3.0f);
-            n3dBBandpassHighFrequency = nSpectrumLowFrequency + nRight3dBIndex * nFrequencyStep;
-
-            DipoleD = DetermineDipoleType(nLeft3dBIndex, nRight3dBIndex, SpectrumValues.Length);
-
-
-            if (DipoleD == DipoleDetected.BPF)
+            if (Marker60dB.BandPass  != -1)
             {
-                n3dBBandpass = (int)((nRight3dBIndex - nLeft3dBIndex) * nFrequencyStep);
+                n6dB60dBfShapeFactor = ((float)Marker60dB.BandPass / Marker6dB.BandPass);
             }
             else
             {
-                n3dBBandpass = -1;
-                if (nLeft3dBIndex == 0)
-                    n3dBBandpassLowFrequency = -1;
-
-                if (nRight3dBIndex >= SpectrumValues.Length - 2)
-                    n3dBBandpassHighFrequency = -1;
-            }
-
-            int nLeft6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 6.0f);
-            if (nLeft6dBIndex != 0)
-            {
-                n6dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft6dBIndex * nFrequencyStep;
-            }
-            else
-            {
-                n6dBBandpassLowFrequency = -1;
-            }
-
-            int nRight6dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 6.0f);
-            if (nRight6dBIndex < SpectrumValues.Length - 1)
-            {
-                n6dBBandpassHighFrequency = nSpectrumLowFrequency + nRight6dBIndex * nFrequencyStep;
-            }
-            else
-            {
-                n6dBBandpassHighFrequency = -1;
-            }
-
-//            DipoleDetected DipoleAt6dB = DetermineDipoleType(nLeft6dBIndex, nRight6dBIndex, SpectrumValues.Length);
-
-
-            if (n6dBBandpassHighFrequency != -1 && n6dBBandpassLowFrequency != -1)
-            {
-                n6dBBandpass = (int)((nRight6dBIndex - nLeft6dBIndex) * nFrequencyStep);
-            }
-            else
-            {
-                n6dBBandpass = -1;
-            }
-
-            int nLeft60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, -1, fMaxLeveldB - 60.0f);
-
-            if (nLeft60dBIndex != 0)
-                n60dBBandpassLowFrequency = nSpectrumLowFrequency + nLeft60dBIndex * nFrequencyStep;
-            else
-                n60dBBandpassLowFrequency = -1;
-
-
-
-            int nRight60dBIndex = Utility.FindLevelIndex(SpectrumValues, nMaxLevelIndex, 1, fMaxLeveldB - 60.0f);
-            if (nRight60dBIndex < SpectrumValues.Length - 1)
-                n60dBBandpassHighFrequency = nSpectrumLowFrequency + nRight60dBIndex * nFrequencyStep;
-            else
-                n60dBBandpassHighFrequency = -1;
-
-
-            //DipoleDetected DipoleAt60dB = DetermineDipoleType(nLeft60dBIndex, nRight60dBIndex, SpectrumValues.Length);
-
-
-
-            if (n60dBBandpassHighFrequency != -1 && n60dBBandpassLowFrequency!=-1)
-            {
-                n60dBBandpass = (int)((nRight60dBIndex - nLeft60dBIndex) * nFrequencyStep);
-                n6dB60dBfShapeFactor = ((float)n60dBBandpass / n6dBBandpass);
-            }
-            else
-            {
-                n60dBBandpass = -1;
                 n6dB60dBfShapeFactor = -1;
             }
 

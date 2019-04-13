@@ -26,6 +26,19 @@ namespace SNASharp
             return StringWithSeparator;
         }
 
+
+        public static String GetFrequencyStringAtBest(Int64 nValue)
+        {
+            if (nValue > 100000000)
+            {
+                return GetStringWithSeparators(nValue / 1000, " ") + "kHz";
+            }
+            else
+            {
+                return GetStringWithSeparators(nValue, " ") + "Hz";
+            }
+        }
+
         public static String GetStringWithSeparators(Int64 nValue, String Separator)
         {
 
