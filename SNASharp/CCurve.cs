@@ -237,8 +237,8 @@ namespace SNASharp
 
         void DrawLevel(float dB, MarkersValues Marker, Graphics g, CGraph Graph)
         {
-            Pen mypenArrow = new Pen(Color.Black, LineWidth);
-            Pen mypenHline = new Pen(Color.Black, LineWidth);
+            Pen mypenArrow = new Pen(Color.Black, 1.0f);
+            Pen mypenHline = new Pen(Color.Black, 1.0f);
             mypenHline.DashStyle = DashStyle.Dash;
 
             Pen mypenVline = new Pen(Color.Black, LineWidth);
@@ -248,7 +248,8 @@ namespace SNASharp
             VerticalTextDrawFormat.FormatFlags = StringFormatFlags.DirectionVertical;
 
 
-            System.Drawing.Font SampleFont = new Font("Verdana", 8.0f);
+            System.Drawing.Font SampleFont = new Font("Verdana", Graph.BitmapWhereDraw.Width/120.0f);
+
             String ndB =((int)dB).ToString()+"dB";
 
             bool bCliped = false;
@@ -261,7 +262,7 @@ namespace SNASharp
 
                 // bandpass
                 PointF HCoords1 = Graph.GetCoords(Marker.LowFreq, fMaxLeveldB + dB, ref bCliped);
-                if (!bCliped) mypenHline.CustomStartCap = new AdjustableArrowCap(4.0f, 4.0f);
+                if (!bCliped) mypenHline.CustomStartCap = new AdjustableArrowCap(5.0f, 5.0f);
                 if (!bCliped)
                 {
                     PointF VCoords1 = new PointF(HCoords1.X, Graph.UpBorder);
@@ -273,7 +274,7 @@ namespace SNASharp
                 }
 
                 PointF HCoords2 = Graph.GetCoords(Marker.HighFreq, fMaxLeveldB + dB, ref bCliped);
-                if (!bCliped) mypenHline.CustomEndCap = new AdjustableArrowCap(4.0f, 4.0f);
+                if (!bCliped) mypenHline.CustomEndCap = new AdjustableArrowCap(5.0f, 5.0f);
                 if (!bCliped)
                 {
                     PointF VCoords1 = new PointF(HCoords2.X, Graph.UpBorder);
@@ -323,19 +324,12 @@ namespace SNASharp
 
                     if (Marker.LowFreq > 0)
                     {
-                        // high pass
-                        //PointF Coords = Graph.GetCoords(Marker.LowFreq, fMaxLeveldB + dB, ref bCliped);
-                        //if (!bCliped) DrawMarker(ndB, Coords, g, SampleFont, mypenArrow, false);
-
-
                         PointF Coords0 = Graph.GetCoords(this.nSpectrumHighFrequency, fMaxLeveldB + dB, ref bCliped);
                         PointF Coords1 = Graph.GetCoords(Marker.LowFreq, fMaxLeveldB + dB, ref bCliped);
                         PointF Coords2 = new PointF(Coords1.X, Graph.BitmapWhereDraw.Height - Graph.LowBorder);
 
-
                         g.DrawLine(mypenHline, Coords0, Coords1);
                         g.DrawLine(mypenVline, Coords1, Coords2);
-
 
                         PointF CoordCenter = new PointF(0.5f * (Coords0.X + Coords1.X), Coords0.Y);
                         PointF CoordVCenter = new PointF(Coords1.X, 0.5f * (Coords1.Y + Coords2.Y));
