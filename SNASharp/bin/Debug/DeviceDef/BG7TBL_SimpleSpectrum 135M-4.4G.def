@@ -5,7 +5,10 @@
   <Attenuator>false</Attenuator>
   <AD8309>true</AD8309>
   <AD8361>false</AD8361>
-  <Firmware />
+  <AllowedFirmwaresVersions>
+    <int>110</int>
+    <int>119</int>
+  </AllowedFirmwaresVersions>
   <MinFrequencyInHz>135000000</MinFrequencyInHz>
   <MaxFrequencyInHz>4400000000</MaxFrequencyInHz>
   <FrequencyDivisor>10</FrequencyDivisor>
