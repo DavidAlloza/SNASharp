@@ -842,7 +842,7 @@ namespace SNASharp
 
         void UpdateSampleCount()
         {
-            if (nFrequencyDetectionEnd - nFrequencyDetectionStart < Convert.ToInt32(SamplesTextBox.Text))
+            if (nFrequencyDetectionEnd - nFrequencyDetectionStart < Convert.ToInt64(SamplesTextBox.Text))
             {
                 SamplesTextBox.Text = (nFrequencyDetectionEnd - nFrequencyDetectionStart).ToString();
                 SamplesTextBox.ForeColor = Color.Red;
@@ -1183,8 +1183,5 @@ namespace SNASharp
         {
             SpectrumPictureBox.CopyPictureToclipboard();
         }
-
-
-
     }
 }

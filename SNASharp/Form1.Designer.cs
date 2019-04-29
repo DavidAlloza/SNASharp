@@ -39,7 +39,9 @@
             this.AutodetectButton = new System.Windows.Forms.Button();
             this.OperationsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label17 = new System.Windows.Forms.Label();
             this.ForceRangeButton = new System.Windows.Forms.Button();
+            this.FilterComboBox = new System.Windows.Forms.ComboBox();
             this.SaveCurveButton = new System.Windows.Forms.Button();
             this.LoadCurveButton = new System.Windows.Forms.Button();
             this.DeleteCurveButton = new System.Windows.Forms.Button();
@@ -81,8 +83,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.TransformerComboBox = new System.Windows.Forms.ComboBox();
             this.ControlgroupBox = new System.Windows.Forms.GroupBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.FilterComboBox = new System.Windows.Forms.ComboBox();
             this.ControlResetButton = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.OutputModeComboBox = new System.Windows.Forms.ComboBox();
@@ -220,7 +220,9 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage2.Controls.Add(this.label17);
             this.tabPage2.Controls.Add(this.ForceRangeButton);
+            this.tabPage2.Controls.Add(this.FilterComboBox);
             this.tabPage2.Controls.Add(this.SaveCurveButton);
             this.tabPage2.Controls.Add(this.LoadCurveButton);
             this.tabPage2.Controls.Add(this.DeleteCurveButton);
@@ -240,21 +242,39 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sweepmode";
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(284, 11);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(66, 13);
+            this.label17.TabIndex = 25;
+            this.label17.Text = "Capture filter";
+            // 
             // ForceRangeButton
             // 
-            this.ForceRangeButton.Location = new System.Drawing.Point(7, 243);
+            this.ForceRangeButton.Location = new System.Drawing.Point(6, 252);
             this.ForceRangeButton.Name = "ForceRangeButton";
-            this.ForceRangeButton.Size = new System.Drawing.Size(68, 37);
+            this.ForceRangeButton.Size = new System.Drawing.Size(68, 43);
             this.ForceRangeButton.TabIndex = 13;
             this.ForceRangeButton.Text = "Force\r\nRange";
             this.ForceRangeButton.UseVisualStyleBackColor = true;
             this.ForceRangeButton.Click += new System.EventHandler(this.ForceRangeButton_Click);
             // 
+            // FilterComboBox
+            // 
+            this.FilterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FilterComboBox.FormattingEnabled = true;
+            this.FilterComboBox.Location = new System.Drawing.Point(287, 27);
+            this.FilterComboBox.Name = "FilterComboBox";
+            this.FilterComboBox.Size = new System.Drawing.Size(75, 21);
+            this.FilterComboBox.TabIndex = 24;
+            // 
             // SaveCurveButton
             // 
             this.SaveCurveButton.Location = new System.Drawing.Point(81, 200);
             this.SaveCurveButton.Name = "SaveCurveButton";
-            this.SaveCurveButton.Size = new System.Drawing.Size(68, 37);
+            this.SaveCurveButton.Size = new System.Drawing.Size(68, 46);
             this.SaveCurveButton.TabIndex = 12;
             this.SaveCurveButton.Text = "Save \r\ncurve";
             this.SaveCurveButton.UseVisualStyleBackColor = true;
@@ -264,7 +284,7 @@
             // 
             this.LoadCurveButton.Location = new System.Drawing.Point(5, 200);
             this.LoadCurveButton.Name = "LoadCurveButton";
-            this.LoadCurveButton.Size = new System.Drawing.Size(70, 37);
+            this.LoadCurveButton.Size = new System.Drawing.Size(70, 46);
             this.LoadCurveButton.TabIndex = 11;
             this.LoadCurveButton.Text = "Load \r\ncurve";
             this.LoadCurveButton.UseVisualStyleBackColor = true;
@@ -305,7 +325,7 @@
             // 
             this.CurveListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CurveListComboBox.FormattingEnabled = true;
-            this.CurveListComboBox.Location = new System.Drawing.Point(156, 75);
+            this.CurveListComboBox.Location = new System.Drawing.Point(155, 80);
             this.CurveListComboBox.Name = "CurveListComboBox";
             this.CurveListComboBox.Size = new System.Drawing.Size(207, 21);
             this.CurveListComboBox.TabIndex = 7;
@@ -336,7 +356,7 @@
             this.DetectorCombobox.FormattingEnabled = true;
             this.DetectorCombobox.Location = new System.Drawing.Point(155, 27);
             this.DetectorCombobox.Name = "DetectorCombobox";
-            this.DetectorCombobox.Size = new System.Drawing.Size(207, 21);
+            this.DetectorCombobox.Size = new System.Drawing.Size(126, 21);
             this.DetectorCombobox.TabIndex = 4;
             // 
             // SweepLoopStopButton
@@ -352,7 +372,7 @@
             // 
             // SweepLoopProcessButton
             // 
-            this.SweepLoopProcessButton.Location = new System.Drawing.Point(6, 62);
+            this.SweepLoopProcessButton.Location = new System.Drawing.Point(6, 67);
             this.SweepLoopProcessButton.Name = "SweepLoopProcessButton";
             this.SweepLoopProcessButton.Size = new System.Drawing.Size(143, 34);
             this.SweepLoopProcessButton.TabIndex = 2;
@@ -363,7 +383,7 @@
             // SweepProcessButton
             // 
             this.SweepProcessButton.BackColor = System.Drawing.Color.PaleGreen;
-            this.SweepProcessButton.Location = new System.Drawing.Point(6, 14);
+            this.SweepProcessButton.Location = new System.Drawing.Point(6, 27);
             this.SweepProcessButton.Name = "SweepProcessButton";
             this.SweepProcessButton.Size = new System.Drawing.Size(143, 34);
             this.SweepProcessButton.TabIndex = 0;
@@ -688,8 +708,6 @@
             // ControlgroupBox
             // 
             this.ControlgroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ControlgroupBox.Controls.Add(this.label17);
-            this.ControlgroupBox.Controls.Add(this.FilterComboBox);
             this.ControlgroupBox.Controls.Add(this.ControlResetButton);
             this.ControlgroupBox.Controls.Add(this.label15);
             this.ControlgroupBox.Controls.Add(this.OutputModeComboBox);
@@ -712,24 +730,6 @@
             this.ControlgroupBox.TabIndex = 14;
             this.ControlgroupBox.TabStop = false;
             this.ControlgroupBox.Text = "Controls";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(160, 123);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(66, 13);
-            this.label17.TabIndex = 25;
-            this.label17.Text = "Capture filter";
-            // 
-            // FilterComboBox
-            // 
-            this.FilterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.FilterComboBox.FormattingEnabled = true;
-            this.FilterComboBox.Location = new System.Drawing.Point(163, 139);
-            this.FilterComboBox.Name = "FilterComboBox";
-            this.FilterComboBox.Size = new System.Drawing.Size(75, 21);
-            this.FilterComboBox.TabIndex = 24;
             // 
             // ControlResetButton
             // 
@@ -823,7 +823,7 @@
             this.SelectecDeviceComboBox.FormattingEnabled = true;
             this.SelectecDeviceComboBox.Location = new System.Drawing.Point(153, 4);
             this.SelectecDeviceComboBox.Name = "SelectecDeviceComboBox";
-            this.SelectecDeviceComboBox.Size = new System.Drawing.Size(272, 21);
+            this.SelectecDeviceComboBox.Size = new System.Drawing.Size(285, 21);
             this.SelectecDeviceComboBox.TabIndex = 16;
             this.SelectecDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.SelectecDeviceComboBox_SelectedIndexChanged);
             // 
@@ -841,7 +841,7 @@
             // 
             this.SerialPortComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SerialPortComboBox.FormattingEnabled = true;
-            this.SerialPortComboBox.Location = new System.Drawing.Point(476, 2);
+            this.SerialPortComboBox.Location = new System.Drawing.Point(486, 2);
             this.SerialPortComboBox.Name = "SerialPortComboBox";
             this.SerialPortComboBox.Size = new System.Drawing.Size(159, 21);
             this.SerialPortComboBox.TabIndex = 18;
@@ -852,7 +852,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(444, 6);
+            this.label13.Location = new System.Drawing.Point(454, 6);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(26, 13);
             this.label13.TabIndex = 19;
@@ -861,7 +861,7 @@
             // FirmwareTextBox
             // 
             this.FirmwareTextBox.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FirmwareTextBox.Location = new System.Drawing.Point(743, 2);
+            this.FirmwareTextBox.Location = new System.Drawing.Point(754, 2);
             this.FirmwareTextBox.Name = "FirmwareTextBox";
             this.FirmwareTextBox.ReadOnly = true;
             this.FirmwareTextBox.Size = new System.Drawing.Size(40, 22);
@@ -870,7 +870,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(651, 7);
+            this.label14.Location = new System.Drawing.Point(662, 7);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(86, 13);
             this.label14.TabIndex = 21;
@@ -879,7 +879,7 @@
             // AutodetectCOMcheckBox
             // 
             this.AutodetectCOMcheckBox.AutoSize = true;
-            this.AutodetectCOMcheckBox.Location = new System.Drawing.Point(789, 5);
+            this.AutodetectCOMcheckBox.Location = new System.Drawing.Point(809, 5);
             this.AutodetectCOMcheckBox.Name = "AutodetectCOMcheckBox";
             this.AutodetectCOMcheckBox.Size = new System.Drawing.Size(172, 17);
             this.AutodetectCOMcheckBox.TabIndex = 22;
