@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
+
 namespace NWTInterface
 {
     public enum AttLevel { _0dB, _10dB, _20dB, _30dB, _40dB, _50dB };
@@ -42,15 +43,13 @@ namespace NWTInterface
         {
         }
 
-
         protected new String _ModelName = "NWTCompatible";
         protected new String _BuilderName = "Homemade";
-        protected int _FirmwareVersion = 110;
+        protected int[] _FirmwareVersions = new int[] { 110,119 };
+
         protected bool _HaveAttenuator = false;
         protected bool _HaveAD8309 = true;
         protected bool _HaveAD8361 = false;
-
-
 
         public string ModelName
         {
@@ -87,10 +86,10 @@ namespace NWTInterface
         }
 
 
-        public int Firmware
+        public int[] AllowedFirmwaresVersions
         {
-            get { return _FirmwareVersion; }
-            set { _FirmwareVersion = value; }
+            get { return _FirmwareVersions; }
+            set { _FirmwareVersions = value; }
         }
 
         public Int64 MinFrequencyInHz
@@ -395,6 +394,7 @@ namespace NWTInterface
             }
         }
 
+
         public void RunCalibration(CBackNotifier Notifier, int nCount, bool bLinear = false)
         {
 
@@ -410,6 +410,7 @@ namespace NWTInterface
                                           Notifier,
                                           null,
                                           Out);
+            SNASharp.Utility.FilterArray(Out, 2);
 
             CalibrationValues.SetReferenceArray(CurrentLevel, Out, bLinear);
             Notifier.SendProgress(0, 0.0f);
@@ -568,6 +569,11 @@ namespace NWTInterface
 
                  nLowByte = StreamFromSNA[0];
                  nHighByte = StreamFromSNA[1];
+
+                /*
+                nLowByte *= 4;
+                nHighByte *= 4;
+                */
 
                 int nMesure = (nHighByte << 8) + nLowByte;
 

@@ -55,7 +55,10 @@ namespace SNASharp
             Text = Program.Version;
             QSelectionComboBox.DataSource = Enum.GetValues(typeof(QualityFactor));
             OutputModeComboBox.DataSource = Enum.GetValues(typeof(OutputMode));
+            FilterComboBox.DataSource = Enum.GetValues(typeof(FilterMode));
             OutputModeComboBox.SelectedItem = Program.Save.Output;
+            FilterComboBox.SelectedItem = Program.Save.Filter;
+
 
             AttLevelcomboBox.SelectedIndexChanged -= AttLevelcomboBox_SelectedIndexChanged;
             AttLevelcomboBox.DataSource = Enum.GetValues(typeof(AttLevel));
@@ -144,7 +147,18 @@ namespace SNASharp
                 LOGDraw("Firmware version : " + DeviceInterface.nFirmwareVersionNumber.ToString());
                 FirmwareTextBox.Text = DeviceInterface.nFirmwareVersionNumber.ToString();
 
-                if (DeviceInterface.nFirmwareVersionNumber == DeviceInterface.GetDevice().Firmware)
+                bool bFirmwareOK = false;
+
+                foreach (int i in DeviceInterface.GetDevice().AllowedFirmwaresVersions)
+                {
+                    if ( i == DeviceInterface.nFirmwareVersionNumber)
+                    {
+                        bFirmwareOK = true;
+                        break;
+                    }
+                }
+
+                if (bFirmwareOK)
                 {
                     FirmwareTextBox.BackColor = Color.Chartreuse;
                     LOGDraw("Compatible analyzer found on port " + PortName);
@@ -1018,6 +1032,7 @@ namespace SNASharp
             Program.Save.LastUsedDevice = GetDevice(SelectecDeviceComboBox.SelectedIndex).ToString();
             Program.Save.LastUsedCOMPort = (String)SerialPortComboBox.SelectedItem;
             Program.Save.Output = (OutputMode)OutputModeComboBox.SelectedItem;
+            Program.Save.Filter = (FilterMode)FilterComboBox.SelectedItem;
             Program.Save.LowFrequency = nFrequencyDetectionStart;
             Program.Save.HighFrequency = nFrequencyDetectionEnd;
 
@@ -1168,5 +1183,8 @@ namespace SNASharp
         {
             SpectrumPictureBox.CopyPictureToclipboard();
         }
+
+
+
     }
 }

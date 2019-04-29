@@ -61,10 +61,10 @@ namespace SNASharp
             //Image = new Bitmap(BackGroundBackup);
 
             DisplayFrequencyAndLevelOnCorners(e.X);
-            //Graphics g = Graphics.FromImage(Image);
 
-            //g.DrawLine(new Pen(Color.Black), new Point(0, 0), new Point(e.X, e.Y));
-            //g.Dispose();
+//            Graphics g = Graphics.FromImage(Image);
+//            g.DrawLine(new Pen(Color.Black), new Point(0, 0), new Point(e.X, e.Y));
+//            g.Dispose();
         }
 
         public void DisplayFrequencyAndLevelOnCorners(int nXMouse)
@@ -348,8 +348,12 @@ namespace SNASharp
             //BackGroundBackup = new Bitmap(PictureBoxBitmap);
             
         }
-
-
+        /*
+        public void FastBitmapCopy(Bitmap Source, Bitmap Dest)
+        {
+            Source.
+        }
+        */
         public void SetActiveCurve(CCurve Active)
         {
             ActiveCurve = Active;
@@ -396,7 +400,7 @@ namespace SNASharp
         private CGraph GraphConfig = new CGraph();
         private ArrayList CurvesList = new ArrayList();
         private CCurve ActiveCurve = null;
-        //Bitmap BackGroundBackup = null;
+        Bitmap BackGroundBackup = null;
         Bitmap PictureBoxBitmap = null;
 
 

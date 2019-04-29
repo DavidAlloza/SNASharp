@@ -126,6 +126,7 @@ namespace SNASharp
 
             if (AcquisitionParams.ResultDatas != null)
             {
+                Utility.FilterArray(AcquisitionParams.ResultDatas, (int)((FilterMode)FilterComboBox.SelectedItem));
                 CurveConfig.SpectrumValues = AcquisitionParams.ResultDatas;
                 CurveConfig.DetermineMinMaxLevels();
                 CurveConfig.ComputeCaracteristicsParams();
@@ -264,7 +265,6 @@ namespace SNASharp
 
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Curves files (*.xml)|*.xml|all files (*.*)|*.*";
-            //CurveDef CurveToLoad = (CurveDef)CurveConfigPropertyGrid.SelectedObject;
             dialog.InitialDirectory = Program.CurvesPath;
 
 
@@ -291,6 +291,16 @@ namespace SNASharp
                 }
             }
 
+        }
+
+        private void ForceRangeButton_Click(object sender, EventArgs e)
+        {
+            CCurve ActiveCurve = (CCurve)CurveConfigPropertyGrid.SelectedObject;
+            if (ActiveCurve != null && ActiveCurve.SpectrumValues != null)
+            {
+                SetSweepFrequencies(ActiveCurve.nSpectrumLowFrequency, ActiveCurve.nSpectrumHighFrequency);
+
+            }
         }
 
     }

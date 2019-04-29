@@ -39,6 +39,7 @@
             this.AutodetectButton = new System.Windows.Forms.Button();
             this.OperationsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.ForceRangeButton = new System.Windows.Forms.Button();
             this.SaveCurveButton = new System.Windows.Forms.Button();
             this.LoadCurveButton = new System.Windows.Forms.Button();
             this.DeleteCurveButton = new System.Windows.Forms.Button();
@@ -80,6 +81,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.TransformerComboBox = new System.Windows.Forms.ComboBox();
             this.ControlgroupBox = new System.Windows.Forms.GroupBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.FilterComboBox = new System.Windows.Forms.ComboBox();
             this.ControlResetButton = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.OutputModeComboBox = new System.Windows.Forms.ComboBox();
@@ -97,7 +100,6 @@
             this.label14 = new System.Windows.Forms.Label();
             this.AutodetectCOMcheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundWorkerSerialCapture = new System.ComponentModel.BackgroundWorker();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.SpectrumPictureBox = new SNASharp.SpectrumPictureBoxClass();
             this.OperationsTabControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -218,6 +220,7 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage2.Controls.Add(this.ForceRangeButton);
             this.tabPage2.Controls.Add(this.SaveCurveButton);
             this.tabPage2.Controls.Add(this.LoadCurveButton);
             this.tabPage2.Controls.Add(this.DeleteCurveButton);
@@ -237,11 +240,21 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sweepmode";
             // 
+            // ForceRangeButton
+            // 
+            this.ForceRangeButton.Location = new System.Drawing.Point(7, 243);
+            this.ForceRangeButton.Name = "ForceRangeButton";
+            this.ForceRangeButton.Size = new System.Drawing.Size(68, 37);
+            this.ForceRangeButton.TabIndex = 13;
+            this.ForceRangeButton.Text = "Force\r\nRange";
+            this.ForceRangeButton.UseVisualStyleBackColor = true;
+            this.ForceRangeButton.Click += new System.EventHandler(this.ForceRangeButton_Click);
+            // 
             // SaveCurveButton
             // 
-            this.SaveCurveButton.Location = new System.Drawing.Point(81, 240);
+            this.SaveCurveButton.Location = new System.Drawing.Point(81, 200);
             this.SaveCurveButton.Name = "SaveCurveButton";
-            this.SaveCurveButton.Size = new System.Drawing.Size(68, 55);
+            this.SaveCurveButton.Size = new System.Drawing.Size(68, 37);
             this.SaveCurveButton.TabIndex = 12;
             this.SaveCurveButton.Text = "Save \r\ncurve";
             this.SaveCurveButton.UseVisualStyleBackColor = true;
@@ -249,9 +262,9 @@
             // 
             // LoadCurveButton
             // 
-            this.LoadCurveButton.Location = new System.Drawing.Point(5, 240);
+            this.LoadCurveButton.Location = new System.Drawing.Point(5, 200);
             this.LoadCurveButton.Name = "LoadCurveButton";
-            this.LoadCurveButton.Size = new System.Drawing.Size(70, 55);
+            this.LoadCurveButton.Size = new System.Drawing.Size(70, 37);
             this.LoadCurveButton.TabIndex = 11;
             this.LoadCurveButton.Text = "Load \r\ncurve";
             this.LoadCurveButton.UseVisualStyleBackColor = true;
@@ -259,12 +272,13 @@
             // 
             // DeleteCurveButton
             // 
-            this.DeleteCurveButton.Location = new System.Drawing.Point(81, 172);
+            this.DeleteCurveButton.BackColor = System.Drawing.Color.Salmon;
+            this.DeleteCurveButton.Location = new System.Drawing.Point(81, 152);
             this.DeleteCurveButton.Name = "DeleteCurveButton";
-            this.DeleteCurveButton.Size = new System.Drawing.Size(68, 62);
+            this.DeleteCurveButton.Size = new System.Drawing.Size(68, 42);
             this.DeleteCurveButton.TabIndex = 10;
             this.DeleteCurveButton.Text = "Delete \r\ncurve";
-            this.DeleteCurveButton.UseVisualStyleBackColor = true;
+            this.DeleteCurveButton.UseVisualStyleBackColor = false;
             this.DeleteCurveButton.Click += new System.EventHandler(this.DeleteCurveButton_Click);
             // 
             // label16
@@ -278,12 +292,13 @@
             // 
             // AddNewCurveButton
             // 
-            this.AddNewCurveButton.Location = new System.Drawing.Point(3, 172);
+            this.AddNewCurveButton.BackColor = System.Drawing.Color.PaleGreen;
+            this.AddNewCurveButton.Location = new System.Drawing.Point(3, 152);
             this.AddNewCurveButton.Name = "AddNewCurveButton";
-            this.AddNewCurveButton.Size = new System.Drawing.Size(72, 62);
+            this.AddNewCurveButton.Size = new System.Drawing.Size(72, 42);
             this.AddNewCurveButton.TabIndex = 8;
             this.AddNewCurveButton.Text = "Add new \r\ncurve";
-            this.AddNewCurveButton.UseVisualStyleBackColor = true;
+            this.AddNewCurveButton.UseVisualStyleBackColor = false;
             this.AddNewCurveButton.Click += new System.EventHandler(this.AddNewCurveButton_Click);
             // 
             // CurveListComboBox
@@ -347,7 +362,7 @@
             // 
             // SweepProcessButton
             // 
-            this.SweepProcessButton.BackColor = System.Drawing.Color.Chartreuse;
+            this.SweepProcessButton.BackColor = System.Drawing.Color.PaleGreen;
             this.SweepProcessButton.Location = new System.Drawing.Point(6, 14);
             this.SweepProcessButton.Name = "SweepProcessButton";
             this.SweepProcessButton.Size = new System.Drawing.Size(143, 34);
@@ -673,6 +688,8 @@
             // ControlgroupBox
             // 
             this.ControlgroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlgroupBox.Controls.Add(this.label17);
+            this.ControlgroupBox.Controls.Add(this.FilterComboBox);
             this.ControlgroupBox.Controls.Add(this.ControlResetButton);
             this.ControlgroupBox.Controls.Add(this.label15);
             this.ControlgroupBox.Controls.Add(this.OutputModeComboBox);
@@ -695,6 +712,24 @@
             this.ControlgroupBox.TabIndex = 14;
             this.ControlgroupBox.TabStop = false;
             this.ControlgroupBox.Text = "Controls";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(160, 123);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(66, 13);
+            this.label17.TabIndex = 25;
+            this.label17.Text = "Capture filter";
+            // 
+            // FilterComboBox
+            // 
+            this.FilterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FilterComboBox.FormattingEnabled = true;
+            this.FilterComboBox.Location = new System.Drawing.Point(163, 139);
+            this.FilterComboBox.Name = "FilterComboBox";
+            this.FilterComboBox.Size = new System.Drawing.Size(75, 21);
+            this.FilterComboBox.TabIndex = 24;
             // 
             // ControlResetButton
             // 
@@ -729,7 +764,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(156, 123);
+            this.label10.Location = new System.Drawing.Point(82, 123);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(56, 13);
             this.label10.TabIndex = 17;
@@ -737,8 +772,9 @@
             // 
             // AttLevelcomboBox
             // 
+            this.AttLevelcomboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AttLevelcomboBox.FormattingEnabled = true;
-            this.AttLevelcomboBox.Location = new System.Drawing.Point(159, 139);
+            this.AttLevelcomboBox.Location = new System.Drawing.Point(85, 139);
             this.AttLevelcomboBox.Name = "AttLevelcomboBox";
             this.AttLevelcomboBox.Size = new System.Drawing.Size(68, 21);
             this.AttLevelcomboBox.TabIndex = 16;
@@ -984,7 +1020,6 @@
         private System.Windows.Forms.ComboBox OutputModeComboBox;
         private System.Windows.Forms.ComboBox CurveListComboBox;
         private System.Windows.Forms.PropertyGrid CurveConfigPropertyGrid;
-        private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.Button AddNewCurveButton;
         private System.Windows.Forms.Button DeleteCurveButton;
         private System.Windows.Forms.Label label16;
@@ -992,6 +1027,9 @@
         private System.Windows.Forms.Button LoadCurveButton;
         private System.Windows.Forms.Button ControlResetButton;
         private System.Windows.Forms.ToolStripMenuItem copyToClipboardToolStripMenuItem;
+        private System.Windows.Forms.Button ForceRangeButton;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.ComboBox FilterComboBox;
     }
 }
 

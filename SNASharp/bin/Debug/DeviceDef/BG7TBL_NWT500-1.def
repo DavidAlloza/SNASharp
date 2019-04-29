@@ -5,7 +5,7 @@
   <Attenuator>true</Attenuator>
   <AD8309>true</AD8309>
   <AD8361>true</AD8361>
-  <Firmware>119</Firmware>
+  <Firmware />
   <MinFrequencyInHz>100000</MinFrequencyInHz>
   <MaxFrequencyInHz>550000000</MaxFrequencyInHz>
   <FrequencyDivisor>1</FrequencyDivisor>

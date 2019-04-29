@@ -151,5 +151,51 @@ namespace SNASharp
 
             return nIndex- nIncrement;
         }
+
+        public static void FilterArray(short[] Array, int nPass = 1)
+        {
+            float[] FloatArray = new float[Array.Length];
+            for (int i = 0; i < Array.Length; i++)
+            {
+                FloatArray[i] = Array[i];
+            }
+
+            FilterArray(FloatArray, nPass);
+
+            for (int i = 0; i < Array.Length; i++)
+            {
+                Array[i] = (short)Math.Round(FloatArray[i]);
+            }
+        }
+
+
+        public static void FilterArray( float[] Array, int nPass = 1)
+        {
+            float[] backup = new float[Array.Length];
+            
+
+            for (int nCurrentPass = 0; nCurrentPass < nPass; nCurrentPass++)
+            {
+                Array.CopyTo(backup, 0);
+                // first parse in direct 
+                for (int i = 1; i < Array.Length; i++)
+                {
+                    Array[i] = 0.5f * Array[i] + 0.5f * Array[i - 1];
+                }
+
+                // now in reverse
+                for (int i = backup.Length - 2; i >= 0; i--)
+                {
+                    backup[i] = 0.5f * backup[i] + 0.5f * backup[i + 1];
+                }
+
+                // and we take the average of both filterings
+                for (int i = 0; i < Array.Length; i++)
+                {
+                    Array[i] = 0.5f * Array[i] + 0.5f * backup[i];
+                }
+            }
+
+        }
     }
 }

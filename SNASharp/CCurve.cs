@@ -502,6 +502,25 @@ namespace SNASharp
         }
 
 
+        public int GetIndexFromFrequency(Int64 nFrequency)
+        {
+            if (SpectrumValues != null)
+            {
+                double fFrequencyFraction = ((double)(nFrequency - nSpectrumLowFrequency)) / (nSpectrumHighFrequency - nSpectrumLowFrequency);
+                int nArrayIndex = (int)(fFrequencyFraction * (SpectrumValues.Length - 1));
+
+                if (nArrayIndex < 0 || nArrayIndex > SpectrumValues.Length - 1)
+                    return -1;
+                else
+                    return nArrayIndex;
+            }
+            else
+            {
+                return -1;
+            }
+
+        }
+
         public float GeDBLevelFromFrequency(Int64 nFrequency)
         {
             if (SpectrumValues != null)

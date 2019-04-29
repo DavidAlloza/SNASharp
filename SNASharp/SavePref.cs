@@ -14,6 +14,22 @@ namespace SNASharp
         SWR_10
     };
 
+    public enum FilterMode
+    {
+        OFF = 0,
+        LEVEL_1 = 1,
+        LEVEL_2 = 2,
+        LEVEL_3 = 3,
+        LEVEL_4 = 4,
+        LEVEL_5 = 5,
+        LEVEL_6 = 6,
+        LEVEL_7 = 7,
+        LEVEL_8 = 8,
+        LEVEL_9 = 9,
+        LEVEL_10= 10
+    };
+
+
     public class SavePref
     {
         bool _bDisplayDisclaimer = true;
@@ -22,6 +38,7 @@ namespace SNASharp
         String _LastUsedCOMPort = null;
         String _LastUsedAttLevel = null;
         OutputMode _Output = OutputMode.dB;
+        FilterMode _Filter = FilterMode.OFF;
         Int64 _LowFrequencyRange = -1;
         Int64 _HighFrequencyRange = -1;
         int _SampleCount = 2000;
@@ -80,6 +97,13 @@ namespace SNASharp
         {
             get { return _SampleCount; }
             set { _SampleCount = value; }
+
+        }
+
+        public FilterMode  Filter
+        {
+            get { return _Filter; }
+            set { _Filter = value; }
 
         }
 
