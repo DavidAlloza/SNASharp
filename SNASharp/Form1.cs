@@ -1183,5 +1183,25 @@ namespace SNASharp
         {
             SpectrumPictureBox.CopyPictureToclipboard();
         }
+
+        private void SpectrumPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F1)
+            {
+                SpectrumPictureBox.ZoomIncrease();
+            }
+
+            if (e.KeyCode == Keys.F2)
+            {
+                SpectrumPictureBox.ZoomDecrease();
+
+            }
+
+        }
     }
 }

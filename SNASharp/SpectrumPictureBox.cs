@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Drawing.Imaging;
 using System.Collections;
 using System.Xml.Serialization;
-
+using System.Drawing.Drawing2D;
 
 namespace SNASharp
 {
@@ -55,16 +55,70 @@ namespace SNASharp
             Owner = _Owner;
         }
         
+        void DisplayZoomBox(int nX)
+        {
+            Int64 Low = -1;
+            Int64 High = -1;
+            int SampleCount = -1;
+            DetermineNewFrequencyRange(nX, ref Low, ref High, ref SampleCount);
+
+            int X1 = GraphConfig.GetXFromFrequency(Low);
+            int X2 = GraphConfig.GetXFromFrequency(High);
+
+            if (X1 < GraphConfig.LeftBorder)
+                X1 = GraphConfig.LeftBorder;
+
+            if (X2 > Size.Width - GraphConfig.RightBorder)
+                X2 = Size.Width - GraphConfig.RightBorder;
+
+
+            int nWidh = X2 - X1;
+
+
+
+            ForeGroundImageGraphics.Clear(Color.Transparent);
+            Brush brush = new SolidBrush(Color.FromArgb(50, 255, 0, 0));
+            //Brush brushText = new SolidBrush(Color.FromArgb(50, 255, 0, 0));
+
+            ForeGroundImageGraphics.FillRectangle(brush, X1, GraphConfig.UpBorder, nWidh, Size.Height - GraphConfig.LowBorder - GraphConfig.UpBorder);
+            //ForeGroundImageGraphics.DrawString("F1 & F2 to ajust size", new Font("Arial", 10), brushText, new PointF(X1, Size.Height - GraphConfig.LowBorder));
+            //ForeGroundImageGraphics.
+            Image = ForeGroundImageBitmap;
+
+        }
+
+        public void SpectrumPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            ForeGroundImageGraphics.Clear(Color.Transparent);
+            Image = ForeGroundImageBitmap;
+        }
+
+        public void ZoomIncrease()
+        {
+            fZoomInRatio += 0.05f;
+            if (fZoomInRatio > 1.0f)
+                fZoomInRatio = 1.0f;
+
+            DisplayZoomBox(nLastMouseX);
+        }
+
+        public void ZoomDecrease()
+        {
+            fZoomInRatio -= 0.05f;
+            if (fZoomInRatio < 0.05f)
+                fZoomInRatio = 0.05f;
+
+            DisplayZoomBox(nLastMouseX);
+        }
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
-            //Image.Dispose();
-            //Image = new Bitmap(BackGroundBackup);
 
+            nLastMouseX = e.X;
             DisplayFrequencyAndLevelOnCorners(e.X);
+            DisplayZoomBox(e.X);
 
-//            Graphics g = Graphics.FromImage(Image);
-//            g.DrawLine(new Pen(Color.Black), new Point(0, 0), new Point(e.X, e.Y));
-//            g.Dispose();
+            //public int GetXFromFrequency(Int64 nFrequency)
+
         }
 
         public void DisplayFrequencyAndLevelOnCorners(int nXMouse)
@@ -110,13 +164,62 @@ namespace SNASharp
 
         }
 
+        public void DetermineNewFrequencyRange(int x, ref Int64 Low, ref Int64 High, ref int SampleCount)
+        {
+            Int64 nCentralFrequency;
+            Int64 nPreviousBW;
+            Int64 nNewStartFrequency;
+            Int64 nNewEndFrequency;
+
+
+            nCentralFrequency = GraphConfig.GetFrequencyFromXDisplay(x);
+            nPreviousBW = GraphConfig.nLastDrawingHighFrequency - GraphConfig.nLastDrawingLowFrequency;
+
+
+            if (nPreviousBW < 100)
+                return;
+
+            nNewStartFrequency = nCentralFrequency - (Int64)(nPreviousBW * fZoomInRatio * 0.5f);
+            nNewEndFrequency = nCentralFrequency + (Int64)(nPreviousBW * fZoomInRatio * 0.5f);
+
+
+            // now we correct the zoom to take acount of discrete frequency step 
+            SampleCount = Owner.GetSampleCount();
+
+
+            Int64 nBW = (nNewEndFrequency - nNewStartFrequency);
+
+            Int64 nRealStep;
+            if (SampleCount > nBW)
+            {
+                SampleCount = (int)nBW;
+                nRealStep = 1;
+            }
+            else
+            {
+                nRealStep = ((nNewEndFrequency - nNewStartFrequency) + SampleCount / 2) / SampleCount;
+            }
+
+            nNewStartFrequency = nCentralFrequency - nRealStep * SampleCount / 2;
+            nNewEndFrequency = nNewStartFrequency + nRealStep * SampleCount;
+
+
+            if (nNewEndFrequency > Owner.DeviceInterface.MaxFrequency)
+                nNewEndFrequency = Owner.DeviceInterface.MaxFrequency;
+
+            if (nNewStartFrequency < Owner.DeviceInterface.MinFrequency)
+                nNewStartFrequency = Owner.DeviceInterface.MinFrequency;
+
+            Low = nNewStartFrequency;
+            High = nNewEndFrequency;
+        }
+
         public void MouseClicManagement(object sender, EventArgs e)
         {
             if (Owner.DeviceInterface.GetDevice() == null)
                 return; // no device
 
             MouseEventArgs Event = (MouseEventArgs)e;
-            //if (Curve.SpectrumValues != null)
             {
                 Int64 nCentralFrequency;
                 Int64 nPreviousBW ;
@@ -133,8 +236,8 @@ namespace SNASharp
                     if (nPreviousBW < 100)
                         return;
 
-                    nNewStartFrequency = nCentralFrequency - nPreviousBW / 3;
-                    nNewEndFrequency = nCentralFrequency + nPreviousBW / 3;
+                    nNewStartFrequency = nCentralFrequency - (Int64)(nPreviousBW * fZoomInRatio*0.5f);
+                    nNewEndFrequency = nCentralFrequency + (Int64)(nPreviousBW * fZoomInRatio*0.5f);
                 }
                 else
                 {
@@ -163,9 +266,6 @@ namespace SNASharp
 
                 nNewStartFrequency = nCentralFrequency - nRealStep * nSampleCount / 2;
                 nNewEndFrequency = nNewStartFrequency + nRealStep * nSampleCount ;
-
-
-                //int nFrequencyStep = 
 
                 
                 if (nNewEndFrequency > Owner.DeviceInterface.MaxFrequency )
@@ -204,37 +304,64 @@ namespace SNASharp
                 Image = PictureBoxBitmap;
                 */
 
-                Image.Save(dialog.FileName, ImageFormat.Png);
+                BackgroundImage.Save(dialog.FileName, ImageFormat.Png);
             }
         }
 
         public void CopyPictureToclipboard()
         {
-            Clipboard.SetImage(Image);
+            Clipboard.SetImage(BackgroundImage);
         }
 
 
-        public void ResizeAndRedraw(object sender, EventArgs e)
-        {
-            if (PictureBoxBitmap != null)
-                PictureBoxBitmap.Dispose();
 
-            if (Size.Width > 0 && Size.Height > 0)
+        void BitmapUpdate(Size CurrentSize)
+        {
+
+            // release graphics
+            if (ForeGroundImageGraphics != null)
+                ForeGroundImageGraphics.Dispose();
+
+            if (BackGroundImageGraphics != null)
+                BackGroundImageGraphics.Dispose();
+
+            // release bitmaps
+
+            if (ForeGroundImageBitmap != null)
+                ForeGroundImageBitmap.Dispose();
+
+            if (BackGroundImageBitmap != null)
+                BackGroundImageBitmap.Dispose();
+
+
+            // allocate new bitmap
+            if (CurrentSize.Width > 0 && CurrentSize.Height > 0)
             {
-                PictureBoxBitmap = new Bitmap(Size.Width, Size.Height);
+                ForeGroundImageBitmap = new Bitmap(CurrentSize.Width, CurrentSize.Height);
+                BackGroundImageBitmap = new Bitmap(CurrentSize.Width, CurrentSize.Height);
             }
             else
             {
-                PictureBoxBitmap = new Bitmap(1, 1);
+                ForeGroundImageBitmap = new Bitmap(1, 1);
+                BackGroundImageBitmap = new Bitmap(1,1);
             }
 
-  //          Image = PictureBoxBitmap;
+            // create new graphics
+            ForeGroundImageGraphics = Graphics.FromImage(ForeGroundImageBitmap);
+            BackGroundImageGraphics = Graphics.FromImage(BackGroundImageBitmap);
+
+        }
+
+        public void ResizeAndRedraw(object sender, EventArgs e)
+        {
+            BitmapUpdate(Size);
             DrawCurveCollection(CurvesList);
         }
 
         public void Redraw()
         {
-            Image = PictureBoxBitmap;
+            Image = ForeGroundImageBitmap;
+            BackgroundImage = BackGroundImageBitmap;
             DrawCurveCollection(CurvesList);
         }
 
@@ -265,11 +392,14 @@ namespace SNASharp
             GraphConfig.outputMode = OutputMode.dB;
 
 
-            if (PictureBoxBitmap == null)
+            if (ForeGroundImageBitmap == null)
             {
-                PictureBoxBitmap = new Bitmap(this.Width, this.Height);
-                Image = PictureBoxBitmap;
+                BitmapUpdate(this.Size);
+                Image = ForeGroundImageBitmap;
+                BackgroundImage = BackGroundImageBitmap;
             }
+
+
 
             if (CurvesList.Count > 0 && Owner!= null && Owner.GetOutputMode() == OutputMode.dB)
             {
@@ -306,9 +436,7 @@ namespace SNASharp
                     {
                         nLowerScale = (int)GraphConfig.fLastDrawingLevelLow;
                     }
-
                 }
-
             }
             else
             {
@@ -330,7 +458,6 @@ namespace SNASharp
                             break;
 
                     }
-
                     nLowerScale = 1;
                 }
             }
@@ -339,21 +466,11 @@ namespace SNASharp
             GraphConfig.fLastDrawingLevelLow = nLowerScale;
             GraphConfig.fLastDrawingLevelHigh = nUpperScale;
 
-            Image = PictureBoxBitmap;
-            GraphConfig.GraphicDisplay(Curves,ActiveCurve, PictureBoxBitmap);
-            
-            //if (BackGroundBackup != null)
-            //    BackGroundBackup.Dispose();
-            //
-            //BackGroundBackup = new Bitmap(PictureBoxBitmap);
-            
+            GraphConfig.GraphicDisplay(Curves,ActiveCurve, BackGroundImageBitmap);
+            BackgroundImage = BackGroundImageBitmap;
+            Image = ForeGroundImageBitmap;
         }
-        /*
-        public void FastBitmapCopy(Bitmap Source, Bitmap Dest)
-        {
-            Source.
-        }
-        */
+
         public void SetActiveCurve(CCurve Active)
         {
             ActiveCurve = Active;
@@ -397,12 +514,16 @@ namespace SNASharp
             return fMax;
         }
 
+
         private CGraph GraphConfig = new CGraph();
         private ArrayList CurvesList = new ArrayList();
         private CCurve ActiveCurve = null;
-        Bitmap BackGroundBackup = null;
-        Bitmap PictureBoxBitmap = null;
-
+        Bitmap BackGroundImageBitmap = null;
+        Bitmap ForeGroundImageBitmap = null;
+        Graphics BackGroundImageGraphics = null;
+        Graphics ForeGroundImageGraphics = null;
+        float fZoomInRatio = 1.0f / 3.0f;
+        int nLastMouseX = 0;
 
         private System.Windows.Forms.Label FreqDisplayLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.Label LevelDisplayLabel = new System.Windows.Forms.Label();

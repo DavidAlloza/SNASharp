@@ -911,6 +911,7 @@
             this.SpectrumPictureBox.SizeChanged += new System.EventHandler(this.SpectrumPictureBox_SizeChanged);
             this.SpectrumPictureBox.Click += new System.EventHandler(this.SpectrumPictureBox_Click);
             this.SpectrumPictureBox.MouseEnter += new System.EventHandler(this.SpectrumPictureBox_MouseEnter);
+            this.SpectrumPictureBox.MouseLeave += new System.EventHandler(this.SpectrumPictureBox.SpectrumPictureBox_MouseLeave);
             this.SpectrumPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBox_MouseMove);
             this.SpectrumPictureBox.Resize += new System.EventHandler(this.SpectrumPictureBox_Resize);
             // 
@@ -932,10 +933,12 @@
             this.Controls.Add(this.OperationsTabControl);
             this.Controls.Add(this.SpectrumPictureBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "SNASharp  (F4HTQ v2019_01_18)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.OperationsTabControl.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
