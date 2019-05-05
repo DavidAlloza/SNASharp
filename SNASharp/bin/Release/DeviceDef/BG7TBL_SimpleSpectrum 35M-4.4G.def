@@ -15,4 +15,5 @@
   <VerticalResolutiondB>0.1923</VerticalResolutiondB>
   <Operating_mode>SpectrumNoTracking</Operating_mode>
   <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
+  <AcquisitionTimeout>500</AcquisitionTimeout>
 </NWTCompatibleDeviceDef>

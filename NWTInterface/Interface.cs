@@ -50,6 +50,7 @@ namespace NWTInterface
         protected bool _HaveAttenuator = false;
         protected bool _HaveAD8309 = true;
         protected bool _HaveAD8361 = false;
+        protected int _AcquisitionReadTimeout = 500;
 
         public string ModelName
         {
@@ -128,8 +129,13 @@ namespace NWTInterface
             set { _SweepDataFormat = value; }
         }
 
+        public int AcquisitionTimeout
+        {
+            get { return _AcquisitionReadTimeout; }
+            set { _AcquisitionReadTimeout = value; }
+        }
 
-        public  override String  ToString() 
+        public override String  ToString() 
         {
             return _BuilderName + "_" + _ModelName;
         }
@@ -472,12 +478,13 @@ namespace NWTInterface
         public float[] RunSweepMode(Int64 nBaseFrequency, Int64 nFrequencyStep, int nCount, bool bUseInear = false, CBackNotifier Notifier = null, BackgroundWorker Worker =null, Int16[] NativeDatas = null)
         {
             int nSubBlockSize = 9999;
-
             int nPass = nCount / nSubBlockSize;
             int nRest = nCount % nSubBlockSize;
 
             float[] fullBuffer = new float[nCount];
             port.DiscardInBuffer();
+            port.ReadTimeout = DeviceDef.AcquisitionTimeout;
+
 
             for ( int nFullBlock = 0; nFullBlock < nPass; nFullBlock++)
             {
@@ -569,11 +576,6 @@ namespace NWTInterface
 
                  nLowByte = StreamFromSNA[0];
                  nHighByte = StreamFromSNA[1];
-
-                /*
-                nLowByte *= 4;
-                nHighByte *= 4;
-                */
 
                 int nMesure = (nHighByte << 8) + nLowByte;
 
@@ -703,7 +705,7 @@ namespace NWTInterface
             port.DiscardInBuffer();
             port.DiscardOutBuffer();
 
-            port.ReadTimeout = 500;
+            port.ReadTimeout = 2000;
             port.Write(OutMessage, 0, OutMessage.Length);
 
             try
