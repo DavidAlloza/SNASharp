@@ -59,11 +59,10 @@
             this.StartVFOButton = new System.Windows.Forms.Button();
             this.VFOFrequencyTextBox = new System.Windows.Forms.TextBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.FastAnalyzeButton = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.ParallelCheckBox = new System.Windows.Forms.CheckBox();
             this.MotionalDisplayTextBox = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.QSelectionComboBox = new System.Windows.Forms.ComboBox();
             this.AnalyseButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -74,7 +73,6 @@
             this.QERBandPassTextBox = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.SaveDeviceButton = new System.Windows.Forms.Button();
-            this.DeviceDelButton = new System.Windows.Forms.Button();
             this.DeviceProperyGrid = new System.Windows.Forms.PropertyGrid();
             this.NewDeviceButton = new System.Windows.Forms.Button();
             this.DevicesComboBox = new System.Windows.Forms.ComboBox();
@@ -442,11 +440,10 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage1.Controls.Add(this.FastAnalyzeButton);
             this.tabPage1.Controls.Add(this.label7);
             this.tabPage1.Controls.Add(this.ParallelCheckBox);
             this.tabPage1.Controls.Add(this.MotionalDisplayTextBox);
-            this.tabPage1.Controls.Add(this.label9);
-            this.tabPage1.Controls.Add(this.QSelectionComboBox);
             this.tabPage1.Controls.Add(this.AnalyseButton);
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -454,7 +451,17 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(368, 301);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Dipole analyzer";
+            this.tabPage1.Text = "Crystal analyzer";
+            // 
+            // FastAnalyzeButton
+            // 
+            this.FastAnalyzeButton.Location = new System.Drawing.Point(98, 7);
+            this.FastAnalyzeButton.Name = "FastAnalyzeButton";
+            this.FastAnalyzeButton.Size = new System.Drawing.Size(86, 38);
+            this.FastAnalyzeButton.TabIndex = 20;
+            this.FastAnalyzeButton.Text = "Analyse only";
+            this.FastAnalyzeButton.UseVisualStyleBackColor = true;
+            this.FastAnalyzeButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DipoleAnalyseFinalStepOnly);
             // 
             // label7
             // 
@@ -471,7 +478,7 @@
             this.ParallelCheckBox.AutoSize = true;
             this.ParallelCheckBox.Checked = true;
             this.ParallelCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ParallelCheckBox.Location = new System.Drawing.Point(98, 6);
+            this.ParallelCheckBox.Location = new System.Drawing.Point(205, 9);
             this.ParallelCheckBox.Name = "ParallelCheckBox";
             this.ParallelCheckBox.Size = new System.Drawing.Size(113, 17);
             this.ParallelCheckBox.TabIndex = 19;
@@ -491,35 +498,13 @@
             this.MotionalDisplayTextBox.Size = new System.Drawing.Size(351, 110);
             this.MotionalDisplayTextBox.TabIndex = 3;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(200, 35);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(60, 13);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Dipole type";
-            // 
-            // QSelectionComboBox
-            // 
-            this.QSelectionComboBox.FormattingEnabled = true;
-            this.QSelectionComboBox.Items.AddRange(new object[] {
-            "Crystal",
-            "Ceramic resonator",
-            "Serie RLC"});
-            this.QSelectionComboBox.Location = new System.Drawing.Point(266, 32);
-            this.QSelectionComboBox.Name = "QSelectionComboBox";
-            this.QSelectionComboBox.Size = new System.Drawing.Size(90, 21);
-            this.QSelectionComboBox.TabIndex = 16;
-            this.QSelectionComboBox.SelectedIndexChanged += new System.EventHandler(this.QSelectionComboBox_SelectedIndexChanged);
-            // 
             // AnalyseButton
             // 
             this.AnalyseButton.Location = new System.Drawing.Point(6, 7);
             this.AnalyseButton.Name = "AnalyseButton";
             this.AnalyseButton.Size = new System.Drawing.Size(86, 38);
             this.AnalyseButton.TabIndex = 0;
-            this.AnalyseButton.Text = "Run analyze";
+            this.AnalyseButton.Text = "full auto";
             this.AnalyseButton.UseVisualStyleBackColor = true;
             this.AnalyseButton.Click += new System.EventHandler(this.AnalyseButton_Click);
             // 
@@ -597,7 +582,6 @@
             // 
             this.tabPage3.BackColor = System.Drawing.Color.WhiteSmoke;
             this.tabPage3.Controls.Add(this.SaveDeviceButton);
-            this.tabPage3.Controls.Add(this.DeviceDelButton);
             this.tabPage3.Controls.Add(this.DeviceProperyGrid);
             this.tabPage3.Controls.Add(this.NewDeviceButton);
             this.tabPage3.Controls.Add(this.DevicesComboBox);
@@ -610,23 +594,13 @@
             // 
             // SaveDeviceButton
             // 
-            this.SaveDeviceButton.Location = new System.Drawing.Point(277, 30);
+            this.SaveDeviceButton.Location = new System.Drawing.Point(98, 30);
             this.SaveDeviceButton.Name = "SaveDeviceButton";
             this.SaveDeviceButton.Size = new System.Drawing.Size(86, 28);
             this.SaveDeviceButton.TabIndex = 4;
-            this.SaveDeviceButton.Text = "Save";
+            this.SaveDeviceButton.Text = "Save to disk";
             this.SaveDeviceButton.UseVisualStyleBackColor = true;
             this.SaveDeviceButton.Click += new System.EventHandler(this.SaveDeviceButton_Click);
-            // 
-            // DeviceDelButton
-            // 
-            this.DeviceDelButton.Location = new System.Drawing.Point(144, 30);
-            this.DeviceDelButton.Name = "DeviceDelButton";
-            this.DeviceDelButton.Size = new System.Drawing.Size(83, 28);
-            this.DeviceDelButton.TabIndex = 3;
-            this.DeviceDelButton.Text = "Delete";
-            this.DeviceDelButton.UseVisualStyleBackColor = true;
-            this.DeviceDelButton.Click += new System.EventHandler(this.DeviceDelButton_Click);
             // 
             // DeviceProperyGrid
             // 
@@ -911,7 +885,6 @@
             this.SpectrumPictureBox.SizeChanged += new System.EventHandler(this.SpectrumPictureBox_SizeChanged);
             this.SpectrumPictureBox.Click += new System.EventHandler(this.SpectrumPictureBox_Click);
             this.SpectrumPictureBox.MouseEnter += new System.EventHandler(this.SpectrumPictureBox_MouseEnter);
-            this.SpectrumPictureBox.MouseLeave += new System.EventHandler(this.SpectrumPictureBox.SpectrumPictureBox_MouseLeave);
             this.SpectrumPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBox_MouseMove);
             this.SpectrumPictureBox.Resize += new System.EventHandler(this.SpectrumPictureBox_Resize);
             // 
@@ -937,6 +910,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "SNASharp  (F4HTQ v2019_01_18)";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.OperationsTabControl.ResumeLayout(false);
@@ -978,8 +952,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox ParallelCheckBox;
         private System.Windows.Forms.TextBox MotionalDisplayTextBox;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ComboBox QSelectionComboBox;
         private System.Windows.Forms.Button AnalyseButton;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -1003,7 +975,6 @@
         private System.Windows.Forms.Button NewDeviceButton;
         private System.Windows.Forms.ComboBox SelectecDeviceComboBox;
         private System.Windows.Forms.Button SaveDeviceButton;
-        private System.Windows.Forms.Button DeviceDelButton;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button SweepLoopStopButton;
         private System.Windows.Forms.Button SweepLoopProcessButton;
@@ -1033,6 +1004,7 @@
         private System.Windows.Forms.Button ForceRangeButton;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.ComboBox FilterComboBox;
+        private System.Windows.Forms.Button FastAnalyzeButton;
     }
 }
 

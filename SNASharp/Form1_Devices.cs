@@ -60,16 +60,6 @@ namespace SNASharp
             DeviceProperyGrid.SelectedObject = NewDevice;
         }
 
-        private void DeviceDelButton_Click(object sender, EventArgs e)
-        {
-            if (DevicesComboBox.SelectedIndex >= 0)
-            {
-                DeviceArray.RemoveAt(DevicesComboBox.SelectedIndex);
-                // !TODO delete file on disk
-
-                DeviceListMenuRefresh();
-            }
-        }
 
         private void DevicesComboBox_SelectedValueChanged(object sender, EventArgs e)
         {

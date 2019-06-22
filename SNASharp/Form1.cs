@@ -14,13 +14,6 @@ namespace SNASharp
     public partial class Form1 : Form
     {
 
-        enum QualityFactor
-        {
-            Crystal,
-            Ceramic_resonator,
-            Serie_RLC
-        };
-
 
         enum ProcessingNeeded
         {
@@ -53,7 +46,6 @@ namespace SNASharp
 
 
             Text = Program.Version;
-            QSelectionComboBox.DataSource = Enum.GetValues(typeof(QualityFactor));
             OutputModeComboBox.DataSource = Enum.GetValues(typeof(OutputMode));
             FilterComboBox.DataSource = Enum.GetValues(typeof(FilterMode));
             OutputModeComboBox.SelectedItem = Program.Save.Output;
@@ -118,6 +110,8 @@ namespace SNASharp
             SpectrumPictureBox.SetOwnedForm(this);
 
             SetSampleCount(Program.Save.SampleCount);
+            DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem);
+
 
         }
 
@@ -292,6 +286,8 @@ namespace SNASharp
 
             if (SerialPortComboBox.SelectedItem != null)
                 SerialPortInitialize((String)SerialPortComboBox.SelectedItem);
+
+
         }
 
         public void LoadCalibrationFile()
@@ -480,7 +476,7 @@ namespace SNASharp
         }
 
 
-        float [] RunSweep(Int64 nFrequencyStart, int nStep, int nCount, FormNotifier Notifier)
+        float [] RunSweep(Int64 nFrequencyStart, Int64 nStep, int nCount, FormNotifier Notifier)
         {
             LOGDraw("BW:" + (nStep* nCount).ToString() + "Hz", false);
             LOGDraw(" samples:" + nCount.ToString(), false);
@@ -488,7 +484,7 @@ namespace SNASharp
             return DeviceInterface.RunSweepMode(nFrequencyStart, nStep, nCount, false,Notifier);
         }
 
-        void SingleCurveDisplay(Int64 nFrequencyBase, int nStep, float [] data)
+        void SingleCurveDisplay(Int64 nFrequencyBase, Int64 nStep, float [] data)
         {
             int Count = data.Length;
             CCurve Curve = new CCurve();
@@ -507,19 +503,125 @@ namespace SNASharp
             Curve.Name = "Crystal";
             SpectrumPictureBox.DrawSingleCurve(Curve);
         }
-        void DipoleAnalyse()
+
+
+        void DipoleProcessAnalyseOnFinalRange(float [] fSweepResult, Int64 nFrequencyBase, Int64 nFrequencyStep)
+        {
+
+            int nParrallelIndex = Utility.RetrieveMinValueIndex(fSweepResult);
+            float nParralelLeveldB = fSweepResult[nParrallelIndex];
+            Int64 fParrallelFrequency = nFrequencyBase + nParrallelIndex* nFrequencyStep;
+
+            int nserieIndex = Utility.RetrieveMaxValueIndex(fSweepResult);
+            float nserieLeveldB = fSweepResult[nserieIndex];
+            fserieFrequency = nFrequencyBase + nserieIndex * nFrequencyStep;
+
+
+            int SerieBandPass3dBLeft = Utility.FindLevelIndex(fSweepResult, nserieIndex, -1, nserieLeveldB - 3.0f);
+            int SerieBandPass3dBRight = Utility.FindLevelIndex(fSweepResult, nserieIndex, +1, nserieLeveldB - 3.0f);
+
+            Int64 nBandPass3dB = (SerieBandPass3dBRight - SerieBandPass3dBLeft) * nFrequencyStep;
+
+
+            LOGDraw("--------------------------------");
+            LOGDraw("serie frequency :" + Utility.GetStringWithSeparators((int)fserieFrequency, " ") + "Hz");
+            LOGDraw("serie attenuation level :" + Math.Round(nserieLeveldB, 2).ToString() + "dB");
+
+            if (ParallelCheckBox.Checked)
+            {
+                LOGDraw("Parallel Frequency :" + Utility.GetStringWithSeparators((int)fParrallelFrequency, " ") + "Hz");
+                LOGDraw("Parallel attenuation level :" + Math.Round(nParralelLeveldB, 2).ToString() + "dB");
+            }
+
+            LOGDraw("3dB Bandpass :" + nBandPass3dB.ToString() + "Hz");
+            LOGDraw("--------------------------------");
+
+
+            // motionnals parameters
+            Rm = (100.0f / ((float)Math.Pow(10.0f, nserieLeveldB / 20.0f)) - 100.0f) / fImpedanceRatio;
+            Lm = (100 + Rm) / (2.0f * (float)Math.PI * nBandPass3dB);
+            Cm = 1.0f / (4.0f * (float)Math.PI * (float)Math.PI * fserieFrequency * fserieFrequency * Lm);
+            Q = Lm * fserieFrequency * 2.0f * (float)Math.PI / Rm;
+
+            // we compute RP equivalent to Rm
+            float Zl = Lm * 2.0f * (float)Math.PI * fserieFrequency;
+            Rp = Zl * Zl / Rm;
+
+            double fParrallelFrequencyDisplayKhz = 0.0f;
+            if (ParallelCheckBox.Checked)
+            {
+                Co = 1.0f / (4.0f * (float)Math.PI * (float)Math.PI * Lm * fParrallelFrequency * fParrallelFrequency - 1.0f / Cm);
+                //Rp = (100.0f / ((float)Math.Pow(10.0f, nParralelLeveldB / 20.0f)) - 100.0f) / fImpedanceRatio;
+                fParrallelFrequencyDisplayKhz = Math.Round(fParrallelFrequency * 0.001f, 3);
+
+            }
+            else
+            {
+                Co = 0.0f;
+            }
+
+
+            float RmDisplay_Ohms = (float)Math.Round(Rm, 1);
+            float LmDisplay_mH = (float)Math.Round(Lm * 1000.0f, 2);
+            float CmDisplay_fF = (float)Math.Round(Cm * 1000000000000000.0f, 2);
+
+            double fserieFrequencyDisplayKhz = Math.Round(fserieFrequency * 0.001f, 3);
+
+
+            MotionalDisplayTextBox.Text += "Serial=" + fserieFrequencyDisplayKhz.ToString() + "kHz  ";
+
+            if (ParallelCheckBox.Checked)
+                MotionalDisplayTextBox.Text += "Parallel=" + fParrallelFrequencyDisplayKhz.ToString() + "kHz";
+
+            MotionalDisplayTextBox.Text += Environment.NewLine;
+
+
+            MotionalDisplayTextBox.Text += "Rm=" + RmDisplay_Ohms.ToString() + "Ohms  ";
+            //MotionalDisplayTextBox.Text += Environment.NewLine;
+
+            MotionalDisplayTextBox.Text += "Lm=" + LmDisplay_mH.ToString() + "mH  ";
+            //MotionalDisplayTextBox.Text += Environment.NewLine;
+
+            MotionalDisplayTextBox.Text += "Cm=" + CmDisplay_fF.ToString() + "fF  ";
+            MotionalDisplayTextBox.Text += Environment.NewLine;
+
+
+            if (ParallelCheckBox.Checked)
+            {
+                float CoDisplayPF = (float)Math.Round(Co * 1000000000000.0f, 1);
+                MotionalDisplayTextBox.Text += "Co=" + CoDisplayPF.ToString() + "pF  ";
+                //MotionalDisplayTextBox.Text += Environment.NewLine;
+            }
+
+            float fQDisplay = (float)Math.Round(Q, 0);
+
+            MotionalDisplayTextBox.Text += "Q=" + fQDisplay.ToString() + " ";
+            //MotionalDisplayTextBox.Text += Environment.NewLine;
+
+            float fBPDisplay = (float)Math.Round(fserieFrequency * 0.001f / Q, 3);
+            MotionalDisplayTextBox.Text += "BP(-3dB)=" + fBPDisplay.ToString() + "kHz ";
+            MotionalDisplayTextBox.Text += Environment.NewLine;
+
+            MotionalDisplayTextBox.Text += "------------------------------";
+            MotionalDisplayTextBox.Text += Environment.NewLine;
+
+            MotionalDisplayTextBox.SelectionStart = MotionalDisplayTextBox.Text.Length;
+            MotionalDisplayTextBox.ScrollToCaret();
+
+        }
+
+       //void Refine
+    
+        void DipoleAnalyseOneStepOnly()
         {
             if (!CheckForCalibration() || !bDeviceConnected)
             {
                 return;
             }
-            int nFrequencyStep;
+            Int64 nFrequencyStep;
             float[] fSweepResult = null;
             Int64 nFrequencyBase;
             int nCaptureCount;
-            float nserieLeveldB;
-            int nserieIndex;
-            Int64 nserieFrequency;
 
             CCurve Curve = new CCurve();
 
@@ -528,7 +630,7 @@ namespace SNASharp
             LOGDraw("Start dipole detection...");
             nFrequencyBase = nFrequencyDetectionStart;
             nCaptureCount = 9999;
-            nFrequencyStep = (int)(((nFrequencyDetectionEnd - nFrequencyDetectionStart) + (nCaptureCount - 1) )/ nCaptureCount);
+            nFrequencyStep = ((nFrequencyDetectionEnd - nFrequencyDetectionStart) + (nCaptureCount - 1)) / nCaptureCount;
 
 
             if (nFrequencyStep == 0)
@@ -540,10 +642,51 @@ namespace SNASharp
 
             fSweepResult = RunSweep(nFrequencyBase, nFrequencyStep, nCaptureCount, MyNotifier);
 
+
             SingleCurveDisplay(nFrequencyBase, nFrequencyStep, fSweepResult);
 
+            DipoleProcessAnalyseOnFinalRange(fSweepResult, nFrequencyBase, nFrequencyStep);
+            RefreshQERFilterEstimator();
+        }
 
-            if (DipoleQualityFactor != QualityFactor.Serie_RLC)
+        void DipoleAnalyse()
+        {
+            if (!CheckForCalibration() || !bDeviceConnected)
+            {
+                return;
+            }
+            Int64 nFrequencyStep;
+            float[] fSweepResult = null;
+            Int64 nFrequencyBase;
+            int nCaptureCount;
+            int nserieIndex;
+            Int64 nserieFrequency;
+
+            CCurve Curve = new CCurve();
+
+            // first scan 
+            MyNotifier.SetProgressBar(SweepProgressBar);
+            LOGDraw("Start dipole detection...");
+            nFrequencyBase = nFrequencyDetectionStart;
+            nCaptureCount = 9999;
+            nFrequencyStep = ((nFrequencyDetectionEnd - nFrequencyDetectionStart) + (nCaptureCount - 1) )/ nCaptureCount;
+
+
+            if (nFrequencyStep == 0)
+            {
+                nFrequencyStep = 1;
+                nCaptureCount = (int)(nFrequencyDetectionEnd - nFrequencyDetectionStart);
+                SamplesTextBox.Text = nCaptureCount.ToString();
+            }
+
+            fSweepResult = RunSweep(nFrequencyBase, nFrequencyStep, nCaptureCount, MyNotifier);
+
+
+            SingleCurveDisplay(nFrequencyBase, nFrequencyStep, fSweepResult);
+
+            // check if the precision will be acceptable
+
+
             {
                 nserieIndex = Utility.RetrieveMaxValueIndex(fSweepResult);
                 nserieFrequency = nFrequencyBase + nserieIndex * nFrequencyStep;
@@ -554,14 +697,7 @@ namespace SNASharp
                 if (nStepFromFrequencyFactor > 5)
                     nStepFromFrequencyFactor = 5;
 
-                if (DipoleQualityFactor == QualityFactor.Crystal)
-                {
-                    nFrequencyStep = (nStepFromFrequencyFactor) + 1;
-                }
-                else
-                {
-                    nFrequencyStep = 5 * ((nStepFromFrequencyFactor) + 1);
-                }
+                nFrequencyStep = (nStepFromFrequencyFactor) + 1;
                 
 
                 if (!ParallelCheckBox.Checked)
@@ -597,92 +733,8 @@ namespace SNASharp
                 fParrallelFrequency = nFrequencyBase + nParrallelIndex * nFrequencyStep;
             }
 
-            nserieIndex = Utility.RetrieveMaxValueIndex(fSweepResult);
-            nserieLeveldB = fSweepResult[nserieIndex];
 
-            fserieFrequency = nFrequencyBase + nserieIndex * nFrequencyStep;
-
-
-            int SerieBandPass3dBLeft = Utility.FindLevelIndex(fSweepResult, nserieIndex, -1, nserieLeveldB - 3.0f);
-            int SerieBandPass3dBRight = Utility.FindLevelIndex(fSweepResult, nserieIndex, +1, nserieLeveldB - 3.0f);
-
-            int nBandPass3dB = (SerieBandPass3dBRight - SerieBandPass3dBLeft) * nFrequencyStep;
-
-
-            LOGDraw("--------------------------------");
-            LOGDraw("serie frequency :" + Utility.GetStringWithSeparators((int)fserieFrequency, " ") + "Hz");
-            LOGDraw("serie attenuation level :" + Math.Round(nserieLeveldB, 2).ToString() + "dB");
-
-            if (ParallelCheckBox.Checked)
-            {
-                LOGDraw("Parallel Frequency :" + Utility.GetStringWithSeparators((int)fParrallelFrequency, " ") + "Hz");
-                LOGDraw("Parallel attenuation level :" + Math.Round(nParralelLeveldB,2).ToString() + "dB");
-            }
-            
-            LOGDraw("3dB Bandpass :" + nBandPass3dB.ToString() + "Hz");
-            LOGDraw("--------------------------------");
-           
-
-            // motionnals parameters
-            Rm = (100.0f / ((float)Math.Pow(10.0f, nserieLeveldB / 20.0f)) - 100.0f) / fImpedanceRatio;
-            Lm = (100 + Rm) / (2.0f * (float)Math.PI * nBandPass3dB);
-            Cm = 1.0f / (4.0f * (float)Math.PI * (float)Math.PI * fserieFrequency * fserieFrequency * Lm);
-            Q = Lm * fserieFrequency * 2.0f * (float)Math.PI / Rm;
-
-            // we compute RP equivalent to Rm
-            float Zl = Lm * 2.0f * (float)Math.PI * fserieFrequency;
-            Rp = Zl * Zl / Rm;
-
-            if (ParallelCheckBox.Checked)
-            {
-                Co = 1.0f / (4.0f * (float)Math.PI * (float)Math.PI * Lm * fParrallelFrequency * fParrallelFrequency - 1.0f / Cm);
-                //Rp = (100.0f / ((float)Math.Pow(10.0f, nParralelLeveldB / 20.0f)) - 100.0f) / fImpedanceRatio;
-
-            }
-            else
-            {
-                Co = 0.0f;
-            }
-
-
-            float RmDisplay_Ohms = (float)Math.Round(Rm, 1);
-            float LmDisplay_mH = (float)Math.Round(Lm * 1000.0f, 2);
-            float CmDisplay_fF = (float)Math.Round(Cm*1000000000000000.0f, 2);
-
-
-            MotionalDisplayTextBox.Text += "Rm=" + RmDisplay_Ohms.ToString()+" Ohms";
-            MotionalDisplayTextBox.Text += Environment.NewLine;
-
-            MotionalDisplayTextBox.Text += "Lm=" + LmDisplay_mH.ToString() + " mH";
-            MotionalDisplayTextBox.Text += Environment.NewLine;
-
-            MotionalDisplayTextBox.Text += "Cm=" + CmDisplay_fF.ToString() + " fF";
-            MotionalDisplayTextBox.Text += Environment.NewLine;
-
-            
-            if (ParallelCheckBox.Checked)
-            {
-                float CoDisplayPF = (float)Math.Round(Co * 1000000000000.0f, 1);
-                MotionalDisplayTextBox.Text += "Co=" + CoDisplayPF.ToString() + " pF";
-                MotionalDisplayTextBox.Text += Environment.NewLine;
-            }
-
-            float fQDisplay = (float)Math.Round(Q, 0);
-
-            MotionalDisplayTextBox.Text += "Q=" + fQDisplay.ToString();
-            MotionalDisplayTextBox.Text += Environment.NewLine;
-
-            float fBPDisplay = (float)Math.Round(fserieFrequency * 0.001f / Q, 3);
-            MotionalDisplayTextBox.Text += "BP-3dB=" + fBPDisplay.ToString() + " kHz";
-            MotionalDisplayTextBox.Text += Environment.NewLine;
-            
-            
-            MotionalDisplayTextBox.Text += "------------------------------";
-            MotionalDisplayTextBox.Text += Environment.NewLine;
-
-            MotionalDisplayTextBox.SelectionStart = MotionalDisplayTextBox.Text.Length;
-            MotionalDisplayTextBox.ScrollToCaret();
-
+            DipoleProcessAnalyseOnFinalRange(fSweepResult, nFrequencyBase, nFrequencyStep);
             RefreshQERFilterEstimator();
         }
 
@@ -748,7 +800,6 @@ namespace SNASharp
         bool bCalibrationAvailable = false;
         float fImpedanceRatio = 1.0f;
         bool bDeviceConnected = false;
-        QualityFactor DipoleQualityFactor = QualityFactor.Crystal;
         public static String Version = "F4HTQ SNASharp 2019_01_07 ";
         bool bMuteDeviceComboBoxEvent = false;
         NWTCompatibleDeviceDef CurrentDeviceDef = null;
@@ -918,14 +969,6 @@ namespace SNASharp
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
 
-        }
-
-        private void QSelectionComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DipoleQualityFactor = (QualityFactor)QSelectionComboBox.SelectedItem;
-
-            if (DipoleQualityFactor == QualityFactor.Serie_RLC)
-                ParallelCheckBox.Checked = false;
         }
 
         private void SpectrumPictureBox_Click(object sender, EventArgs e)
@@ -1202,6 +1245,16 @@ namespace SNASharp
 
             }
 
+        }
+
+        private void DeviceDelButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DipoleAnalyseFinalStepOnly(object sender, MouseEventArgs e)
+        {
+            DipoleAnalyseOneStepOnly();
         }
     }
 }
