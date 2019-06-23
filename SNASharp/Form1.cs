@@ -106,7 +106,6 @@ namespace SNASharp
             }
 
 
-            TransformerComboBox.SelectedIndex = 0;
             SpectrumPictureBox.SetOwnedForm(this);
 
             SetSampleCount(Program.Save.SampleCount);
@@ -476,12 +475,22 @@ namespace SNASharp
         }
 
 
-        float [] RunSweep(Int64 nFrequencyStart, Int64 nStep, int nCount, FormNotifier Notifier)
+        float [] RunSweep(Int64 nFrequencyStart, Int64 nStep, int nCount, FormNotifier Notifier, NWTDevice.DetectorUsed Detector = NWTDevice.DetectorUsed.LOGARITHMIC)
         {
+            NWTDevice.RunSweepModeParam Param = new NWTDevice.RunSweepModeParam();
+            Param.Detector = Detector;  
+            Param.nBaseFrequency = nFrequencyStart;
+            Param.nFrequencyStep = nStep;
+            Param.nCount = nCount;
+            Param.Notifier = Notifier;
+            Param.Worker = null;
+
             LOGDraw("BW:" + (nStep* nCount).ToString() + "Hz", false);
             LOGDraw(" samples:" + nCount.ToString(), false);
             LOGDraw(" Step:" + nStep.ToString());
-            return DeviceInterface.RunSweepMode(nFrequencyStart, nStep, nCount, false,Notifier);
+            float [] Result = DeviceInterface.RunSweepMode(Param);
+            Utility.FilterArray(Result, (int)((FilterMode)FilterComboBox.SelectedItem));
+            return Result;
         }
 
         void SingleCurveDisplay(Int64 nFrequencyBase, Int64 nStep, float [] data)
@@ -629,7 +638,7 @@ namespace SNASharp
             MyNotifier.SetProgressBar(SweepProgressBar);
             LOGDraw("Start dipole detection...");
             nFrequencyBase = nFrequencyDetectionStart;
-            nCaptureCount = 9999;
+            nCaptureCount = Convert.ToInt32(SamplesTextBox.Text);
             nFrequencyStep = ((nFrequencyDetectionEnd - nFrequencyDetectionStart) + (nCaptureCount - 1)) / nCaptureCount;
 
 
@@ -640,7 +649,11 @@ namespace SNASharp
                 SamplesTextBox.Text = nCaptureCount.ToString();
             }
 
-            fSweepResult = RunSweep(nFrequencyBase, nFrequencyStep, nCaptureCount, MyNotifier);
+            fSweepResult = RunSweep(nFrequencyBase, 
+                                    nFrequencyStep, 
+                                    nCaptureCount, 
+                                    MyNotifier, 
+                                    (NWTDevice.DetectorUsed)DetectorCombobox.SelectedItem);
 
 
             SingleCurveDisplay(nFrequencyBase, nFrequencyStep, fSweepResult);
@@ -949,21 +962,6 @@ namespace SNASharp
                 bool CalibrationOk = ProcessCalibration();
             }
 
-        }
-
-        private void TransformerComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (TransformerComboBox.SelectedIndex)
-            {
-                case 0: fImpedanceRatio = 1.0f; break;
-                case 1:fImpedanceRatio = 4.0f; break;
-                case 2:fImpedanceRatio = 9.0f; break;
-                case 3:fImpedanceRatio = 16.0f; break;
-                default:break;
-            }
-
-            if (TransformerComboBox.SelectedIndex != 0)
-                LOGWarning("If you change the impedance transformer do not forget to recalibrate the SNA before any new mesure.");
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)

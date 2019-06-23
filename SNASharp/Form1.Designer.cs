@@ -49,8 +49,6 @@
             this.AddNewCurveButton = new System.Windows.Forms.Button();
             this.CurveListComboBox = new System.Windows.Forms.ComboBox();
             this.CurveConfigPropertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.label12 = new System.Windows.Forms.Label();
-            this.DetectorCombobox = new System.Windows.Forms.ComboBox();
             this.SweepLoopStopButton = new System.Windows.Forms.Button();
             this.SweepLoopProcessButton = new System.Windows.Forms.Button();
             this.SweepProcessButton = new System.Windows.Forms.Button();
@@ -76,10 +74,10 @@
             this.DeviceProperyGrid = new System.Windows.Forms.PropertyGrid();
             this.NewDeviceButton = new System.Windows.Forms.Button();
             this.DevicesComboBox = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.DetectorCombobox = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.SamplesTextBox = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.TransformerComboBox = new System.Windows.Forms.ComboBox();
             this.ControlgroupBox = new System.Windows.Forms.GroupBox();
             this.ControlResetButton = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
@@ -218,9 +216,7 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.tabPage2.Controls.Add(this.label17);
             this.tabPage2.Controls.Add(this.ForceRangeButton);
-            this.tabPage2.Controls.Add(this.FilterComboBox);
             this.tabPage2.Controls.Add(this.SaveCurveButton);
             this.tabPage2.Controls.Add(this.LoadCurveButton);
             this.tabPage2.Controls.Add(this.DeleteCurveButton);
@@ -228,8 +224,6 @@
             this.tabPage2.Controls.Add(this.AddNewCurveButton);
             this.tabPage2.Controls.Add(this.CurveListComboBox);
             this.tabPage2.Controls.Add(this.CurveConfigPropertyGrid);
-            this.tabPage2.Controls.Add(this.label12);
-            this.tabPage2.Controls.Add(this.DetectorCombobox);
             this.tabPage2.Controls.Add(this.SweepLoopStopButton);
             this.tabPage2.Controls.Add(this.SweepLoopProcessButton);
             this.tabPage2.Controls.Add(this.SweepProcessButton);
@@ -243,7 +237,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(284, 11);
+            this.label17.Location = new System.Drawing.Point(13, 123);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(66, 13);
             this.label17.TabIndex = 25;
@@ -263,7 +257,7 @@
             // 
             this.FilterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.FilterComboBox.FormattingEnabled = true;
-            this.FilterComboBox.Location = new System.Drawing.Point(287, 27);
+            this.FilterComboBox.Location = new System.Drawing.Point(13, 139);
             this.FilterComboBox.Name = "FilterComboBox";
             this.FilterComboBox.Size = new System.Drawing.Size(75, 21);
             this.FilterComboBox.TabIndex = 24;
@@ -338,24 +332,6 @@
             this.CurveConfigPropertyGrid.TabIndex = 6;
             this.CurveConfigPropertyGrid.ToolbarVisible = false;
             this.CurveConfigPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.CurveConfigPropertyGrid_PropertyValueChanged);
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(155, 11);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(48, 13);
-            this.label12.TabIndex = 5;
-            this.label12.Text = "Detector";
-            // 
-            // DetectorCombobox
-            // 
-            this.DetectorCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.DetectorCombobox.FormattingEnabled = true;
-            this.DetectorCombobox.Location = new System.Drawing.Point(155, 27);
-            this.DetectorCombobox.Name = "DetectorCombobox";
-            this.DetectorCombobox.Size = new System.Drawing.Size(126, 21);
-            this.DetectorCombobox.TabIndex = 4;
             // 
             // SweepLoopStopButton
             // 
@@ -633,6 +609,24 @@
             this.DevicesComboBox.SelectedIndexChanged += new System.EventHandler(this.DevicesComboBox_SelectedIndexChanged);
             this.DevicesComboBox.SelectedValueChanged += new System.EventHandler(this.DevicesComboBox_SelectedValueChanged);
             // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(160, 123);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(48, 13);
+            this.label12.TabIndex = 5;
+            this.label12.Text = "Detector";
+            // 
+            // DetectorCombobox
+            // 
+            this.DetectorCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.DetectorCombobox.FormattingEnabled = true;
+            this.DetectorCombobox.Location = new System.Drawing.Point(163, 139);
+            this.DetectorCombobox.Name = "DetectorCombobox";
+            this.DetectorCombobox.Size = new System.Drawing.Size(135, 21);
+            this.DetectorCombobox.TabIndex = 4;
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -655,35 +649,13 @@
             this.SamplesTextBox.TextChanged += new System.EventHandler(this.SamplesTextBox_TextChanged);
             this.SamplesTextBox.Leave += new System.EventHandler(this.SamplesTextBox_Leave);
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 123);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(63, 13);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "Transformer";
-            // 
-            // TransformerComboBox
-            // 
-            this.TransformerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.TransformerComboBox.FormattingEnabled = true;
-            this.TransformerComboBox.Items.AddRange(new object[] {
-            "1:1 ",
-            "1:4 ",
-            "1:9",
-            "1:16"});
-            this.TransformerComboBox.Location = new System.Drawing.Point(12, 139);
-            this.TransformerComboBox.Name = "TransformerComboBox";
-            this.TransformerComboBox.Size = new System.Drawing.Size(63, 21);
-            this.TransformerComboBox.TabIndex = 14;
-            this.TransformerComboBox.SelectedIndexChanged += new System.EventHandler(this.TransformerComboBox_SelectedIndexChanged);
-            // 
             // ControlgroupBox
             // 
             this.ControlgroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlgroupBox.Controls.Add(this.label17);
             this.ControlgroupBox.Controls.Add(this.ControlResetButton);
             this.ControlgroupBox.Controls.Add(this.label15);
+            this.ControlgroupBox.Controls.Add(this.FilterComboBox);
             this.ControlgroupBox.Controls.Add(this.OutputModeComboBox);
             this.ControlgroupBox.Controls.Add(this.label10);
             this.ControlgroupBox.Controls.Add(this.AttLevelcomboBox);
@@ -692,8 +664,8 @@
             this.ControlgroupBox.Controls.Add(this.SweepEndFrequencyTextbox);
             this.ControlgroupBox.Controls.Add(this.SamplesTextBox);
             this.ControlgroupBox.Controls.Add(this.SweepStartFrequencyTextbox);
-            this.ControlgroupBox.Controls.Add(this.label8);
-            this.ControlgroupBox.Controls.Add(this.TransformerComboBox);
+            this.ControlgroupBox.Controls.Add(this.label12);
+            this.ControlgroupBox.Controls.Add(this.DetectorCombobox);
             this.ControlgroupBox.Controls.Add(this.label4);
             this.ControlgroupBox.Controls.Add(this.SweepProgressBar);
             this.ControlgroupBox.Controls.Add(this.AutodetectButton);
@@ -719,7 +691,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(299, 123);
+            this.label15.Location = new System.Drawing.Point(304, 123);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(68, 13);
             this.label15.TabIndex = 19;
@@ -738,7 +710,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(82, 123);
+            this.label10.Location = new System.Drawing.Point(98, 123);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(56, 13);
             this.label10.TabIndex = 17;
@@ -748,9 +720,9 @@
             // 
             this.AttLevelcomboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AttLevelcomboBox.FormattingEnabled = true;
-            this.AttLevelcomboBox.Location = new System.Drawing.Point(85, 139);
+            this.AttLevelcomboBox.Location = new System.Drawing.Point(99, 139);
             this.AttLevelcomboBox.Name = "AttLevelcomboBox";
-            this.AttLevelcomboBox.Size = new System.Drawing.Size(68, 21);
+            this.AttLevelcomboBox.Size = new System.Drawing.Size(54, 21);
             this.AttLevelcomboBox.TabIndex = 16;
             this.AttLevelcomboBox.SelectedIndexChanged += new System.EventHandler(this.AttLevelcomboBox_SelectedIndexChanged);
             // 
@@ -953,7 +925,6 @@
         private System.Windows.Forms.CheckBox ParallelCheckBox;
         private System.Windows.Forms.TextBox MotionalDisplayTextBox;
         private System.Windows.Forms.Button AnalyseButton;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
@@ -961,7 +932,6 @@
         private System.Windows.Forms.TextBox ImpedancetextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox QERBandPassTextBox;
-        private System.Windows.Forms.ComboBox TransformerComboBox;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox SamplesTextBox;
         private System.Windows.Forms.MenuStrip menuStrip1;
