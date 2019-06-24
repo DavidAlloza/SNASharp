@@ -496,9 +496,10 @@ namespace SNASharp
         void SingleCurveDisplay(Int64 nFrequencyBase, Int64 nStep, float [] data)
         {
             int Count = data.Length;
-            CCurve Curve = new CCurve();
+            CCurve Curve = (CCurve) SweepModeCurvesList[0];
             Curve.Color_ = Color.DeepPink;
 
+            /*
             CGraph Graph = SpectrumPictureBox.GetGraphConfig();
             Graph.nLastDrawingLowFrequency = nFrequencyBase;
             Graph.nLastDrawingHighFrequency = nFrequencyBase + nStep * Count;
@@ -506,11 +507,15 @@ namespace SNASharp
             Graph.fLastDrawingLevelHigh = 0;
 
             SpectrumPictureBox.GetGraphConfig().DrawBackGround();
+            */
             Curve.SpectrumValues = data;
             Curve.nSpectrumLowFrequency = nFrequencyBase;
             Curve.nSpectrumHighFrequency = nFrequencyBase  + nStep * Count;
             Curve.Name = "Crystal";
-            SpectrumPictureBox.DrawSingleCurve(Curve);
+            Curve.DetermineMinMaxLevels();
+
+            SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
+            //SpectrumPictureBox.DrawSingleCurve(Curve);
         }
 
 
@@ -632,8 +637,6 @@ namespace SNASharp
             Int64 nFrequencyBase;
             int nCaptureCount;
 
-            CCurve Curve = new CCurve();
-
             // first scan 
             MyNotifier.SetProgressBar(SweepProgressBar);
             LOGDraw("Start dipole detection...");
@@ -675,7 +678,6 @@ namespace SNASharp
             int nserieIndex;
             Int64 nserieFrequency;
 
-            CCurve Curve = new CCurve();
 
             // first scan 
             MyNotifier.SetProgressBar(SweepProgressBar);
