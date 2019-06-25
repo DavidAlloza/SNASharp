@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using NWTInterface;
+using AnalyzerInterface;
 using System.IO;
 using System.Xml.Serialization;
 

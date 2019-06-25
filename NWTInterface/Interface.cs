@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 
 
-namespace NWTInterface
+namespace AnalyzerInterface
 {
     public enum AttLevel { _0dB, _10dB, _20dB, _30dB, _40dB, _50dB };
 
@@ -48,8 +48,8 @@ namespace NWTInterface
         protected int[] _FirmwareVersions = new int[] { 110,119 };
 
         protected bool _HaveAttenuator = false;
-        protected bool _HaveAD8309 = true;
-        protected bool _HaveAD8361 = false;
+        protected bool _HaveLogDetector = true;
+        protected bool _HaveLinDetector = false;
         protected int _AcquisitionReadTimeout = 500;
 
         public string ModelName
@@ -74,16 +74,16 @@ namespace NWTInterface
         }
 
 
-        public bool AD8309
+        public bool HaveLogDetector
         {
-            get { return _HaveAD8309; }
-            set { _HaveAD8309 = value; }
+            get { return _HaveLogDetector; }
+            set { _HaveLogDetector = value; }
         }
 
-        public bool AD8361
+        public bool HaveLinDetector
         {
-            get { return _HaveAD8361; }
-            set { _HaveAD8361 = value; }
+            get { return _HaveLinDetector; }
+            set { _HaveLinDetector = value; }
         }
 
 
@@ -560,7 +560,7 @@ namespace NWTInterface
                         StreamFromSNA[0] = (byte)port.ReadByte();
                         StreamFromSNA[1] = (byte)port.ReadByte();
 
-                        if (DeviceDef.SweepDataFormat == NWTInterface.DeviceDef.SamplingDataFormat._16Bits_2Channel)
+                        if (DeviceDef.SweepDataFormat == AnalyzerInterface.DeviceDef.SamplingDataFormat._16Bits_2Channel)
                         {
                             StreamFromSNA[2] = (byte)port.ReadByte();
                             StreamFromSNA[3] = (byte)port.ReadByte();

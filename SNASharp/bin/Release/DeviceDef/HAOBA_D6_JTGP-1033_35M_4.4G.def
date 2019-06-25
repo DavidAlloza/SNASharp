@@ -3,8 +3,8 @@
   <ModelName>D6_JTGP-1033_35M_4.4G</ModelName>
   <BuilderName>HAOBA</BuilderName>
   <Attenuator>false</Attenuator>
-  <AD8309>true</AD8309>
-  <AD8361>false</AD8361>
+  <HaveLogDetector>true</HaveLogDetector>
+  <HaveLinDetector>false</HaveLinDetector>
   <AllowedFirmwaresVersions>
     <int>110</int>
     <int>119</int>
@@ -15,4 +15,5 @@
   <VerticalResolutiondB>0.1923</VerticalResolutiondB>
   <Operating_mode>TrackingSpectrum</Operating_mode>
   <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
+  <AcquisitionTimeout>500</AcquisitionTimeout>
 </NWTCompatibleDeviceDef>

@@ -3,8 +3,8 @@
   <ModelName>FIRMWARE_12BITS_D6_JTGP-1033 35M-4.4G</ModelName>
   <BuilderName>F1FGV</BuilderName>
   <Attenuator>false</Attenuator>
-  <AD8309>true</AD8309>
-  <AD8361>false</AD8361>
+  <HaveLogDetector>true</HaveLogDetector>
+  <HaveLinDetector>false</HaveLinDetector>
   <AllowedFirmwaresVersions>
     <int>110</int>
     <int>119</int>

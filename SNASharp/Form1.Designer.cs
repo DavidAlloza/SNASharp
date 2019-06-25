@@ -39,9 +39,7 @@
             this.AutodetectButton = new System.Windows.Forms.Button();
             this.OperationsTabControl = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label17 = new System.Windows.Forms.Label();
             this.ForceRangeButton = new System.Windows.Forms.Button();
-            this.FilterComboBox = new System.Windows.Forms.ComboBox();
             this.SaveCurveButton = new System.Windows.Forms.Button();
             this.LoadCurveButton = new System.Windows.Forms.Button();
             this.DeleteCurveButton = new System.Windows.Forms.Button();
@@ -74,6 +72,8 @@
             this.DeviceProperyGrid = new System.Windows.Forms.PropertyGrid();
             this.NewDeviceButton = new System.Windows.Forms.Button();
             this.DevicesComboBox = new System.Windows.Forms.ComboBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.FilterComboBox = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.DetectorCombobox = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -207,10 +207,10 @@
             this.OperationsTabControl.Controls.Add(this.tabPage4);
             this.OperationsTabControl.Controls.Add(this.tabPage1);
             this.OperationsTabControl.Controls.Add(this.tabPage3);
-            this.OperationsTabControl.Location = new System.Drawing.Point(754, 199);
+            this.OperationsTabControl.Location = new System.Drawing.Point(754, 226);
             this.OperationsTabControl.Name = "OperationsTabControl";
             this.OperationsTabControl.SelectedIndex = 0;
-            this.OperationsTabControl.Size = new System.Drawing.Size(376, 327);
+            this.OperationsTabControl.Size = new System.Drawing.Size(376, 300);
             this.OperationsTabControl.TabIndex = 4;
             // 
             // tabPage2
@@ -230,22 +230,13 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(368, 301);
+            this.tabPage2.Size = new System.Drawing.Size(368, 274);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sweepmode";
             // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(13, 123);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(66, 13);
-            this.label17.TabIndex = 25;
-            this.label17.Text = "Capture filter";
-            // 
             // ForceRangeButton
             // 
-            this.ForceRangeButton.Location = new System.Drawing.Point(6, 252);
+            this.ForceRangeButton.Location = new System.Drawing.Point(6, 226);
             this.ForceRangeButton.Name = "ForceRangeButton";
             this.ForceRangeButton.Size = new System.Drawing.Size(68, 43);
             this.ForceRangeButton.TabIndex = 13;
@@ -253,18 +244,9 @@
             this.ForceRangeButton.UseVisualStyleBackColor = true;
             this.ForceRangeButton.Click += new System.EventHandler(this.ForceRangeButton_Click);
             // 
-            // FilterComboBox
-            // 
-            this.FilterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.FilterComboBox.FormattingEnabled = true;
-            this.FilterComboBox.Location = new System.Drawing.Point(13, 139);
-            this.FilterComboBox.Name = "FilterComboBox";
-            this.FilterComboBox.Size = new System.Drawing.Size(75, 21);
-            this.FilterComboBox.TabIndex = 24;
-            // 
             // SaveCurveButton
             // 
-            this.SaveCurveButton.Location = new System.Drawing.Point(81, 200);
+            this.SaveCurveButton.Location = new System.Drawing.Point(81, 174);
             this.SaveCurveButton.Name = "SaveCurveButton";
             this.SaveCurveButton.Size = new System.Drawing.Size(68, 46);
             this.SaveCurveButton.TabIndex = 12;
@@ -274,7 +256,7 @@
             // 
             // LoadCurveButton
             // 
-            this.LoadCurveButton.Location = new System.Drawing.Point(5, 200);
+            this.LoadCurveButton.Location = new System.Drawing.Point(6, 174);
             this.LoadCurveButton.Name = "LoadCurveButton";
             this.LoadCurveButton.Size = new System.Drawing.Size(70, 46);
             this.LoadCurveButton.TabIndex = 11;
@@ -285,7 +267,7 @@
             // DeleteCurveButton
             // 
             this.DeleteCurveButton.BackColor = System.Drawing.Color.Salmon;
-            this.DeleteCurveButton.Location = new System.Drawing.Point(81, 152);
+            this.DeleteCurveButton.Location = new System.Drawing.Point(82, 126);
             this.DeleteCurveButton.Name = "DeleteCurveButton";
             this.DeleteCurveButton.Size = new System.Drawing.Size(68, 42);
             this.DeleteCurveButton.TabIndex = 10;
@@ -296,7 +278,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(156, 59);
+            this.label16.Location = new System.Drawing.Point(156, 3);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(67, 13);
             this.label16.TabIndex = 9;
@@ -305,7 +287,7 @@
             // AddNewCurveButton
             // 
             this.AddNewCurveButton.BackColor = System.Drawing.Color.PaleGreen;
-            this.AddNewCurveButton.Location = new System.Drawing.Point(3, 152);
+            this.AddNewCurveButton.Location = new System.Drawing.Point(6, 126);
             this.AddNewCurveButton.Name = "AddNewCurveButton";
             this.AddNewCurveButton.Size = new System.Drawing.Size(72, 42);
             this.AddNewCurveButton.TabIndex = 8;
@@ -317,7 +299,7 @@
             // 
             this.CurveListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CurveListComboBox.FormattingEnabled = true;
-            this.CurveListComboBox.Location = new System.Drawing.Point(155, 80);
+            this.CurveListComboBox.Location = new System.Drawing.Point(155, 19);
             this.CurveListComboBox.Name = "CurveListComboBox";
             this.CurveListComboBox.Size = new System.Drawing.Size(207, 21);
             this.CurveListComboBox.TabIndex = 7;
@@ -326,9 +308,9 @@
             // CurveConfigPropertyGrid
             // 
             this.CurveConfigPropertyGrid.HelpVisible = false;
-            this.CurveConfigPropertyGrid.Location = new System.Drawing.Point(155, 112);
+            this.CurveConfigPropertyGrid.Location = new System.Drawing.Point(155, 46);
             this.CurveConfigPropertyGrid.Name = "CurveConfigPropertyGrid";
-            this.CurveConfigPropertyGrid.Size = new System.Drawing.Size(207, 183);
+            this.CurveConfigPropertyGrid.Size = new System.Drawing.Size(207, 223);
             this.CurveConfigPropertyGrid.TabIndex = 6;
             this.CurveConfigPropertyGrid.ToolbarVisible = false;
             this.CurveConfigPropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.CurveConfigPropertyGrid_PropertyValueChanged);
@@ -336,7 +318,7 @@
             // SweepLoopStopButton
             // 
             this.SweepLoopStopButton.Enabled = false;
-            this.SweepLoopStopButton.Location = new System.Drawing.Point(6, 112);
+            this.SweepLoopStopButton.Location = new System.Drawing.Point(6, 86);
             this.SweepLoopStopButton.Name = "SweepLoopStopButton";
             this.SweepLoopStopButton.Size = new System.Drawing.Size(143, 34);
             this.SweepLoopStopButton.TabIndex = 3;
@@ -346,7 +328,7 @@
             // 
             // SweepLoopProcessButton
             // 
-            this.SweepLoopProcessButton.Location = new System.Drawing.Point(6, 67);
+            this.SweepLoopProcessButton.Location = new System.Drawing.Point(6, 46);
             this.SweepLoopProcessButton.Name = "SweepLoopProcessButton";
             this.SweepLoopProcessButton.Size = new System.Drawing.Size(143, 34);
             this.SweepLoopProcessButton.TabIndex = 2;
@@ -357,7 +339,7 @@
             // SweepProcessButton
             // 
             this.SweepProcessButton.BackColor = System.Drawing.Color.PaleGreen;
-            this.SweepProcessButton.Location = new System.Drawing.Point(6, 27);
+            this.SweepProcessButton.Location = new System.Drawing.Point(6, 6);
             this.SweepProcessButton.Name = "SweepProcessButton";
             this.SweepProcessButton.Size = new System.Drawing.Size(143, 34);
             this.SweepProcessButton.TabIndex = 0;
@@ -373,7 +355,7 @@
             this.tabPage4.Controls.Add(this.VFOFrequencyTextBox);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(368, 301);
+            this.tabPage4.Size = new System.Drawing.Size(368, 274);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "VFO";
             // 
@@ -425,7 +407,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(368, 301);
+            this.tabPage1.Size = new System.Drawing.Size(368, 274);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Crystal analyzer";
             // 
@@ -443,7 +425,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(9, 157);
+            this.label7.Location = new System.Drawing.Point(9, 128);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(163, 16);
             this.label7.TabIndex = 5;
@@ -454,7 +436,7 @@
             this.ParallelCheckBox.AutoSize = true;
             this.ParallelCheckBox.Checked = true;
             this.ParallelCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ParallelCheckBox.Location = new System.Drawing.Point(205, 9);
+            this.ParallelCheckBox.Location = new System.Drawing.Point(249, 7);
             this.ParallelCheckBox.Name = "ParallelCheckBox";
             this.ParallelCheckBox.Size = new System.Drawing.Size(113, 17);
             this.ParallelCheckBox.TabIndex = 19;
@@ -466,12 +448,12 @@
             this.MotionalDisplayTextBox.BackColor = System.Drawing.Color.White;
             this.MotionalDisplayTextBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MotionalDisplayTextBox.ForeColor = System.Drawing.Color.Black;
-            this.MotionalDisplayTextBox.Location = new System.Drawing.Point(12, 188);
+            this.MotionalDisplayTextBox.Location = new System.Drawing.Point(11, 147);
             this.MotionalDisplayTextBox.Multiline = true;
             this.MotionalDisplayTextBox.Name = "MotionalDisplayTextBox";
             this.MotionalDisplayTextBox.ReadOnly = true;
             this.MotionalDisplayTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.MotionalDisplayTextBox.Size = new System.Drawing.Size(351, 110);
+            this.MotionalDisplayTextBox.Size = new System.Drawing.Size(351, 121);
             this.MotionalDisplayTextBox.TabIndex = 3;
             // 
             // AnalyseButton
@@ -493,7 +475,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.QERBandPassTextBox);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox1.Location = new System.Drawing.Point(9, 65);
+            this.groupBox1.Location = new System.Drawing.Point(9, 51);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(353, 74);
             this.groupBox1.TabIndex = 11;
@@ -564,7 +546,7 @@
             this.tabPage3.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(368, 301);
+            this.tabPage3.Size = new System.Drawing.Size(368, 274);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Devices editor";
             // 
@@ -583,7 +565,7 @@
             this.DeviceProperyGrid.HelpVisible = false;
             this.DeviceProperyGrid.Location = new System.Drawing.Point(3, 64);
             this.DeviceProperyGrid.Name = "DeviceProperyGrid";
-            this.DeviceProperyGrid.Size = new System.Drawing.Size(360, 234);
+            this.DeviceProperyGrid.Size = new System.Drawing.Size(360, 210);
             this.DeviceProperyGrid.TabIndex = 2;
             this.DeviceProperyGrid.ToolbarVisible = false;
             this.DeviceProperyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.DeviceProperyGrid_PropertyValueChanged);
@@ -608,6 +590,24 @@
             this.DevicesComboBox.TabIndex = 0;
             this.DevicesComboBox.SelectedIndexChanged += new System.EventHandler(this.DevicesComboBox_SelectedIndexChanged);
             this.DevicesComboBox.SelectedValueChanged += new System.EventHandler(this.DevicesComboBox_SelectedValueChanged);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(13, 123);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(66, 13);
+            this.label17.TabIndex = 25;
+            this.label17.Text = "Capture filter";
+            // 
+            // FilterComboBox
+            // 
+            this.FilterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FilterComboBox.FormattingEnabled = true;
+            this.FilterComboBox.Location = new System.Drawing.Point(13, 139);
+            this.FilterComboBox.Name = "FilterComboBox";
+            this.FilterComboBox.Size = new System.Drawing.Size(75, 21);
+            this.FilterComboBox.TabIndex = 24;
             // 
             // label12
             // 

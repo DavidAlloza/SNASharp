@@ -28,10 +28,10 @@ namespace SNASharp
             // unserialize device definition
             for (int i = 0; i < Files.Length; i++)
             {
-                XmlSerializer xs = new XmlSerializer(typeof(NWTInterface.NWTCompatibleDeviceDef));
+                XmlSerializer xs = new XmlSerializer(typeof(AnalyzerInterface.NWTCompatibleDeviceDef));
                 using (StreamReader wr = new StreamReader(System.IO.Path.Combine(Program.DeviceDefPath,Files[i].ToString())))
                 {
-                    DeviceArray.Add(xs.Deserialize(wr) as NWTInterface.NWTCompatibleDeviceDef);
+                    DeviceArray.Add(xs.Deserialize(wr) as AnalyzerInterface.NWTCompatibleDeviceDef);
                 }
             }
 
@@ -41,8 +41,8 @@ namespace SNASharp
         {
             for (int nDevice = 0; nDevice < DeviceArray.Count; nDevice++)
             {
-                NWTInterface.NWTCompatibleDeviceDef DeviceDef = (NWTInterface.NWTCompatibleDeviceDef)DeviceArray[nDevice];
-                XmlSerializer xs = new XmlSerializer(typeof(NWTInterface.NWTCompatibleDeviceDef));
+                AnalyzerInterface.NWTCompatibleDeviceDef DeviceDef = (AnalyzerInterface.NWTCompatibleDeviceDef)DeviceArray[nDevice];
+                XmlSerializer xs = new XmlSerializer(typeof(AnalyzerInterface.NWTCompatibleDeviceDef));
                 using (StreamWriter wr = new StreamWriter(System.IO.Path.Combine(Program.DeviceDefPath,DeviceDef.ToString() + ".def")))
                 {
                     xs.Serialize(wr, DeviceDef);
@@ -53,7 +53,7 @@ namespace SNASharp
 
         private void NewDevicebutton_Click(object sender, EventArgs e)
         {
-            NWTInterface.DeviceDef NewDevice = new NWTInterface.NWTCompatibleDeviceDef();
+            AnalyzerInterface.DeviceDef NewDevice = new AnalyzerInterface.NWTCompatibleDeviceDef();
             DeviceArray.Add(NewDevice);
             DeviceListMenuRefresh();
             DevicesComboBox.SelectedItem = NewDevice;
@@ -86,9 +86,9 @@ namespace SNASharp
             //deviceModelToolStripMenuItem.Text = DeviceArray[0].ToString();
         }
 
-        NWTInterface.NWTCompatibleDeviceDef GetDevice(int nDeviceIndex)
+        AnalyzerInterface.NWTCompatibleDeviceDef GetDevice(int nDeviceIndex)
         {
-            return (NWTInterface.NWTCompatibleDeviceDef)DeviceArray[nDeviceIndex];
+            return (AnalyzerInterface.NWTCompatibleDeviceDef)DeviceArray[nDeviceIndex];
         }
 
         int GetDeviceIndex(String sDeviceName)

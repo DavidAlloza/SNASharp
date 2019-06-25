@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using NWTInterface;
+using AnalyzerInterface;
 using System.Globalization;
 using System.IO;
 using System.Xml.Serialization;
@@ -272,7 +272,7 @@ namespace SNASharp
 
                 }
 
-                if (!DeviceDef.AD8361)
+                if (!DeviceDef.HaveLinDetector)
                 {
                     DetectorCombobox.SelectedIndex = 0;
                     DetectorCombobox.Enabled = false;
@@ -377,13 +377,13 @@ namespace SNASharp
 
         bool ProcessCalibrationNoAttenuator()
         {
-            if (DeviceInterface.GetDevice().AD8309)
+            if (DeviceInterface.GetDevice().HaveLogDetector)
             {
                 LOGDraw("Calibration in progress using logarithmic detector..", true);
                 DeviceInterface.RunCalibration(MyNotifier,9999,false);
             }
 
-            if (DeviceInterface.GetDevice().AD8361)
+            if (DeviceInterface.GetDevice().HaveLinDetector)
             {
                 LOGDraw("Calibration in progress using linear detector..", true);
                 DeviceInterface.RunCalibration(MyNotifier,9999,true);
@@ -424,13 +424,13 @@ namespace SNASharp
 
                 if (Result == DialogResult.No)
                 {
-                    if (DeviceInterface.GetDevice().AD8309)
+                    if (DeviceInterface.GetDevice().HaveLogDetector)
                     {
                         LOGDraw("Calibration for " + Current.ToString() + " attenuator, using logarithmic detector", true);
                         DeviceInterface.SetAttenuatorLevel(Current);
                         DeviceInterface.RunCalibration(MyNotifier,9999, false);
                     }
-                    if (DeviceInterface.GetDevice().AD8361)
+                    if (DeviceInterface.GetDevice().HaveLinDetector)
                     {
                         LOGDraw("Calibration for " + Current.ToString() + " attenuator, using linear detector..", true);
                         DeviceInterface.SetAttenuatorLevel(Current);
@@ -446,14 +446,14 @@ namespace SNASharp
                 {
                     foreach (AttLevel Level in Enum.GetValues(typeof(AttLevel)))
                     {
-                        if (DeviceInterface.GetDevice().AD8309)
+                        if (DeviceInterface.GetDevice().HaveLogDetector)
                         {
                             LOGDraw("Calibration for " + Level.ToString() + " attenuator, using logarihtmic detector..", true);
                             DeviceInterface.SetAttenuatorLevel(Level);
                             DeviceInterface.RunCalibration(MyNotifier,4000,false);
                         }
 
-                        if (DeviceInterface.GetDevice().AD8361)
+                        if (DeviceInterface.GetDevice().HaveLinDetector)
                         {
                             LOGDraw("Calibration for " + Level.ToString() + " attenuator, using linear detector..", true);
                             DeviceInterface.SetAttenuatorLevel(Level);
@@ -753,7 +753,7 @@ namespace SNASharp
             RefreshQERFilterEstimator();
         }
 
-        public class FormNotifier : NWTInterface.CBackNotifier
+        public class FormNotifier : AnalyzerInterface.CBackNotifier
         {
             System.Windows.Forms.ProgressBar ProgressBar = null;
             Form1 form = null;

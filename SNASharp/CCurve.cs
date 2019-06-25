@@ -565,11 +565,11 @@ namespace SNASharp
         {
 
             String NL = Environment.NewLine;
-
+           
             String Result = "Name : " + Name + NL;
-            Result += "Max Level : " + fMaxLeveldB + "dB";
+            Result += "Max Level : " + Math.Round(fMaxLeveldB,2) + "dB";
             Result += " at " + Utility.GetStringWithSeparators(nMaxLevelFrequency, " ") + "Hz"+ NL;
-            Result += "Min Level : " + fMinLeveldB + "dB";
+            Result += "Min Level : " + Math.Round(fMinLeveldB,2) + "dB";
             Result += " at " + Utility.GetStringWithSeparators(nMinLevelFrequency, " ") + "Hz"+ NL;
 
             Result += "DUT detected as ";
