@@ -111,6 +111,7 @@ namespace SNASharp
             SetSampleCount(Program.Save.SampleCount);
             DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem);
 
+            VFOFrequencyTextBox.Text = Utility.GetStringWithSeparators(Program.Save.LastVFOFrequency, " "); 
 
         }
 
@@ -1078,6 +1079,7 @@ namespace SNASharp
             Program.Save.Filter = (FilterMode)FilterComboBox.SelectedItem;
             Program.Save.LowFrequency = nFrequencyDetectionStart;
             Program.Save.HighFrequency = nFrequencyDetectionEnd;
+            Program.Save.LastVFOFrequency = GetVFOFrequencyValue();
 
             if (GetSampleCount() > 0)
                 Program.Save.SampleCount = GetSampleCount();
@@ -1143,31 +1145,35 @@ namespace SNASharp
             Program.Save.SerialPortAutodetectAtLaunch = AutodetectCOMcheckBox.Checked;
         }
 
-        private void VFOFrequencyTextBox_TextChanged(object sender, EventArgs e)
+
+        Int64 GetVFOFrequencyValue()
         {
-            Int64 FinalValue;
             String Result = Utility.RemoveSeparator(VFOFrequencyTextBox.Text);
 
             Result = Result.Replace(",", ".");
-
             if (Result.Length > 0)
+                return Convert.ToInt64(Result, new CultureInfo("en-US"));
+            else
+                return 0;
+        }
+
+        private void VFOFrequencyTextBox_TextChanged(object sender, EventArgs e)
+        {
+            Int64 FinalValue = GetVFOFrequencyValue();
+
+            if (FinalValue > DeviceInterface.MaxFrequency || FinalValue < DeviceInterface.MinFrequency)
             {
-                FinalValue = Convert.ToInt64(Result, new CultureInfo("en-US"));
+                VFOFrequencyTextBox.ForeColor = Color.Red;
+            }
+            else
+            {
+                VFOFrequencyTextBox.ForeColor = Color.Black;
 
-                if (FinalValue > DeviceInterface.MaxFrequency || FinalValue < DeviceInterface.MinFrequency)
+                if (StartVFOButton.Enabled == false)
                 {
-                    VFOFrequencyTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    VFOFrequencyTextBox.ForeColor = Color.Black;
-
-                    if (StartVFOButton.Enabled == false)
-                    {
-                        // we are running
-                        LOGDraw("Set VFO Frequency:" + VFOFrequencyTextBox.Text);
-                        DeviceInterface.SetFrequency(FinalValue);
-                    }
+                    // we are running
+                    LOGDraw("Set VFO Frequency:" + VFOFrequencyTextBox.Text);
+                    DeviceInterface.SetFrequency(FinalValue);
                 }
             }
         }
@@ -1194,7 +1200,7 @@ namespace SNASharp
             SpectrumPictureBox.Enabled = true;
             StartVFOButton.Enabled = true;
             StopVFOButton.Enabled = false;
-            int nVersion = DeviceInterface.GetVersion();
+            DeviceInterface.SetFrequency(0);
         }
 
         public OutputMode GetOutputMode()

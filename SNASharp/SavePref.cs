@@ -42,6 +42,7 @@ namespace SNASharp
         Int64 _LowFrequencyRange = -1;
         Int64 _HighFrequencyRange = -1;
         int _SampleCount = 2000;
+        Int64 _LastVFOFrequency = 50000000;
 
 
         public bool DisplayDisclaimer
@@ -104,6 +105,14 @@ namespace SNASharp
         {
             get { return _Filter; }
             set { _Filter = value; }
+
+        }
+
+
+        public Int64 LastVFOFrequency 
+        {
+            get { return _LastVFOFrequency; }
+            set { _LastVFOFrequency = value; }
 
         }
 

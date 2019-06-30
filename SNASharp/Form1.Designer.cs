@@ -115,12 +115,12 @@
             this.LogOutputTextBox.BackColor = System.Drawing.Color.Blue;
             this.LogOutputTextBox.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LogOutputTextBox.ForeColor = System.Drawing.Color.Yellow;
-            this.LogOutputTextBox.Location = new System.Drawing.Point(758, 532);
+            this.LogOutputTextBox.Location = new System.Drawing.Point(633, 532);
             this.LogOutputTextBox.Multiline = true;
             this.LogOutputTextBox.Name = "LogOutputTextBox";
             this.LogOutputTextBox.ReadOnly = true;
             this.LogOutputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.LogOutputTextBox.Size = new System.Drawing.Size(372, 132);
+            this.LogOutputTextBox.Size = new System.Drawing.Size(372, 191);
             this.LogOutputTextBox.TabIndex = 1;
             this.LogOutputTextBox.TextChanged += new System.EventHandler(this.LogOutputTextBox_TextChanged);
             // 
@@ -207,7 +207,7 @@
             this.OperationsTabControl.Controls.Add(this.tabPage4);
             this.OperationsTabControl.Controls.Add(this.tabPage1);
             this.OperationsTabControl.Controls.Add(this.tabPage3);
-            this.OperationsTabControl.Location = new System.Drawing.Point(754, 226);
+            this.OperationsTabControl.Location = new System.Drawing.Point(629, 226);
             this.OperationsTabControl.Name = "OperationsTabControl";
             this.OperationsTabControl.SelectedIndex = 0;
             this.OperationsTabControl.Size = new System.Drawing.Size(376, 300);
@@ -390,7 +390,7 @@
             this.VFOFrequencyTextBox.Name = "VFOFrequencyTextBox";
             this.VFOFrequencyTextBox.Size = new System.Drawing.Size(306, 50);
             this.VFOFrequencyTextBox.TabIndex = 0;
-            this.VFOFrequencyTextBox.Text = "4 400 000 000";
+            this.VFOFrequencyTextBox.Text = "50 000 000";
             this.VFOFrequencyTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.VFOFrequencyTextBox.TextChanged += new System.EventHandler(this.VFOFrequencyTextBox_TextChanged);
             this.VFOFrequencyTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.VFOFrequencyTextBox_KeyUp);
@@ -670,7 +670,7 @@
             this.ControlgroupBox.Controls.Add(this.SweepProgressBar);
             this.ControlgroupBox.Controls.Add(this.AutodetectButton);
             this.ControlgroupBox.Controls.Add(this.CalibrationButton);
-            this.ControlgroupBox.Location = new System.Drawing.Point(754, 27);
+            this.ControlgroupBox.Location = new System.Drawing.Point(629, 27);
             this.ControlgroupBox.Name = "ControlgroupBox";
             this.ControlgroupBox.Size = new System.Drawing.Size(376, 166);
             this.ControlgroupBox.TabIndex = 14;
@@ -851,7 +851,7 @@
             this.SpectrumPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("SpectrumPictureBox.Image")));
             this.SpectrumPictureBox.Location = new System.Drawing.Point(-1, 27);
             this.SpectrumPictureBox.Name = "SpectrumPictureBox";
-            this.SpectrumPictureBox.Size = new System.Drawing.Size(749, 637);
+            this.SpectrumPictureBox.Size = new System.Drawing.Size(624, 696);
             this.SpectrumPictureBox.TabIndex = 0;
             this.SpectrumPictureBox.TabStop = false;
             this.SpectrumPictureBox.SizeChanged += new System.EventHandler(this.SpectrumPictureBox_SizeChanged);
@@ -864,7 +864,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1133, 670);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.AutodetectCOMcheckBox);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.FirmwareTextBox);
