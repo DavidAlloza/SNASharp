@@ -16,6 +16,7 @@ namespace SNASharp
 
         private void SweepProcessButton_Click(object sender, EventArgs e)
         {
+            bLoop = false;
             ProcessSweepModeStartAcquisition();
         }
 
@@ -85,10 +86,21 @@ namespace SNASharp
             {
                 SweepProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             }
+            else
+            {
+                SweepProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            }
 
             if (DeviceInterface.IsPortOpen())
             {
-                backgroundWorkerSerialCapture.RunWorkerAsync(NextAcquisitionParams);
+                try
+                {
+                    backgroundWorkerSerialCapture.RunWorkerAsync(NextAcquisitionParams);
+                }
+                catch (Exception ex)
+                {
+                    LOGError(ex.Message);
+                }
             }
             else
             {
@@ -132,6 +144,7 @@ namespace SNASharp
                 CurveConfig.ComputeCaracteristicsParams();
                 if (bLoop == false)
                 {
+                    LOGDraw(""); // new line
                     LOGDraw("*** ----- RESULTS----- ***");
                     LOGDraw(CurveConfig.GetCurveDescription());
                 }
@@ -151,8 +164,10 @@ namespace SNASharp
 
         private void backgroundWorkerSerialCapture_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-           // if ( !bLoop)
-                SweepProgressBar.Value = e.ProgressPercentage;
+            SweepProgressBar.Value = e.ProgressPercentage;
+
+            //if (!bLoop)
+            //    LogOutputTextBox.Text += ".";
         }
 
         private void backgroundWorkerSerialCapture_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

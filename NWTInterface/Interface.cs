@@ -483,6 +483,8 @@ namespace AnalyzerInterface
 
             float[] fullBuffer = new float[nCount];
             port.DiscardInBuffer();
+            port.DiscardOutBuffer();
+
             port.ReadTimeout = DeviceDef.AcquisitionTimeout;
 
 
