@@ -109,7 +109,9 @@ namespace SNASharp
             SpectrumPictureBox.SetOwnedForm(this);
 
             SetSampleCount(Program.Save.SampleCount);
-            DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem);
+
+            if (DeviceInterface.GetDevice().Attenuator)
+                DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem);
 
             VFOFrequencyTextBox.Text = Utility.GetStringWithSeparators(Program.Save.LastVFOFrequency, " "); 
 
