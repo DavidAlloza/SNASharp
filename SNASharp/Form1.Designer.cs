@@ -96,6 +96,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.AutodetectCOMcheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundWorkerSerialCapture = new System.ComponentModel.BackgroundWorker();
+            this.RawCaptureCheckBox = new System.Windows.Forms.CheckBox();
             this.SpectrumPictureBox = new SNASharp.SpectrumPictureBoxClass();
             this.OperationsTabControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -652,6 +653,7 @@
             // ControlgroupBox
             // 
             this.ControlgroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlgroupBox.Controls.Add(this.RawCaptureCheckBox);
             this.ControlgroupBox.Controls.Add(this.label17);
             this.ControlgroupBox.Controls.Add(this.ControlResetButton);
             this.ControlgroupBox.Controls.Add(this.label15);
@@ -672,7 +674,7 @@
             this.ControlgroupBox.Controls.Add(this.CalibrationButton);
             this.ControlgroupBox.Location = new System.Drawing.Point(629, 27);
             this.ControlgroupBox.Name = "ControlgroupBox";
-            this.ControlgroupBox.Size = new System.Drawing.Size(376, 166);
+            this.ControlgroupBox.Size = new System.Drawing.Size(376, 193);
             this.ControlgroupBox.TabIndex = 14;
             this.ControlgroupBox.TabStop = false;
             this.ControlgroupBox.Text = "Controls";
@@ -841,6 +843,17 @@
             this.backgroundWorkerSerialCapture.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerSerialCapture_ProgressChanged);
             this.backgroundWorkerSerialCapture.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerSerialCapture_RunWorkerCompleted);
             // 
+            // RawCaptureCheckBox
+            // 
+            this.RawCaptureCheckBox.AutoSize = true;
+            this.RawCaptureCheckBox.Location = new System.Drawing.Point(12, 170);
+            this.RawCaptureCheckBox.Name = "RawCaptureCheckBox";
+            this.RawCaptureCheckBox.Size = new System.Drawing.Size(87, 17);
+            this.RawCaptureCheckBox.TabIndex = 26;
+            this.RawCaptureCheckBox.Text = "Raw capture";
+            this.RawCaptureCheckBox.UseVisualStyleBackColor = true;
+            this.RawCaptureCheckBox.CheckedChanged += new System.EventHandler(this.RawCaptureCheckBox_CheckedChanged);
+            // 
             // SpectrumPictureBox
             // 
             this.SpectrumPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -975,6 +988,7 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.ComboBox FilterComboBox;
         private System.Windows.Forms.Button FastAnalyzeButton;
+        private System.Windows.Forms.CheckBox RawCaptureCheckBox;
     }
 }
 

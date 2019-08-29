@@ -52,18 +52,19 @@ namespace SNASharp
             if (!bDeviceConnected)
             {
                 LOGError("No Device connected");
-            }
-
-
-            if (!CheckForCalibration())
-            {
-                LOGError("No calibration available");
-            }
-
-            if (!CheckForCalibration() || !bDeviceConnected)
-            {
                 return;
+
             }
+
+            if (!Program.Save.RawCapture)
+            {
+                if (!CheckForCalibration())
+                {
+                    LOGError("No calibration available");
+                    return;
+                }
+            }
+
 
             FillAcquisitionParams(CurrentAcquisitionParams);
             FillAcquisitionParams(NextAcquisitionParams);
@@ -123,6 +124,8 @@ namespace SNASharp
             Param.nCount = nCaptureCount;
             Param.Notifier = null;
             Param.Worker = backgroundWorkerSerialCapture;
+            Param.bUseRawMode = Program.Save.RawCapture;
+            Param.RawModeBase = DeviceInterface.GetDevice().RawMode_0dB_Reference;
         }
 
         public void ProcessSweepModeDisplayAcquisition(NWTDevice.RunSweepModeParam AcquisitionParams)

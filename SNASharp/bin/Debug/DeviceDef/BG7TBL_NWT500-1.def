@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RawMode_0dB_Reference>510</RawMode_0dB_Reference>
   <ModelName>NWT500-1</ModelName>
   <BuilderName>BG7TBL</BuilderName>
   <Attenuator>true</Attenuator>

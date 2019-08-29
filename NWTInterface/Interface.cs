@@ -51,6 +51,13 @@ namespace AnalyzerInterface
         protected bool _HaveLogDetector = true;
         protected bool _HaveLinDetector = false;
         protected int _AcquisitionReadTimeout = 500;
+        protected UInt16 _RawModeReference = 510;
+
+        public UInt16 RawMode_0dB_Reference
+        {
+            get { return _RawModeReference; }
+            set { _RawModeReference = value; }
+        }
 
         public string ModelName
         {
@@ -315,6 +322,8 @@ namespace AnalyzerInterface
             public BackgroundWorker Worker = null;
             public Int16[] NativeDatas = null;
             public float[] ResultDatas = null;
+            public bool bUseRawMode = false;
+            public UInt16 RawModeBase = 500;
 
         }
 
@@ -434,13 +443,13 @@ namespace AnalyzerInterface
             return Encoding.ASCII.GetBytes(sValue);
         }
 
-        public float[] RunSweepModeHybrid(Int64 nBaseFrequency, Int64 nFrequencyStep, int nCount, CBackNotifier Notifier = null, BackgroundWorker Worker = null, Int16[] NativeDatas = null)
+        public float[] RunSweepModeHybrid(Int64 nBaseFrequency, Int64 nFrequencyStep, int nCount, CBackNotifier Notifier = null, BackgroundWorker Worker = null, Int16[] NativeDatas = null,bool bUseRawMode = false, UInt16 RawModeBase = 500)
         {
             Int16[] Native = new Int16[nCount];
 
 
-            float[] Log = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, false, Notifier, Worker);
-            float[] Lin = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, true, Notifier, Worker, Native);
+            float[] Log = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, false, Notifier, Worker,null, bUseRawMode, RawModeBase);
+            float[] Lin = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, true, Notifier, Worker, Native,bUseRawMode, RawModeBase);
             float[] Result  = new float[nCount];
             for (int i = 0; i < nCount; i++)
             {
@@ -464,18 +473,26 @@ namespace AnalyzerInterface
             float[] fResult = null;
             switch (Param.Detector)
             {
-                case DetectorUsed.BOTH:  fResult =  RunSweepModeHybrid(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, Param.Notifier, Param.Worker, Param.NativeDatas);
+                case DetectorUsed.BOTH:  fResult =  RunSweepModeHybrid(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode,Param.RawModeBase);
                     break;
-                case DetectorUsed.LINEAR:  fResult = RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, true, Param.Notifier, Param.Worker, Param.NativeDatas);
+                case DetectorUsed.LINEAR:  fResult = RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, true, Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode, Param.RawModeBase);
                     break;
-                case DetectorUsed.LOGARITHMIC:  fResult =  RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, false, Param.Notifier, Param.Worker, Param.NativeDatas);
+                case DetectorUsed.LOGARITHMIC:  fResult =  RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, false, Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode, Param.RawModeBase);
                     break;
             }
             Param.ResultDatas = fResult;
             return fResult;
         }
 
-        public float[] RunSweepMode(Int64 nBaseFrequency, Int64 nFrequencyStep, int nCount, bool bUseInear = false, CBackNotifier Notifier = null, BackgroundWorker Worker =null, Int16[] NativeDatas = null)
+        public float[] RunSweepMode(Int64 nBaseFrequency, 
+                                    Int64 nFrequencyStep, 
+                                    int nCount, 
+                                    bool bUseInear = false, 
+                                    CBackNotifier Notifier = null, 
+                                    BackgroundWorker Worker =null, 
+                                    Int16[] NativeDatas = null,
+                                    bool bUseRawMode = false,
+                                    UInt16 RawModeBase = 500)
         {
             int nSubBlockSize = 9999;
             int nPass = nCount / nSubBlockSize;
@@ -492,7 +509,7 @@ namespace AnalyzerInterface
             {
                 int nOffset = nFullBlock * nSubBlockSize;
                 Int16[] SubNativeData = new Int16[nSubBlockSize];
-                float []fSubBuffer = RunSweepModeBlock(nBaseFrequency+ nOffset * nFrequencyStep, nFrequencyStep, nSubBlockSize, nCount, nOffset, bUseInear, Notifier, Worker, SubNativeData);
+                float []fSubBuffer = RunSweepModeBlock(nBaseFrequency+ nOffset * nFrequencyStep, nFrequencyStep, nSubBlockSize, nCount, nOffset, bUseInear, Notifier, Worker, SubNativeData, bUseRawMode, RawModeBase);
                 fSubBuffer.CopyTo(fullBuffer, nOffset);
 
                 if (NativeDatas != null)
@@ -503,7 +520,7 @@ namespace AnalyzerInterface
             {
                 int nOffset = nPass * nSubBlockSize;
                 Int16[] SubNativeData = new Int16[nRest];
-                float[] fSubBuffer = RunSweepModeBlock(nBaseFrequency + nOffset * nFrequencyStep, nFrequencyStep, nRest, nCount, nOffset, bUseInear, Notifier, Worker, SubNativeData);
+                float[] fSubBuffer = RunSweepModeBlock(nBaseFrequency + nOffset * nFrequencyStep, nFrequencyStep, nRest, nCount, nOffset, bUseInear, Notifier, Worker, SubNativeData,bUseRawMode, RawModeBase);
                 fSubBuffer.CopyTo(fullBuffer, nOffset);
 
                 if (NativeDatas != null)
@@ -524,7 +541,9 @@ namespace AnalyzerInterface
                                     bool bUseLinear = false, 
                                     CBackNotifier Notifier = null,
                                      BackgroundWorker Worker = null,
-                                    Int16 [] NativeDatas = null)
+                                    Int16 [] NativeDatas = null,
+                                    bool bUseRawMode = false,
+                                    UInt16 RawModeBase = 500)
         {
             float[] DataOut = new float[nCount];
             byte[] StreamFromSNA = new byte[4];
@@ -591,17 +610,33 @@ namespace AnalyzerInterface
 
                 if (!bUseLinear)
                 {
-                    // sampling from logarithmic detector
-                    DataOut[i] = (((float)nMesure) - CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentLevel,false)) * DeviceDef.VerticalResolutiondB;
+                    if (bUseRawMode)
+                    {
+                        DataOut[i] = (((float)nMesure) - RawModeBase) * DeviceDef.VerticalResolutiondB;
+                    }
+                    else
+                    {
+                        // sampling from logarithmic detector
+                        DataOut[i] = (((float)nMesure) - CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentLevel, false)) * DeviceDef.VerticalResolutiondB;
+                    }
                 }
                 else
                 {
                     // sampling from linear detector
                     //if (nMesure == 0)
-                     //   nMesure = 1;
+                    //   nMesure = 1;
 
-                    float fConvertedTodB = 20.0f * (float)Math.Log10((double)nMesure / ((double)CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentLevel, true)));
-                    DataOut[i] = fConvertedTodB;
+                    if (bUseRawMode)
+                    {
+                        float fConvertedTodB = 20.0f * (float)Math.Log10((double)nMesure / ((double)RawModeBase));
+                        DataOut[i] = fConvertedTodB;
+
+                    }
+                    else
+                    {
+                        float fConvertedTodB = 20.0f * (float)Math.Log10((double)nMesure / ((double)CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentLevel, true)));
+                        DataOut[i] = fConvertedTodB;
+                    }
 
                 }
 

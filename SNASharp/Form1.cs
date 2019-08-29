@@ -39,6 +39,7 @@ namespace SNASharp
 
 
             AutodetectCOMcheckBox.Checked = Program.Save.SerialPortAutodetectAtLaunch;
+            RawCaptureCheckBox.Checked = Program.Save.RawCapture;
 
             //SerialPortComboBox.SelectedValueChanged -= DevicesComboBox_SelectedValueChanged;
             RefreshCOMPortList();
@@ -1244,13 +1245,12 @@ namespace SNASharp
         {
             if (e.KeyCode == Keys.F1)
             {
-                SpectrumPictureBox.ZoomIncrease();
+                SpectrumPictureBox.ZoomDecrease();
             }
 
             if (e.KeyCode == Keys.F2)
             {
-                SpectrumPictureBox.ZoomDecrease();
-
+                SpectrumPictureBox.ZoomIncrease();
             }
 
         }
@@ -1263,6 +1263,11 @@ namespace SNASharp
         private void DipoleAnalyseFinalStepOnly(object sender, MouseEventArgs e)
         {
             DipoleAnalyseOneStepOnly();
+        }
+
+        private void RawCaptureCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Save.RawCapture = RawCaptureCheckBox.Checked;
         }
     }
 }

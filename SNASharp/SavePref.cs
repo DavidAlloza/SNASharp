@@ -34,6 +34,7 @@ namespace SNASharp
     {
         bool _bDisplayDisclaimer = true;
         bool _SerialPortAutodetectAtLaunch = false;
+        bool _RawCapture = false;
         String _LastUsedDevice = null;
         String _LastUsedCOMPort = null;
         String _LastUsedAttLevel = null;
@@ -49,6 +50,12 @@ namespace SNASharp
         {
             get { return _bDisplayDisclaimer; }
             set { _bDisplayDisclaimer = value; }
+        }
+
+        public bool RawCapture
+        {
+            get { return _RawCapture; }
+            set { _RawCapture = value; }
         }
 
         public bool SerialPortAutodetectAtLaunch
