@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <RawMode_0dB_Reference>510</RawMode_0dB_Reference>
-  <ModelName>NWT500-1</ModelName>
-  <BuilderName>BG7TBL</BuilderName>
-  <Attenuator>true</Attenuator>
+  <RawMode_0dB_Reference>455</RawMode_0dB_Reference>
+  <ModelName>LTDZ_35-4400M</ModelName>
+  <BuilderName>Geekcreit®</BuilderName>
+  <Attenuator>false</Attenuator>
   <HaveLogDetector>true</HaveLogDetector>
-  <HaveLinDetector>true</HaveLinDetector>
+  <HaveLinDetector>false</HaveLinDetector>
   <AllowedFirmwaresVersions>
     <int>110</int>
     <int>119</int>
   </AllowedFirmwaresVersions>
-  <MinFrequencyInHz>100000</MinFrequencyInHz>
-  <MaxFrequencyInHz>550000000</MaxFrequencyInHz>
-  <FrequencyDivisor>1</FrequencyDivisor>
+  <MinFrequencyInHz>35000000</MinFrequencyInHz>
+  <MaxFrequencyInHz>4400000000</MaxFrequencyInHz>
+  <FrequencyDivisor>10</FrequencyDivisor>
   <VerticalResolutiondB>0.1923</VerticalResolutiondB>
-  <Operating_mode>TrackingNoSpectrum</Operating_mode>
+  <Operating_mode>TrackingSpectrum</Operating_mode>
   <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
   <AcquisitionTimeout>500</AcquisitionTimeout>
 </NWTCompatibleDeviceDef>

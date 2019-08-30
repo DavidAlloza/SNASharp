@@ -106,13 +106,18 @@ namespace SNASharp
                 }
             }
 
-
+            AttCalCheckBox.Checked = Program.Save.AttCal;
             SpectrumPictureBox.SetOwnedForm(this);
 
             SetSampleCount(Program.Save.SampleCount);
 
             if (DeviceInterface.GetDevice().Attenuator)
-                DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem);
+            {
+                if ( Program.Save.AttCal)
+                    DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem, (AttLevel)AttLevelcomboBox.SelectedItem);
+                else
+                    DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem, AttLevel._0dB);
+            }
 
             VFOFrequencyTextBox.Text = Utility.GetStringWithSeparators(Program.Save.LastVFOFrequency, " "); 
 
@@ -285,6 +290,9 @@ namespace SNASharp
                 {
                     DetectorCombobox.Enabled = true;
                 }
+
+                AttCalCheckBox.Enabled = DeviceDef.Attenuator;
+
             }
 
             if (SerialPortComboBox.SelectedItem != null)
@@ -431,13 +439,13 @@ namespace SNASharp
                     if (DeviceInterface.GetDevice().HaveLogDetector)
                     {
                         LOGDraw("Calibration for " + Current.ToString() + " attenuator, using logarithmic detector", true);
-                        DeviceInterface.SetAttenuatorLevel(Current);
+                        DeviceInterface.SetAttenuatorLevel(Current,Current);
                         DeviceInterface.RunCalibration(MyNotifier,9999, false);
                     }
                     if (DeviceInterface.GetDevice().HaveLinDetector)
                     {
                         LOGDraw("Calibration for " + Current.ToString() + " attenuator, using linear detector..", true);
-                        DeviceInterface.SetAttenuatorLevel(Current);
+                        DeviceInterface.SetAttenuatorLevel(Current,Current);
                         DeviceInterface.RunCalibration(MyNotifier,9999, true);
                     }
 
@@ -453,14 +461,14 @@ namespace SNASharp
                         if (DeviceInterface.GetDevice().HaveLogDetector)
                         {
                             LOGDraw("Calibration for " + Level.ToString() + " attenuator, using logarihtmic detector..", true);
-                            DeviceInterface.SetAttenuatorLevel(Level);
+                            DeviceInterface.SetAttenuatorLevel(Level,Level);
                             DeviceInterface.RunCalibration(MyNotifier,4000,false);
                         }
 
                         if (DeviceInterface.GetDevice().HaveLinDetector)
                         {
                             LOGDraw("Calibration for " + Level.ToString() + " attenuator, using linear detector..", true);
-                            DeviceInterface.SetAttenuatorLevel(Level);
+                            DeviceInterface.SetAttenuatorLevel(Level,Level);
                             DeviceInterface.RunCalibration(MyNotifier,4000, true);
                         }
 
@@ -469,7 +477,11 @@ namespace SNASharp
                     }
                     DeviceInterface.SaveCalibration(Program.CalibrationPath);
                     bCalibrationAvailable = true;
-                    DeviceInterface.SetAttenuatorLevel(Current);
+
+                    if (Program.Save.AttCal)
+                        DeviceInterface.SetAttenuatorLevel(Current, Current);
+                    else
+                        DeviceInterface.SetAttenuatorLevel(Current, AttLevel._0dB);
 
                 }
 
@@ -1019,7 +1031,12 @@ namespace SNASharp
 
         private void AttLevelcomboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem);
+
+            if ( Program.Save.AttCal)
+                DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem, (AttLevel)AttLevelcomboBox.SelectedItem);
+            else
+                DeviceInterface.SetAttenuatorLevel((AttLevel)AttLevelcomboBox.SelectedItem, AttLevel._0dB);
+
             Program.Save.LastUsedAttLevel = AttLevelcomboBox.SelectedItem.ToString();
         }
 
@@ -1268,6 +1285,26 @@ namespace SNASharp
         private void RawCaptureCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             Program.Save.RawCapture = RawCaptureCheckBox.Checked;
+            if (RawCaptureCheckBox.Checked)
+            {
+                AttCalCheckBox.Enabled = false;
+            }
+            else
+            {
+                if (CurrentDeviceDef.Attenuator)
+                    AttCalCheckBox.Enabled = true;
+            }
+        }
+
+        private void AttCalCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Save.AttCal = AttCalCheckBox.Checked;
+
+            AttLevelcomboBox_SelectedIndexChanged(null, null);
+            /*
+            if (AttCalCheckBox.Checked && CurrentDeviceDef.Attenuator)
+                DeviceInterface.SetAttenuatorLevel(
+                */
         }
     }
 }

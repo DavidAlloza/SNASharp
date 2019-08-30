@@ -79,6 +79,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.SamplesTextBox = new System.Windows.Forms.TextBox();
             this.ControlgroupBox = new System.Windows.Forms.GroupBox();
+            this.AttCalCheckBox = new System.Windows.Forms.CheckBox();
+            this.RawCaptureCheckBox = new System.Windows.Forms.CheckBox();
             this.ControlResetButton = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.OutputModeComboBox = new System.Windows.Forms.ComboBox();
@@ -96,7 +98,6 @@
             this.label14 = new System.Windows.Forms.Label();
             this.AutodetectCOMcheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundWorkerSerialCapture = new System.ComponentModel.BackgroundWorker();
-            this.RawCaptureCheckBox = new System.Windows.Forms.CheckBox();
             this.SpectrumPictureBox = new SNASharp.SpectrumPictureBoxClass();
             this.OperationsTabControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -653,6 +654,7 @@
             // ControlgroupBox
             // 
             this.ControlgroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ControlgroupBox.Controls.Add(this.AttCalCheckBox);
             this.ControlgroupBox.Controls.Add(this.RawCaptureCheckBox);
             this.ControlgroupBox.Controls.Add(this.label17);
             this.ControlgroupBox.Controls.Add(this.ControlResetButton);
@@ -678,6 +680,28 @@
             this.ControlgroupBox.TabIndex = 14;
             this.ControlgroupBox.TabStop = false;
             this.ControlgroupBox.Text = "Controls";
+            // 
+            // AttCalCheckBox
+            // 
+            this.AttCalCheckBox.AutoSize = true;
+            this.AttCalCheckBox.Location = new System.Drawing.Point(99, 170);
+            this.AttCalCheckBox.Name = "AttCalCheckBox";
+            this.AttCalCheckBox.Size = new System.Drawing.Size(79, 17);
+            this.AttCalCheckBox.TabIndex = 27;
+            this.AttCalCheckBox.Text = "Use Att Cal";
+            this.AttCalCheckBox.UseVisualStyleBackColor = true;
+            this.AttCalCheckBox.CheckedChanged += new System.EventHandler(this.AttCalCheckBox_CheckedChanged);
+            // 
+            // RawCaptureCheckBox
+            // 
+            this.RawCaptureCheckBox.AutoSize = true;
+            this.RawCaptureCheckBox.Location = new System.Drawing.Point(12, 170);
+            this.RawCaptureCheckBox.Name = "RawCaptureCheckBox";
+            this.RawCaptureCheckBox.Size = new System.Drawing.Size(87, 17);
+            this.RawCaptureCheckBox.TabIndex = 26;
+            this.RawCaptureCheckBox.Text = "Raw capture";
+            this.RawCaptureCheckBox.UseVisualStyleBackColor = true;
+            this.RawCaptureCheckBox.CheckedChanged += new System.EventHandler(this.RawCaptureCheckBox_CheckedChanged);
             // 
             // ControlResetButton
             // 
@@ -843,17 +867,6 @@
             this.backgroundWorkerSerialCapture.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerSerialCapture_ProgressChanged);
             this.backgroundWorkerSerialCapture.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerSerialCapture_RunWorkerCompleted);
             // 
-            // RawCaptureCheckBox
-            // 
-            this.RawCaptureCheckBox.AutoSize = true;
-            this.RawCaptureCheckBox.Location = new System.Drawing.Point(12, 170);
-            this.RawCaptureCheckBox.Name = "RawCaptureCheckBox";
-            this.RawCaptureCheckBox.Size = new System.Drawing.Size(87, 17);
-            this.RawCaptureCheckBox.TabIndex = 26;
-            this.RawCaptureCheckBox.Text = "Raw capture";
-            this.RawCaptureCheckBox.UseVisualStyleBackColor = true;
-            this.RawCaptureCheckBox.CheckedChanged += new System.EventHandler(this.RawCaptureCheckBox_CheckedChanged);
-            // 
             // SpectrumPictureBox
             // 
             this.SpectrumPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -989,6 +1002,7 @@
         private System.Windows.Forms.ComboBox FilterComboBox;
         private System.Windows.Forms.Button FastAnalyzeButton;
         private System.Windows.Forms.CheckBox RawCaptureCheckBox;
+        private System.Windows.Forms.CheckBox AttCalCheckBox;
     }
 }
 

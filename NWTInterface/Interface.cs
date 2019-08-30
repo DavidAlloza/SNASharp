@@ -334,6 +334,8 @@ namespace AnalyzerInterface
         static CalibrationDatas CalibrationValues = new CalibrationDatas();
         NWTCompatibleDeviceDef DeviceDef = null;
         AttLevel CurrentLevel = AttLevel._0dB;
+        AttLevel CurrentCalibrationLevel = AttLevel._0dB;
+
         public int nFirmwareVersionNumber = -1;
         String CurrentSerialPort = null;
         public void SetDevice(NWTCompatibleDeviceDef _DeviceDef)
@@ -617,7 +619,7 @@ namespace AnalyzerInterface
                     else
                     {
                         // sampling from logarithmic detector
-                        DataOut[i] = (((float)nMesure) - CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentLevel, false)) * DeviceDef.VerticalResolutiondB;
+                        DataOut[i] = (((float)nMesure) - CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentCalibrationLevel, false)) * DeviceDef.VerticalResolutiondB;
                     }
                 }
                 else
@@ -634,7 +636,7 @@ namespace AnalyzerInterface
                     }
                     else
                     {
-                        float fConvertedTodB = 20.0f * (float)Math.Log10((double)nMesure / ((double)CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentLevel, true)));
+                        float fConvertedTodB = 20.0f * (float)Math.Log10((double)nMesure / ((double)CalibrationValues.GetZeroDbValue(nBaseFrequency + nFrequencyStep * i, CurrentCalibrationLevel, true)));
                         DataOut[i] = fConvertedTodB;
                     }
 
@@ -808,11 +810,11 @@ namespace AnalyzerInterface
 
             if (!bLinear)
             {
-                return (((float)Input) - CalibrationValues.GetZeroDbValue(nFrequency, CurrentLevel, false)) * DeviceDef.VerticalResolutiondB;
+                return (((float)Input) - CalibrationValues.GetZeroDbValue(nFrequency, CurrentCalibrationLevel, false)) * DeviceDef.VerticalResolutiondB;
             }
             else
             {
-                return  20.0f * (float)Math.Log10((double)Input / ((double)CalibrationValues.GetZeroDbValue(nFrequency, CurrentLevel, true)));
+                return  20.0f * (float)Math.Log10((double)Input / ((double)CalibrationValues.GetZeroDbValue(nFrequency, CurrentCalibrationLevel, true)));
             }
         }
 
@@ -826,7 +828,7 @@ namespace AnalyzerInterface
         public float GetLevel(int nSamples = 10)
         {
             float fAverage = 0;
-            Int16 AverageLevel = CalibrationValues.GetAverageReferenceLevel(CurrentLevel);
+            Int16 AverageLevel = CalibrationValues.GetAverageReferenceLevel(CurrentCalibrationLevel);
 
             for (int i = 0; i < nSamples; i++)
             {
@@ -846,7 +848,7 @@ namespace AnalyzerInterface
             return ((int)GetAttenuatorLevel())*10;
         }
 
-        public void SetAttenuatorLevel(AttLevel Level)
+        public void SetAttenuatorLevel(AttLevel Level, AttLevel CalibrationLevel)
         {
             if (port.IsOpen)
             {
@@ -869,6 +871,7 @@ namespace AnalyzerInterface
                 // needed to wait completion
                 int nVersion = GetVersion();
                 CurrentLevel = Level;
+                CurrentCalibrationLevel = CalibrationLevel;
             }
         }
 

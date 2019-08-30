@@ -35,6 +35,8 @@ namespace SNASharp
         bool _bDisplayDisclaimer = true;
         bool _SerialPortAutodetectAtLaunch = false;
         bool _RawCapture = false;
+        bool _AttCal = true;
+
         String _LastUsedDevice = null;
         String _LastUsedCOMPort = null;
         String _LastUsedAttLevel = null;
@@ -44,6 +46,12 @@ namespace SNASharp
         Int64 _HighFrequencyRange = -1;
         int _SampleCount = 2000;
         Int64 _LastVFOFrequency = 50000000;
+
+        public bool AttCal
+        {
+            get { return _AttCal; }
+            set { _AttCal = value; }
+        }
 
 
         public bool DisplayDisclaimer
