@@ -387,18 +387,18 @@ namespace SNASharp
         }
 
 
-        bool ProcessCalibrationNoAttenuator()
+        bool ProcessCalibrationNoAttenuator(UInt16 nCaptureDelay = 0)
         {
             if (DeviceInterface.GetDevice().HaveLogDetector)
             {
                 LOGDraw("Calibration in progress using logarithmic detector..", true);
-                DeviceInterface.RunCalibration(MyNotifier,9999,false);
+                DeviceInterface.RunCalibration(MyNotifier,9999, false);
             }
 
             if (DeviceInterface.GetDevice().HaveLinDetector)
             {
                 LOGDraw("Calibration in progress using linear detector..", true);
-                DeviceInterface.RunCalibration(MyNotifier,9999,true);
+                DeviceInterface.RunCalibration(MyNotifier,9999, true);
             }
 
             DeviceInterface.SaveCalibration(Program.CalibrationPath);
@@ -408,7 +408,7 @@ namespace SNASharp
             return true;
         }
 
-        bool ProcessCalibration(bool AllAttenuatorforced = false)
+        bool ProcessCalibration(bool AllAttenuatorforced = false, UInt16 nCaptureDelay = 0)
         {
 
             if ( !CurrentDeviceDef.Attenuator )

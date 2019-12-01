@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CaptureDelay__x00B5_s>0</CaptureDelay__x00B5_s>
+  <TrackingModeFrequencyShift>0</TrackingModeFrequencyShift>
+  <DefaultPPMCorrection>0</DefaultPPMCorrection>
   <RawMode_0dB_Reference>455</RawMode_0dB_Reference>
   <ModelName>D6_JTGP-1033_35M_4.4G</ModelName>
   <BuilderName>HAOBA</BuilderName>

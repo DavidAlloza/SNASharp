@@ -12,8 +12,6 @@ namespace AnalyzerInterface
 {
     public enum AttLevel { _0dB, _10dB, _20dB, _30dB, _40dB, _50dB };
 
-
-
     public class DeviceDef
     {
         public enum AnalyserClass { TrackingNoSpectrum, TrackingSpectrum, SpectrumNoTracking};
@@ -52,6 +50,36 @@ namespace AnalyzerInterface
         protected bool _HaveLinDetector = false;
         protected int _AcquisitionReadTimeout = 500;
         protected UInt16 _RawModeReference = 510;
+        protected UInt16 _CaptureDelay_µS = 0;
+        protected Int32 _FrequencyShift = 0;
+        protected int _DefaultPPMCorrection = 0;
+
+        public UInt16 CaptureDelay_µs
+        {
+            get { return _CaptureDelay_µS; }
+            set
+            {
+                if (value > 999)
+                    _CaptureDelay_µS = 999;
+                else
+                    _CaptureDelay_µS = value;
+
+            }
+        }
+
+
+        public Int32 TrackingModeFrequencyShift
+        {
+            get { return _FrequencyShift; }
+            set { _FrequencyShift = value; }
+        }
+
+        public int DefaultPPMCorrection
+        {
+            get { return _DefaultPPMCorrection; }
+            set { _DefaultPPMCorrection = value; }
+        }
+
 
         public UInt16 RawMode_0dB_Reference
         {
@@ -412,7 +440,7 @@ namespace AnalyzerInterface
         }
 
 
-        public void RunCalibration(CBackNotifier Notifier, int nCount, bool bLinear = false)
+        public void RunCalibration(CBackNotifier Notifier, int nCount,  bool bLinear = false)
         {
 
         CalibrationValues.nFirstCalibrationFrequency = DeviceDef.MinFrequencyInHz;
@@ -450,8 +478,8 @@ namespace AnalyzerInterface
             Int16[] Native = new Int16[nCount];
 
 
-            float[] Log = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, false, Notifier, Worker,null, bUseRawMode, RawModeBase);
-            float[] Lin = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, true, Notifier, Worker, Native,bUseRawMode, RawModeBase);
+            float[] Log = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, false,Notifier, Worker,null, bUseRawMode, RawModeBase);
+            float[] Lin = RunSweepMode(nBaseFrequency, nFrequencyStep, nCount, true,Notifier, Worker, Native,bUseRawMode, RawModeBase);
             float[] Result  = new float[nCount];
             for (int i = 0; i < nCount; i++)
             {
@@ -477,7 +505,7 @@ namespace AnalyzerInterface
             {
                 case DetectorUsed.BOTH:  fResult =  RunSweepModeHybrid(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode,Param.RawModeBase);
                     break;
-                case DetectorUsed.LINEAR:  fResult = RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, true, Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode, Param.RawModeBase);
+                case DetectorUsed.LINEAR:  fResult = RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, true,Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode, Param.RawModeBase);
                     break;
                 case DetectorUsed.LOGARITHMIC:  fResult =  RunSweepMode(Param.nBaseFrequency, Param.nFrequencyStep, Param.nCount, false, Param.Notifier, Param.Worker, Param.NativeDatas, Param.bUseRawMode, Param.RawModeBase);
                     break;
@@ -489,7 +517,7 @@ namespace AnalyzerInterface
         public float[] RunSweepMode(Int64 nBaseFrequency, 
                                     Int64 nFrequencyStep, 
                                     int nCount, 
-                                    bool bUseInear = false, 
+                                    bool bUseInear = false,
                                     CBackNotifier Notifier = null, 
                                     BackgroundWorker Worker =null, 
                                     Int16[] NativeDatas = null,
@@ -511,7 +539,7 @@ namespace AnalyzerInterface
             {
                 int nOffset = nFullBlock * nSubBlockSize;
                 Int16[] SubNativeData = new Int16[nSubBlockSize];
-                float []fSubBuffer = RunSweepModeBlock(nBaseFrequency+ nOffset * nFrequencyStep, nFrequencyStep, nSubBlockSize, nCount, nOffset, bUseInear, Notifier, Worker, SubNativeData, bUseRawMode, RawModeBase);
+                float []fSubBuffer = RunSweepModeBlock(nBaseFrequency+ nOffset * nFrequencyStep, nFrequencyStep, nSubBlockSize, nCount, nOffset, bUseInear,Notifier, Worker, SubNativeData, bUseRawMode, RawModeBase);
                 fSubBuffer.CopyTo(fullBuffer, nOffset);
 
                 if (NativeDatas != null)
@@ -540,7 +568,7 @@ namespace AnalyzerInterface
                                     int nCount,
                                     int nFullCaptureSize, 
                                     int nFullCaptureOffset,
-                                    bool bUseLinear = false, 
+                                    bool bUseLinear = false,
                                     CBackNotifier Notifier = null,
                                      BackgroundWorker Worker = null,
                                     Int16 [] NativeDatas = null,
@@ -549,22 +577,49 @@ namespace AnalyzerInterface
         {
             float[] DataOut = new float[nCount];
             byte[] StreamFromSNA = new byte[4];
-            byte[] OutMessage = new byte[2 + 9 + 8 + 4];
+
+            nBaseFrequency += (Int64)DeviceDef.TrackingModeFrequencyShift;
+            Int64 PPMCorrectionHz = (Int64)((nBaseFrequency * (double)DeviceDef.DefaultPPMCorrection) / 1000000.0);
+            nBaseFrequency += PPMCorrectionHz;
+
+            int nMessageSize;
+            if (DeviceDef.CaptureDelay_µs == 0)
+                nMessageSize = 2 + 9 + 8 + 4;
+            else
+                nMessageSize = 2 + 9 + 8 + 4 + 3 ;
+
+            byte[] OutMessage = new byte[nMessageSize];
 
             OutMessage[0] = 0x8f;
-            if ( !bUseLinear)
-                OutMessage[1] = (byte)'x';
+            if (!bUseLinear)
+            {
+                if (DeviceDef.CaptureDelay_µs == 0)
+                    OutMessage[1] = (byte)'x';
+                else
+                    OutMessage[1] = (byte)'a';
+            }
             else
-                OutMessage[1] = (byte)'w';
+            {
+                if (DeviceDef.CaptureDelay_µs == 0)
+                    OutMessage[1] = (byte)'w';
+                else
+                    OutMessage[1] = (byte)'b';
+            }
 
 
             byte[] cBaseFrequency = BuildZeroLeftString(nBaseFrequency/DeviceDef.FrequencyDivisor, 9);
             byte[] cFrequencyStep = BuildZeroLeftString(nFrequencyStep / DeviceDef.FrequencyDivisor, 8);
             byte[] cCount = BuildZeroLeftString(nCount, 4);
+            byte[] cDelay = BuildZeroLeftString(DeviceDef.CaptureDelay_µs, 3);
 
             cBaseFrequency.CopyTo(OutMessage, 2);
             cFrequencyStep.CopyTo(OutMessage, 2 + 9);
             cCount.CopyTo(OutMessage, 2 + 9 + 8);
+
+            if (DeviceDef.CaptureDelay_µs != 0)
+            {
+                cDelay.CopyTo(OutMessage, 2 + 9 + 8 + 4);
+            }
 
             port.Write(OutMessage, 0, OutMessage.Length);
 

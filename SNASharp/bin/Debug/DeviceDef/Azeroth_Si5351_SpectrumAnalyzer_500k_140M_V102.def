@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <CaptureDelay__x00B5_s>0</CaptureDelay__x00B5_s>
-  <TrackingModeFrequencyShift>0</TrackingModeFrequencyShift>
+  <TrackingModeFrequencyShift>200000</TrackingModeFrequencyShift>
   <DefaultPPMCorrection>0</DefaultPPMCorrection>
-  <RawMode_0dB_Reference>2040</RawMode_0dB_Reference>
-  <ModelName>FIRMWARE_12BITS_D6_JTGP-1033 35M-4.4G</ModelName>
-  <BuilderName>F1FGV</BuilderName>
+  <RawMode_0dB_Reference>510</RawMode_0dB_Reference>
+  <ModelName>Si5351_SpectrumAnalyzer_500k_140M_V102</ModelName>
+  <BuilderName>Azeroth</BuilderName>
   <Attenuator>false</Attenuator>
   <HaveLogDetector>true</HaveLogDetector>
   <HaveLinDetector>false</HaveLinDetector>
@@ -13,10 +13,10 @@
     <int>110</int>
     <int>119</int>
   </AllowedFirmwaresVersions>
-  <MinFrequencyInHz>35000000</MinFrequencyInHz>
-  <MaxFrequencyInHz>4400000000</MaxFrequencyInHz>
-  <FrequencyDivisor>10</FrequencyDivisor>
-  <VerticalResolutiondB>0.048</VerticalResolutiondB>
+  <MinFrequencyInHz>500000</MinFrequencyInHz>
+  <MaxFrequencyInHz>140000000</MaxFrequencyInHz>
+  <FrequencyDivisor>1</FrequencyDivisor>
+  <VerticalResolutiondB>0.1923</VerticalResolutiondB>
   <Operating_mode>TrackingSpectrum</Operating_mode>
   <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
   <AcquisitionTimeout>500</AcquisitionTimeout>

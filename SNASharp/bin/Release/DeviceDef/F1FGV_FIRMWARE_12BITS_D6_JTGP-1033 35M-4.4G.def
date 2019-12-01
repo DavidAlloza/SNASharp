@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <RawMode_0dB_Reference>510</RawMode_0dB_Reference>
+  <CaptureDelay__x00B5_s>0</CaptureDelay__x00B5_s>
+  <TrackingModeFrequencyShift>0</TrackingModeFrequencyShift>
+  <DefaultPPMCorrection>0</DefaultPPMCorrection>
+  <RawMode_0dB_Reference>2040</RawMode_0dB_Reference>
   <ModelName>FIRMWARE_12BITS_D6_JTGP-1033 35M-4.4G</ModelName>
   <BuilderName>F1FGV</BuilderName>
   <Attenuator>false</Attenuator>
