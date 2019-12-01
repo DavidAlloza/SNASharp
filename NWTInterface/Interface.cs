@@ -838,6 +838,11 @@ namespace AnalyzerInterface
         {
             if (port.IsOpen)
             {
+
+                Int64 PPMCorrectionHz = (Int64)((nFrequency * (double)DeviceDef.DefaultPPMCorrection) / 1000000.0);
+                nFrequency += PPMCorrectionHz;
+
+
                 String sFrequency = (nFrequency/DeviceDef.FrequencyDivisor).ToString();
 
 
