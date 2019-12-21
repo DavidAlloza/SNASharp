@@ -385,6 +385,27 @@ namespace AnalyzerInterface
             return false;
         }
 
+        public bool TryToReOpenPort()
+        {
+            if (port == null)
+                return false;
+
+            if (IsPortOpen())
+                return true;
+            else
+            {
+                try
+                {
+                    port.Open();
+                    return port.IsOpen;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+        }
+
         public Int64 MinFrequency
         {
             get
@@ -500,6 +521,7 @@ namespace AnalyzerInterface
 
         public float []  RunSweepMode(RunSweepModeParam Param)
         {
+
             float[] fResult = null;
             switch (Param.Detector)
             {
@@ -529,6 +551,7 @@ namespace AnalyzerInterface
             int nRest = nCount % nSubBlockSize;
 
             float[] fullBuffer = new float[nCount];
+
             port.DiscardInBuffer();
             port.DiscardOutBuffer();
 

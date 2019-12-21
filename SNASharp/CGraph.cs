@@ -77,7 +77,7 @@ namespace SNASharp
             return 1000000000;
         }
 
-        void DrawTopBox(ArrayList curveList = null)
+        public void DrawTopBox(ArrayList curveList = null, Int64 CursorFrequency = -1)
         {
             Graphics g = Graphics.FromImage(BitmapWhereDraw);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -86,7 +86,8 @@ namespace SNASharp
             float nFontSize = 12.0f;
             float nFontVerticalPos = UpBorder / 2 - 8;
 
-
+            SolidBrush ClearBrush = new SolidBrush(Color.White);
+            g.FillRectangle(ClearBrush, new Rectangle(LeftBorder, 0, BitmapWhereDraw.Size.Width, UpBorder-15));
             // display curve name
             System.Drawing.Font CurveFont = new Font("Verdana", nFontSize);
 
@@ -100,10 +101,18 @@ namespace SNASharp
                     SolidBrush CurveBrush = new SolidBrush(Curve.Color_);
                     Pen mypen = new Pen(Curve.Color_, Curve.LineWidth + 1);
 
+                    String TextToDraw = Curve.Name;
+                    if (CursorFrequency >= 0)
+                    {
+                        double dBLevel = Math.Round(Curve.GeDBLevelFromFrequency(CursorFrequency), 2);
+                        TextToDraw += ":" + dBLevel.ToString() + "dB";
+                    }
+
+
                     int nXStart = (nCurve + 1) * HCurveGranularity;
 
                     g.DrawLine(mypen, nXStart - 15, nFontVerticalPos + 10, nXStart, nFontVerticalPos + 10);
-                    g.DrawString(Curve.Name, CurveFont, CurveBrush, new PointF(nXStart + 2, nFontVerticalPos));
+                    g.DrawString(TextToDraw, CurveFont, CurveBrush, new PointF(nXStart + 2, nFontVerticalPos));
                 }
             }
             g.Dispose();

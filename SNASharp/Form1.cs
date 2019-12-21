@@ -389,6 +389,13 @@ namespace SNASharp
 
         bool ProcessCalibrationNoAttenuator(UInt16 nCaptureDelay = 0)
         {
+
+            if (!DeviceInterface.IsPortOpen())
+            {
+                LOGWarning("Port not open, i try to autodetect analyzer");
+                AutoDetectSerialPort();
+            }
+
             if (DeviceInterface.GetDevice().HaveLogDetector)
             {
                 LOGDraw("Calibration in progress using logarithmic detector..", true);

@@ -121,6 +121,50 @@ namespace SNASharp
 
         }
 
+        public void DisplayFrequencyAndLevelOnCornersNew(int nXMouse)
+        {
+            Int64 nFrequency = GraphConfig.GetFrequencyFromXDisplay(nXMouse);
+            FreqDisplayLabel.Text = "Frequency : " + Utility.GetStringWithSeparators(nFrequency, " ") + "Hz";
+
+
+            double dBLevel;
+
+            String LevelText = null;
+            if (CurvesList.Count > 0 && ActiveCurve != null)
+            {
+                dBLevel = Math.Round(ActiveCurve.GeDBLevelFromFrequency(nFrequency), 2);
+                LevelDisplayLabel.ForeColor = ActiveCurve.Color_;
+                LevelText = ActiveCurve.Name + " : ";
+            }
+            else
+            {
+                dBLevel = 0.0f;
+                LevelDisplayLabel.ForeColor = Color.Black;
+                LevelText = "Level : ";
+            }
+
+
+            double ImpedanceNorm = (100.0f / ((float)Math.Pow(10.0f, dBLevel / 20.0f)) - 100.0f) / 1.0f;
+
+
+
+            if (GraphConfig.outputMode == OutputMode.dB)
+            {
+
+                if (ImpedanceNorm >= 0)
+                    LevelDisplayLabel.Text = LevelText + dBLevel.ToString() + "dB " + " |Z|=" + Math.Round(ImpedanceNorm, 0) + " Ohms";
+                else
+                    LevelDisplayLabel.Text = LevelText + dBLevel.ToString() + "dB ";
+
+            }
+            else
+            {
+                LevelDisplayLabel.Text = LevelText + dBLevel.ToString();
+            }
+
+        }
+
+
         public void DisplayFrequencyAndLevelOnCorners(int nXMouse)
         {
 
@@ -151,16 +195,19 @@ namespace SNASharp
 
             if (GraphConfig.outputMode == OutputMode.dB)
             {
-
+                
                 if (ImpedanceNorm >= 0)
                     LevelDisplayLabel.Text = LevelText + dBLevel.ToString() + "dB " + " |Z|=" + Math.Round(ImpedanceNorm, 0) + " Ohms";
                 else
                     LevelDisplayLabel.Text = LevelText + dBLevel.ToString() + "dB ";
+                    
             }
             else
             {
                 LevelDisplayLabel.Text = LevelText + dBLevel.ToString() ;
             }
+
+            GraphConfig.DrawTopBox(CurvesList, nFrequency);
 
         }
 

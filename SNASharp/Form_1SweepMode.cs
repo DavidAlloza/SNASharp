@@ -92,20 +92,35 @@ namespace SNASharp
                 SweepProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             }
 
-            if (DeviceInterface.IsPortOpen())
+            if (!DeviceInterface.IsPortOpen())
             {
-                try
+                LOGWarning("Port not open, i try to open port");
+                if (!DeviceInterface.TryToReOpenPort())
                 {
-                    backgroundWorkerSerialCapture.RunWorkerAsync(NextAcquisitionParams);
+                    LOGError("unable to open port. run device detection of manualy select available port");
+                    ControlgroupBox.Enabled = true;
+                    SweepProcessButton.Enabled = true;
+                    SweepProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+
+                    if (bLoop)
+                    {
+                        SweepLoopStopButton.Enabled = false;
+                        SweepLoopProcessButton.Enabled = true;
+                    }
+
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    LOGError(ex.Message);
-                }
+                LOGDraw("Port open ok, i run the capture",true);
+
             }
-            else
+
+            try
             {
-                LOGError("COM port not open, run device detection of manualy select available port");
+                backgroundWorkerSerialCapture.RunWorkerAsync(NextAcquisitionParams);
+            }
+            catch (Exception ex)
+            {
+                LOGError(ex.Message);
             }
 
         }
@@ -317,12 +332,7 @@ namespace SNASharp
             if (ActiveCurve != null && ActiveCurve.SpectrumValues != null)
             {
                 SetSweepFrequencies(ActiveCurve.nSpectrumLowFrequency, ActiveCurve.nSpectrumHighFrequency);
-
             }
         }
-
-       
-
-
     }
 }

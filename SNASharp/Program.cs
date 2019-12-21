@@ -9,7 +9,7 @@ namespace SNASharp
 {
     public static class Program
     {
-        public static string Version = "F4HTQ SNASharp v2019_12_01_0";
+        public static string Version = "F4HTQ SNASharp v2019_12_21_0";
         public static string DeviceDefPath = null;
         public static string SavePath = null;
         public static string SaveFullPath = null;
