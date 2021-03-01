@@ -91,28 +91,41 @@ namespace SNASharp
             // display curve name
             System.Drawing.Font CurveFont = new Font("Verdana", nFontSize);
 
-            if (curveList != null && curveList.Count > 0)
+
+            if (curveList != null )
             {
-                int HCurveGranularity = BitmapWhereDraw.Size.Width / (1 + curveList.Count);
+                int nVisibleCurveCount = 0;
+                foreach (CCurve Curve in curveList)
+                {
+                    if (Curve.Visible == CCurve.YesNo.Yes)
+                        nVisibleCurveCount++;
+                }
+
+                int HCurveGranularity = BitmapWhereDraw.Size.Width / (1 + nVisibleCurveCount);
+
+                int nXStart = HCurveGranularity;
 
                 for (int nCurve = 0; nCurve < curveList.Count; nCurve++)
                 {
                     CCurve Curve = (CCurve)curveList[nCurve];
-                    SolidBrush CurveBrush = new SolidBrush(Curve.Color_);
-                    Pen mypen = new Pen(Curve.Color_, Curve.LineWidth + 1);
 
-                    String TextToDraw = Curve.Name;
-                    if (CursorFrequency >= 0)
+                    if (Curve.Visible == CCurve.YesNo.Yes)
                     {
-                        double dBLevel = Math.Round(Curve.GeDBLevelFromFrequency(CursorFrequency), 2);
-                        TextToDraw += ":" + dBLevel.ToString() + "dB";
+                        SolidBrush CurveBrush = new SolidBrush(Curve.Color_);
+                        Pen mypen = new Pen(Curve.Color_, Curve.LineWidth + 1);
+
+                        String TextToDraw = Curve.Name;
+                        if (CursorFrequency >= 0)
+                        {
+                            double dBLevel = Math.Round(Curve.GeDBLevelFromFrequency(CursorFrequency), 2);
+                            TextToDraw += ":" + dBLevel.ToString() + "dB";
+                        }
+
+                        g.DrawLine(mypen, nXStart - 15, nFontVerticalPos + 10, nXStart, nFontVerticalPos + 10);
+                        g.DrawString(TextToDraw, CurveFont, CurveBrush, new PointF(nXStart + 2, nFontVerticalPos));
+                        nXStart += HCurveGranularity;
+
                     }
-
-
-                    int nXStart = (nCurve + 1) * HCurveGranularity;
-
-                    g.DrawLine(mypen, nXStart - 15, nFontVerticalPos + 10, nXStart, nFontVerticalPos + 10);
-                    g.DrawString(TextToDraw, CurveFont, CurveBrush, new PointF(nXStart + 2, nFontVerticalPos));
                 }
             }
             g.Dispose();

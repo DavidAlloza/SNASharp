@@ -174,7 +174,7 @@ namespace SNASharp
             double dBLevel;
 
             String LevelText = null;
-            if (CurvesList.Count > 0 && ActiveCurve != null)
+            if (CurvesList.Count > 0 && ActiveCurve != null && ActiveCurve.Visible == CCurve.YesNo.Yes)
             {
                 dBLevel = Math.Round(ActiveCurve.GeDBLevelFromFrequency(nFrequency), 2);
                 LevelDisplayLabel.ForeColor = ActiveCurve.Color_;
