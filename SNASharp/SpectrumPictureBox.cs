@@ -19,6 +19,7 @@ namespace SNASharp
 
         public SpectrumPictureBoxClass()
         {
+            InitializeComponent();
             // constructor
             // FreqDisplayOnSpectrumLabel
             // 
@@ -261,7 +262,7 @@ namespace SNASharp
             High = nNewEndFrequency;
         }
 
-        public void MouseClicManagement(object sender, EventArgs e)
+        private void SpectrumPictureBoxClass_MouseClick(object sender, MouseEventArgs e)
         {
             if (Owner.DeviceInterface.GetDevice() == null)
                 return; // no device
@@ -399,7 +400,7 @@ namespace SNASharp
 
         }
 
-        public void ResizeAndRedraw(object sender, EventArgs e)
+        private void SpectrumPictureBoxClass_SizeChanged(object sender, EventArgs e)
         {
             BitmapUpdate(Size);
             DrawCurveCollection(CurvesList);
@@ -577,6 +578,22 @@ namespace SNASharp
 
 
         private Form1 Owner = null;
+
+        private void InitializeComponent()
+        {
+            ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // SpectrumPictureBoxClass
+            // 
+            this.SizeChanged += new System.EventHandler(this.SpectrumPictureBoxClass_SizeChanged);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBoxClass_MouseClick);
+            this.MouseLeave += new System.EventHandler(this.SpectrumPictureBox_MouseLeave);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
+            ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
+            this.ResumeLayout(false);
+
+        }
 
     }
 }

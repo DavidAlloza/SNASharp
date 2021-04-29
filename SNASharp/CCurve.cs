@@ -159,6 +159,19 @@ namespace SNASharp
             }
         }
 
+        public DashStyle Style;
+        /*
+        [XmlIgnore]
+        public DashStyle _Style
+        {
+            get { return Style; }
+
+            set
+            {
+                Style = value;
+            }
+        }
+        */
         public String Width
         {
             get { return LineWidth.ToString(); }

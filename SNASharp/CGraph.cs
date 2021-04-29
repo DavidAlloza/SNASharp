@@ -113,8 +113,9 @@ namespace SNASharp
                     {
                         SolidBrush CurveBrush = new SolidBrush(Curve.Color_);
                         Pen mypen = new Pen(Curve.Color_, Curve.LineWidth + 1);
+                        //mypen.DashStyle = Curve._Style;
 
-                        String TextToDraw = Curve.Name;
+                       String TextToDraw = Curve.Name;
                         if (CursorFrequency >= 0)
                         {
                             double dBLevel = Math.Round(Curve.GeDBLevelFromFrequency(CursorFrequency), 2);

@@ -989,37 +989,6 @@ namespace SNASharp
 
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void SpectrumPictureBox_Click(object sender, EventArgs e)
-        {
-            SpectrumPictureBox.MouseClicManagement(sender, e);
-        }
-
-        private void SpectrumPictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            SpectrumPictureBox.OnMouseMove(sender, e);
-
-         }   
-
-    private void SpectrumPictureBox_MouseEnter(object sender, EventArgs e)
-        {
-        }
-
-        private void SpectrumPictureBox_Resize(object sender, EventArgs e)
-        {
-            //SpectrumPictureBox.ResizeAndRedraw(sender, e);
-        }
-
-        private void SpectrumPictureBox_SizeChanged(object sender, EventArgs e)
-        {
-            SpectrumPictureBox.ResizeAndRedraw(sender, e);
-        }
-
-
 
         private void LogOutputTextBox_TextChanged(object sender, EventArgs e)
         {

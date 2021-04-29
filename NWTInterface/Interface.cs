@@ -796,7 +796,7 @@ namespace AnalyzerInterface
 
             bool bOpenedByMe;
 
-            port.DtrEnable = true;
+            port.DtrEnable = false; // to disable arduino reboot at port open.
             port.RtsEnable = true;
 
 
@@ -806,6 +806,7 @@ namespace AnalyzerInterface
                 {
                     port.Open();
                     bOpenedByMe = true;
+
                 }
                 catch (Exception e)
                 {
@@ -823,6 +824,7 @@ namespace AnalyzerInterface
             port.DiscardOutBuffer();
 
             port.ReadTimeout = 2000;
+            //Thread.Sleep(1000);
             port.Write(OutMessage, 0, OutMessage.Length);
 
             try

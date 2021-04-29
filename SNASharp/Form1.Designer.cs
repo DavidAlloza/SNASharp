@@ -873,6 +873,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.SpectrumPictureBox.BackColor = System.Drawing.Color.White;
+            this.SpectrumPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SpectrumPictureBox.BackgroundImage")));
             this.SpectrumPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.SpectrumPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("SpectrumPictureBox.Image")));
             this.SpectrumPictureBox.Location = new System.Drawing.Point(-1, 27);
@@ -880,11 +881,6 @@
             this.SpectrumPictureBox.Size = new System.Drawing.Size(624, 696);
             this.SpectrumPictureBox.TabIndex = 0;
             this.SpectrumPictureBox.TabStop = false;
-            this.SpectrumPictureBox.SizeChanged += new System.EventHandler(this.SpectrumPictureBox_SizeChanged);
-            this.SpectrumPictureBox.Click += new System.EventHandler(this.SpectrumPictureBox_Click);
-            this.SpectrumPictureBox.MouseEnter += new System.EventHandler(this.SpectrumPictureBox_MouseEnter);
-            this.SpectrumPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBox_MouseMove);
-            this.SpectrumPictureBox.Resize += new System.EventHandler(this.SpectrumPictureBox_Resize);
             // 
             // Form1
             // 
