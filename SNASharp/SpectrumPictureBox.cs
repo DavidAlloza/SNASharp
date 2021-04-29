@@ -90,6 +90,7 @@ namespace SNASharp
 
         public void SpectrumPictureBox_MouseLeave(object sender, EventArgs e)
         {
+            GraphConfig.DrawTopBox(CurvesList); // to redraw only curve names
             ForeGroundImageGraphics.Clear(Color.Transparent);
             Image = ForeGroundImageBitmap;
         }
