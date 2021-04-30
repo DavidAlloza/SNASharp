@@ -822,6 +822,22 @@ namespace SNASharp
         NWTDevice.RunSweepModeParam CurrentAcquisitionParams = new NWTDevice.RunSweepModeParam();
         NWTDevice.RunSweepModeParam NextAcquisitionParams = new NWTDevice.RunSweepModeParam();
 
+
+        public String GetCurrentDeviceName()
+        {
+            if (DeviceInterface != null)
+            {
+                if (DeviceInterface.GetDevice() != null)
+                {
+                    return DeviceInterface.GetDevice().BuilderName + "_" + DeviceInterface.GetDevice().ModelName;
+                }
+                else
+                    return "";
+            }
+            else
+                return "";
+        }
+
         volatile bool bLoop = false;
 
 

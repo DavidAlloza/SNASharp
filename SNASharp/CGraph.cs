@@ -79,6 +79,7 @@ namespace SNASharp
 
         public void DrawTopBox(ArrayList curveList = null, Int64 CursorFrequency = -1)
         {
+
             Graphics g = Graphics.FromImage(BitmapWhereDraw);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             int nWidth = BitmapWhereDraw.Size.Width - LeftBorder - RightBorder;
@@ -154,6 +155,12 @@ namespace SNASharp
             String Msg = "Generated with " + Program.Version;
 
             g.DrawString(Msg, MsgFont, Brushes.Brown, new Point(nWidth - 240, BitmapWhereDraw.Size.Height - 20));
+
+            if (Program.MainForm != null)
+            {
+                String AnalyzerVersion = Program.MainForm.GetCurrentDeviceName();
+                g.DrawString("Device:" + AnalyzerVersion, MsgFont, Brushes.Brown, new Point(LeftBorder + 10, BitmapWhereDraw.Size.Height - 20));
+            }
 
 
             g.Dispose();

@@ -73,6 +73,8 @@ namespace SNASharp
 
 
             //MyNotifier.SetProgressBar(SweepProgressBar);
+            LOGDraw("====================================", true);
+
             LOGDraw("Run sweep mode.", true);
 
             LOGDraw("BW:" + Utility.GetStringWithSeparators(nFrequencyDetectionEnd - nFrequencyDetectionStart, " ") + "Hz", false);
@@ -280,6 +282,8 @@ namespace SNASharp
             CCurve CurveToSave = (CCurve)CurveConfigPropertyGrid.SelectedObject;
             dialog.InitialDirectory = Program.CurvesPath;
             dialog.FileName = CurveToSave.ToString()+".xml";
+            dialog.RestoreDirectory = true;
+
 
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -289,6 +293,7 @@ namespace SNASharp
                 {
                     xs.Serialize(wr, CurveToSave);
                 }
+                Program.CurvesPath = System.IO.Path.GetDirectoryName(dialog.FileName);
             }
 
         }
@@ -299,6 +304,7 @@ namespace SNASharp
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Curves files (*.xml)|*.xml|all files (*.*)|*.*";
             dialog.InitialDirectory = Program.CurvesPath;
+            dialog.RestoreDirectory = true;
 
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -321,6 +327,9 @@ namespace SNASharp
                     {
                         LOGError("sorry, your curve file format is incompatible with this software version");
                     }
+
+                    Program.CurvesPath = System.IO.Path.GetDirectoryName(dialog.FileName);
+
                 }
             }
 

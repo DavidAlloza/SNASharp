@@ -17,6 +17,7 @@ namespace SNASharp
         public static string CurvesPath = null;
 
         public static SavePref Save;
+        public static Form1 MainForm = null;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -65,6 +66,7 @@ namespace SNASharp
                 //testExcep /= 0;
 
 
+                MainForm = new Form1();
                 if (Program.Save.DisplayDisclaimer)
                 {
 
@@ -72,12 +74,12 @@ namespace SNASharp
                     DialogResult Result = Disclaimer.ShowDialog();
                     if (Result == DialogResult.OK)
                     {
-                        Application.Run(new Form1());
+                        Application.Run(MainForm);
                     }
                 }
                 else
                 {
-                    Application.Run(new Form1());
+                    Application.Run(MainForm);
                 }
             }
            // catch(Exception e)
