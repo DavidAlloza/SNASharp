@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NWTCompatibleDeviceDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CaptureDelay__x00B5_s>0</CaptureDelay__x00B5_s>
+  <TrackingModeFrequencyShift>0</TrackingModeFrequencyShift>
+  <DefaultPPMCorrection>0</DefaultPPMCorrection>
+  <RawMode_0dB_Reference>510</RawMode_0dB_Reference>
+  <ModelName>AD9834_10k_40M</ModelName>
+  <BuilderName>NWT_Compatible</BuilderName>
+  <Attenuator>false</Attenuator>
+  <HaveLogDetector>true</HaveLogDetector>
+  <HaveLinDetector>false</HaveLinDetector>
+  <AllowedFirmwaresVersions>
+    <int>110</int>
+    <int>119</int>
+  </AllowedFirmwaresVersions>
+  <MinFrequencyInHz>10000</MinFrequencyInHz>
+  <MaxFrequencyInHz>40000000</MaxFrequencyInHz>
+  <FrequencyDivisor>1</FrequencyDivisor>
+  <VerticalResolutiondB>0.1923</VerticalResolutiondB>
+  <Operating_mode>TrackingNoSpectrum</Operating_mode>
+  <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
+  <AcquisitionTimeout>500</AcquisitionTimeout>
+</NWTCompatibleDeviceDef>
