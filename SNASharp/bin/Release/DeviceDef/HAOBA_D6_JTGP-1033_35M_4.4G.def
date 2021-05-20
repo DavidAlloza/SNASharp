@@ -3,9 +3,9 @@
   <CaptureDelay__x00B5_s>0</CaptureDelay__x00B5_s>
   <TrackingModeFrequencyShift>0</TrackingModeFrequencyShift>
   <DefaultPPMCorrection>0</DefaultPPMCorrection>
-  <RawMode_0dB_Reference>488</RawMode_0dB_Reference>
-  <ModelName>AD9954_SingleTracking_50k_220M</ModelName>
-  <BuilderName>Azeroth</BuilderName>
+  <RawMode_0dB_Reference>455</RawMode_0dB_Reference>
+  <ModelName>D6_JTGP-1033_35M_4.4G</ModelName>
+  <BuilderName>HAOBA</BuilderName>
   <Attenuator>false</Attenuator>
   <HaveLogDetector>true</HaveLogDetector>
   <HaveLinDetector>false</HaveLinDetector>
@@ -13,11 +13,11 @@
     <int>110</int>
     <int>119</int>
   </AllowedFirmwaresVersions>
-  <MinFrequencyInHz>50000</MinFrequencyInHz>
-  <MaxFrequencyInHz>220000000</MaxFrequencyInHz>
-  <FrequencyDivisor>1</FrequencyDivisor>
+  <MinFrequencyInHz>35000000</MinFrequencyInHz>
+  <MaxFrequencyInHz>4400000000</MaxFrequencyInHz>
+  <FrequencyDivisor>10</FrequencyDivisor>
   <VerticalResolutiondB>0.1923</VerticalResolutiondB>
-  <Operating_mode>TrackingNoSpectrum</Operating_mode>
+  <Operating_mode>TrackingSpectrum</Operating_mode>
   <SweepDataFormat>_16Bits_2Channel</SweepDataFormat>
   <AcquisitionTimeout>500</AcquisitionTimeout>
 </NWTCompatibleDeviceDef>
