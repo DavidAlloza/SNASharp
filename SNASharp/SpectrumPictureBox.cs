@@ -49,6 +49,7 @@ namespace SNASharp
             FreqDisplayLabel.Font = Font;
             LevelDisplayLabel.Font = Font;
 
+
         }
 
         public void SetOwnedForm(Form1 _Owner )
@@ -56,6 +57,11 @@ namespace SNASharp
             Owner = _Owner;
         }
         
+        void ImageUpdate()
+        {
+            this.Invalidate();
+        }
+
         void DisplayZoomBox(int nX)
         {
             Int64 Low = -1;
@@ -77,22 +83,38 @@ namespace SNASharp
 
 
 
-            ForeGroundImageGraphics.Clear(Color.Transparent);
-            Brush brush = new SolidBrush(Color.FromArgb(50, 255, 0, 0));
-            //Brush brushText = new SolidBrush(Color.FromArgb(50, 255, 0, 0));
+            HUDGraphics.Clear(Color.Transparent);
+            Brush brush = new SolidBrush(Color.FromArgb(10, 255, 0, 0));
+            //Brush brushText = new SolidBrush(Color.FromArgb(10, 255, 0, 0));
 
-            ForeGroundImageGraphics.FillRectangle(brush, X1, GraphConfig.UpBorder, nWidh, Size.Height - GraphConfig.LowBorder - GraphConfig.UpBorder);
-            //ForeGroundImageGraphics.DrawString("F1 & F2 to ajust size", new Font("Arial", 10), brushText, new PointF(X1, Size.Height - GraphConfig.LowBorder));
+            HUDGraphics.FillRectangle(brush, X1, GraphConfig.UpBorder, nWidh, Size.Height - GraphConfig.LowBorder - GraphConfig.UpBorder);
+            Pen RecPen = new Pen(Color.FromArgb(100, 255, 0, 0),2);
+            HUDGraphics.DrawRectangle(RecPen, X1, GraphConfig.UpBorder, nWidh, Size.Height - GraphConfig.LowBorder - GraphConfig.UpBorder);
+
+            //HUDGraphics.DrawString("F1 & F2 to ajust size", new Font(FontFamily.GenericMonospace, 10), brushText, new PointF(X1, Size.Height - GraphConfig.LowBorder-20));
             //ForeGroundImageGraphics.
-            Image = ForeGroundImageBitmap;
+            this.Invalidate();
+            //ImageUpdate();
 
         }
 
         public void SpectrumPictureBox_MouseLeave(object sender, EventArgs e)
         {
             GraphConfig.DrawTopBox(CurvesList); // to redraw only curve names
-            ForeGroundImageGraphics.Clear(Color.Transparent);
-            Image = ForeGroundImageBitmap;
+            HUDGraphics.Clear(Color.Transparent);
+            ImageUpdate();
+        }
+
+        private void SpectrumPictureBox_Paint(object sender, PaintEventArgs e)
+        {
+            /*
+            PictureBoxGraphics.DrawImageUnscaled(GraphicAndCurvesBitmap, 0, 0);
+            PictureBoxGraphics.DrawImageUnscaled(HUDBitmap, 0, 0);
+            */
+
+            e.Graphics.DrawImageUnscaled(GraphicAndCurvesBitmap, 0, 0);
+            e.Graphics.DrawImageUnscaled(HUDBitmap, 0, 0);
+
         }
 
         public void ZoomIncrease()
@@ -114,11 +136,12 @@ namespace SNASharp
         }
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
-
-            nLastMouseX = e.X;
-            DisplayFrequencyAndLevelOnCorners(e.X);
-            DisplayZoomBox(e.X);
-
+            if (Math.Abs(nLastMouseX - e.X) >= 1.0f) // to disable update when only Y change
+            {
+                nLastMouseX = e.X;
+                DisplayFrequencyAndLevelOnCorners(e.X);
+                DisplayZoomBox(e.X);
+            }
             //public int GetXFromFrequency(Int64 nFrequency)
 
         }
@@ -353,13 +376,13 @@ namespace SNASharp
                 Image = PictureBoxBitmap;
                 */
 
-                BackgroundImage.Save(dialog.FileName, ImageFormat.Png);
+                GraphicAndCurvesBitmap.Save(dialog.FileName, ImageFormat.Png);
             }
         }
 
         public void CopyPictureToclipboard()
         {
-            Clipboard.SetImage(BackgroundImage);
+            Clipboard.SetImage(GraphicAndCurvesBitmap);
         }
 
 
@@ -368,36 +391,48 @@ namespace SNASharp
         {
 
             // release graphics
-            if (ForeGroundImageGraphics != null)
-                ForeGroundImageGraphics.Dispose();
+            if (HUDGraphics != null)
+                HUDGraphics.Dispose();
 
-            if (BackGroundImageGraphics != null)
-                BackGroundImageGraphics.Dispose();
+            if (GraphicAndCurvesGraphics != null)
+                GraphicAndCurvesGraphics.Dispose();
+
+            if (PictureBoxGraphics != null)
+                PictureBoxGraphics.Dispose();
 
             // release bitmaps
 
-            if (ForeGroundImageBitmap != null)
-                ForeGroundImageBitmap.Dispose();
+            if (HUDBitmap != null)
+                HUDBitmap.Dispose();
 
-            if (BackGroundImageBitmap != null)
-                BackGroundImageBitmap.Dispose();
+
+
+            if (GraphicAndCurvesBitmap != null)
+                GraphicAndCurvesBitmap.Dispose();
+
+            if (Image != null)
+                Image.Dispose();
 
 
             // allocate new bitmap
             if (CurrentSize.Width > 0 && CurrentSize.Height > 0)
             {
-                ForeGroundImageBitmap = new Bitmap(CurrentSize.Width, CurrentSize.Height);
-                BackGroundImageBitmap = new Bitmap(CurrentSize.Width, CurrentSize.Height);
+                HUDBitmap = new Bitmap(CurrentSize.Width, CurrentSize.Height);
+                GraphicAndCurvesBitmap = new Bitmap(CurrentSize.Width, CurrentSize.Height);
+                Image = new Bitmap(CurrentSize.Width, CurrentSize.Height);
             }
             else
             {
-                ForeGroundImageBitmap = new Bitmap(1, 1);
-                BackGroundImageBitmap = new Bitmap(1,1);
+                HUDBitmap = new Bitmap(1, 1);
+                GraphicAndCurvesBitmap = new Bitmap(1,1);
+                Image = new Bitmap(1, 1);
             }
 
             // create new graphics
-            ForeGroundImageGraphics = Graphics.FromImage(ForeGroundImageBitmap);
-            BackGroundImageGraphics = Graphics.FromImage(BackGroundImageBitmap);
+            HUDGraphics = Graphics.FromImage(HUDBitmap);
+            GraphicAndCurvesGraphics = Graphics.FromImage(GraphicAndCurvesBitmap);
+            PictureBoxGraphics = Graphics.FromImage(Image);
+
 
         }
 
@@ -409,8 +444,7 @@ namespace SNASharp
 
         public void Redraw()
         {
-            Image = ForeGroundImageBitmap;
-            BackgroundImage = BackGroundImageBitmap;
+            ImageUpdate();
             DrawCurveCollection(CurvesList);
         }
 
@@ -441,11 +475,10 @@ namespace SNASharp
             GraphConfig.outputMode = OutputMode.dB;
 
 
-            if (ForeGroundImageBitmap == null)
+            if (HUDBitmap == null)
             {
                 BitmapUpdate(this.Size);
-                Image = ForeGroundImageBitmap;
-                BackgroundImage = BackGroundImageBitmap;
+                ImageUpdate();
             }
 
 
@@ -515,9 +548,8 @@ namespace SNASharp
             GraphConfig.fLastDrawingLevelLow = nLowerScale;
             GraphConfig.fLastDrawingLevelHigh = nUpperScale;
 
-            GraphConfig.GraphicDisplay(Curves,ActiveCurve, BackGroundImageBitmap);
-            BackgroundImage = BackGroundImageBitmap;
-            Image = ForeGroundImageBitmap;
+            GraphConfig.GraphicDisplay(Curves,ActiveCurve, GraphicAndCurvesBitmap);
+            ImageUpdate();
         }
 
         public void SetActiveCurve(CCurve Active)
@@ -567,10 +599,12 @@ namespace SNASharp
         private CGraph GraphConfig = new CGraph();
         private ArrayList CurvesList = new ArrayList();
         private CCurve ActiveCurve = null;
-        Bitmap BackGroundImageBitmap = null;
-        Bitmap ForeGroundImageBitmap = null;
-        Graphics BackGroundImageGraphics = null;
-        Graphics ForeGroundImageGraphics = null;
+        Bitmap GraphicAndCurvesBitmap = null;
+        Bitmap HUDBitmap = null;
+        Graphics GraphicAndCurvesGraphics = null;
+        Graphics HUDGraphics = null;
+        Graphics PictureBoxGraphics = null;
+
         float fZoomInRatio = 1.0f / 3.0f;
         int nLastMouseX = 0;
 
@@ -590,6 +624,8 @@ namespace SNASharp
             this.SizeChanged += new System.EventHandler(this.SpectrumPictureBoxClass_SizeChanged);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SpectrumPictureBoxClass_MouseClick);
             this.MouseLeave += new System.EventHandler(this.SpectrumPictureBox_MouseLeave);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.SpectrumPictureBox_Paint);
+
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
             this.ResumeLayout(false);
