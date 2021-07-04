@@ -225,8 +225,7 @@ namespace SNASharp
             CCurve Curve= (CCurve)CurveConfigPropertyGrid.SelectedObject;
             Curve.ComputeCaracteristicsParams();
             SpectrumPictureBox.Redraw();
-            CurveListComboBox.DataSource = null;
-            CurveListComboBox.DataSource = SweepModeCurvesList;
+            UpdateCurveComboBoxFromCurveList();
             CurveListComboBox.SelectedItem = CurveConfigPropertyGrid.SelectedObject;
         }
 
@@ -236,8 +235,9 @@ namespace SNASharp
             NewCurve.Name = "Curve_" + SweepModeCurvesList.Count;
             NewCurve.Color_ = GetDefaultCurveColor(SweepModeCurvesList.Count);
             SweepModeCurvesList.Add(NewCurve);
-            CurveListComboBox.DataSource = null;
-            CurveListComboBox.DataSource = SweepModeCurvesList;
+
+            UpdateCurveComboBoxFromCurveList();
+
             CurveListComboBox.SelectedItem = NewCurve;
             SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
             CurveConfigPropertyGrid.SelectedObject = NewCurve;
@@ -264,13 +264,36 @@ namespace SNASharp
             if (SweepModeCurvesList.Count > 1)
             {
                 int nIndexToDelete = CurveListComboBox.SelectedIndex;
-                CurveListComboBox.DataSource = null;
+                //CurveListComboBox.DataSource = null;
                 CurveConfigPropertyGrid.SelectedObject = null;
                 SweepModeCurvesList.RemoveAt(nIndexToDelete);
-                CurveListComboBox.DataSource = SweepModeCurvesList;
+                UpdateCurveComboBoxFromCurveList();
                 SpectrumPictureBox.SetActiveCurve((CCurve)SweepModeCurvesList[0]);
                 SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
-                CurveListComboBox.SelectedIndex = 0;
+                if (nIndexToDelete - 1 >= 0)
+                {
+                    CurveListComboBox.SelectedIndex = nIndexToDelete - 1;
+                }
+                else
+                {
+                    CurveListComboBox.SelectedIndex = 0;
+                }
+
+                CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[CurveListComboBox.SelectedIndex];
+
+                /*
+                                int nIndexToDelete = CurveListComboBox.SelectedIndex;
+                                CurveListComboBox.DataSource = null;
+                                CurveConfigPropertyGrid.SelectedObject = null;
+                                SweepModeCurvesList.RemoveAt(nIndexToDelete);
+                                CurveListComboBox.Items.Clear();
+                                CurveListComboBox.Items.AddRange(SweepModeCurvesList.ToArray());
+                                SpectrumPictureBox.SetActiveCurve((CCurve)SweepModeCurvesList[0]);
+                                SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
+                                CurveListComboBox.SelectedIndex = 0;
+                                CurveConfigPropertyGrid.SelectedObject = SweepModeCurvesList[0];
+                                */
+
             }
         }
 
@@ -318,8 +341,8 @@ namespace SNASharp
                         CurveToLoad.ComputeCaracteristicsParams();
 
                         SweepModeCurvesList.Add(CurveToLoad);
-                        CurveListComboBox.DataSource = null;
-                        CurveListComboBox.DataSource = SweepModeCurvesList;
+                        UpdateCurveComboBoxFromCurveList();
+
                         SpectrumPictureBox.DrawCurveCollection(SweepModeCurvesList);
                         CurveListComboBox.SelectedIndex = SweepModeCurvesList.Count - 1;
                     }
@@ -332,6 +355,20 @@ namespace SNASharp
 
                 }
             }
+
+        }
+
+        private void UpdateCurveComboBoxFromCurveList()
+        {
+
+            if (CurveListComboBox.DataSource != null)
+                CurveListComboBox.DataSource = null;
+
+            //CurveListComboBox.DataSource = SweepModeCurvesList;
+
+
+            CurveListComboBox.Items.Clear();
+            CurveListComboBox.Items.AddRange(SweepModeCurvesList.ToArray());
 
         }
 
