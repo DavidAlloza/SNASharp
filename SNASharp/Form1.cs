@@ -599,8 +599,8 @@ namespace SNASharp
 
 
             float RmDisplay_Ohms = (float)Math.Round(Rm, 1);
-            float LmDisplay_mH = (float)Math.Round(Lm * 1000.0f, 2);
-            float CmDisplay_fF = (float)Math.Round(Cm * 1000000000000000.0f, 2);
+            float LmDisplay_mH = (float)Math.Round(Lm * 1000.0f, 3);
+            float CmDisplay_fF = (float)Math.Round(Cm * 1000000000000000.0f, 3);
 
             double fserieFrequencyDisplayKhz = Math.Round(fserieFrequency * 0.001f, 3);
 
