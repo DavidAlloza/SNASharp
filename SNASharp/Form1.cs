@@ -140,11 +140,16 @@ namespace SNASharp
             }
         }
 
-     
-
         bool SerialPortInitialize(String PortName)
         {
-            if (DeviceInterface.Initialize(PortName) == true)
+            bool bSuccess = DeviceInterface.Initialize(PortName, true, 0);
+
+            if (!bSuccess)
+            {
+                bSuccess = DeviceInterface.Initialize(PortName, false, 1000);
+            }
+
+            if (bSuccess == true)
             {
                 LOGDraw("Firmware version : " + DeviceInterface.nFirmwareVersionNumber.ToString());
                 FirmwareTextBox.Text = DeviceInterface.nFirmwareVersionNumber.ToString();
@@ -153,7 +158,7 @@ namespace SNASharp
 
                 foreach (int i in DeviceInterface.GetDevice().AllowedFirmwaresVersions)
                 {
-                    if ( i == DeviceInterface.nFirmwareVersionNumber)
+                    if (i == DeviceInterface.nFirmwareVersionNumber)
                     {
                         bFirmwareOK = true;
                         break;
@@ -171,13 +176,13 @@ namespace SNASharp
                     if (DeviceInterface.nFirmwareVersionNumber > 100 && DeviceInterface.nFirmwareVersionNumber < 120)
                     {
                         FirmwareTextBox.BackColor = Color.Yellow;
-                        LOGWarning(PortName+":In range firmware version number, but no match with selected analyzer");
+                        LOGWarning(PortName + ":In range firmware version number, but no match with selected analyzer");
 
                     }
                     else
                     {
                         FirmwareTextBox.BackColor = Color.OrangeRed;
-                        LOGWarning(PortName+":The device respond to the version request, but the firmware version number is out of range ");
+                        LOGWarning(PortName + ":The device respond to the version request, but the firmware version number is out of range ");
 
                     }
                 }
@@ -189,7 +194,7 @@ namespace SNASharp
                 FirmwareTextBox.BackColor = Color.Red;
                 FirmwareTextBox.Text = "NA";
                 bDeviceConnected = false;
-                LOGError(PortName+":No device respond to version request");
+                LOGError(PortName + ":No device respond to version request");
                 return false;
             }
         }
@@ -635,7 +640,7 @@ namespace SNASharp
             MotionalDisplayTextBox.Text += "Q=" + fQDisplay.ToString() + " ";
             //MotionalDisplayTextBox.Text += Environment.NewLine;
 
-            float fBPDisplay = (float)Math.Round(fserieFrequency * 0.001f / Q, 3);
+            float fBPDisplay = (float)Math.Round(fserieFrequency * 0.001f / Q, 4);
             MotionalDisplayTextBox.Text += "BP(-3dB)=" + fBPDisplay.ToString() + "kHz ";
             MotionalDisplayTextBox.Text += Environment.NewLine;
 

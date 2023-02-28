@@ -121,7 +121,6 @@ namespace AnalyzerInterface
             set { _HaveLinDetector = value; }
         }
 
-
         public int[] AllowedFirmwaresVersions
         {
             get { return _FirmwareVersions; }
@@ -781,7 +780,7 @@ namespace AnalyzerInterface
 
         }
 
-        public bool Initialize(String SerialPortName)
+        public bool Initialize(String SerialPortName, bool bDTREnable, int DelayMSBetweenOpenPortAndSend)
         {
             byte[] OutMessage = new byte[2];
             OutMessage[0] = 0x8f;
@@ -796,7 +795,7 @@ namespace AnalyzerInterface
 
             bool bOpenedByMe;
 
-            port.DtrEnable = false; // to disable arduino reboot at port open.
+            port.DtrEnable = bDTREnable; // to enable or disable arduino reboot at port open.
             port.RtsEnable = true;
 
 
@@ -824,7 +823,10 @@ namespace AnalyzerInterface
             port.DiscardOutBuffer();
 
             port.ReadTimeout = 2000;
-            //Thread.Sleep(1000);
+            if (DelayMSBetweenOpenPortAndSend > 0)
+                Thread.Sleep(DelayMSBetweenOpenPortAndSend);  // needed for arduino MEGA 2560
+          
+           
             port.Write(OutMessage, 0, OutMessage.Length);
 
             try
