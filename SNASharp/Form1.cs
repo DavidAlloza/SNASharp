@@ -635,7 +635,7 @@ namespace SNASharp
             MotionalDisplayTextBox.Text += "Q=" + fQDisplay.ToString() + " ";
             //MotionalDisplayTextBox.Text += Environment.NewLine;
 
-            float fBPDisplay = (float)Math.Round(fserieFrequency * 0.001f / Q, 3);
+            float fBPDisplay = (float)Math.Round(fserieFrequency * 0.001f / Q, 4);
             MotionalDisplayTextBox.Text += "BP(-3dB)=" + fBPDisplay.ToString() + "kHz ";
             MotionalDisplayTextBox.Text += Environment.NewLine;
 
