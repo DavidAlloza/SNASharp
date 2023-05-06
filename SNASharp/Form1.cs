@@ -146,7 +146,7 @@ namespace SNASharp
 
             if (!bSuccess)
             {
-                bSuccess = DeviceInterface.Initialize(PortName, false, 1000);
+                bSuccess = DeviceInterface.Initialize(PortName, false, 1500);
             }
 
             if (bSuccess == true)
@@ -929,7 +929,7 @@ namespace SNASharp
                         SpectrumPictureBox.GraphicUpdateScaleRefresh(nFrequencyDetectionStart, nFrequencyDetectionEnd);
                 }
             }
-
+            UpdateSampleCount();
         }
 
 
@@ -952,14 +952,22 @@ namespace SNASharp
 
         void UpdateSampleCount()
         {
-            if (nFrequencyDetectionEnd - nFrequencyDetectionStart < Convert.ToInt64(SamplesTextBox.Text))
+
+            if (nFrequencyDetectionEnd > nFrequencyDetectionStart)
             {
-                SamplesTextBox.Text = (nFrequencyDetectionEnd - nFrequencyDetectionStart).ToString();
-                SamplesTextBox.ForeColor = Color.Red;
-            }
-            else
-            {
-                SamplesTextBox.ForeColor = Color.Black;
+                if (nFrequencyDetectionEnd - nFrequencyDetectionStart < Convert.ToInt64(SamplesTextBox.Text))
+                {
+                    SamplesTextBox.Text = (nFrequencyDetectionEnd - nFrequencyDetectionStart).ToString();
+                    SamplesTextBox.ForeColor = Color.Red;
+                }
+                else
+                {
+                    SamplesTextBox.ForeColor = Color.Black;
+                }
+
+                double FrequencyStep = ((double)(nFrequencyDetectionEnd - nFrequencyDetectionStart)) / Convert.ToInt64(SamplesTextBox.Text);
+                double correctionRatio = FrequencyStep / Math.Round(FrequencyStep);
+                SamplesTextBox.Text = (Math.Truncate(Convert.ToInt64(SamplesTextBox.Text) * correctionRatio)).ToString();
             }
         }
 
@@ -1236,6 +1244,8 @@ namespace SNASharp
 
             LOGPrint("Reset sample count to default");
             SetSampleCount(2000);
+            // update sample count to assure integer frequency step granularity 
+            UpdateSampleCount();
         }
 
         private void MenuSavePicture_Click(object sender, EventArgs e)
