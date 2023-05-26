@@ -463,8 +463,12 @@ namespace AnalyzerInterface
         public void RunCalibration(CBackNotifier Notifier, int nCount,  bool bLinear = false)
         {
 
+
         CalibrationValues.nFirstCalibrationFrequency = DeviceDef.MinFrequencyInHz;
         CalibrationValues.nLastCalibrationFrequency = DeviceDef.MaxFrequencyInHz;
+
+        nCount=(int) SNASharp.Utility.UpdateSampleCountToMatchIntegerFrequencyStepConstraint(DeviceDef.MinFrequencyInHz, DeviceDef.MaxFrequencyInHz, nCount);
+
 
         Int16[] Out = new Int16[nCount];
 

@@ -8,6 +8,16 @@ namespace SNASharp
     class Utility
     {
 
+        public static long UpdateSampleCountToMatchIntegerFrequencyStepConstraint(long FreqStart, long FreqEnd, long InitialSampleCount)
+        {
+
+            double FrequencyStep = ((double)(FreqEnd - FreqStart)) / InitialSampleCount;
+            if (FrequencyStep < 0.51)
+                FrequencyStep = 0.51;
+
+            double correctionRatio = FrequencyStep / Math.Round(FrequencyStep);
+            return (long)Math.Truncate(InitialSampleCount * correctionRatio);
+        }
 
         public static String BuildZeroLeftString(Int64 nValue, int nNeededlength)
         {

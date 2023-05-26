@@ -8,6 +8,16 @@ namespace SNASharp
     class Utility
     {
 
+        public static long UpdateSampleCountToMatchIntegerFrequencyStepConstraint(long FreqStart, long FreqEnd, long InitialSampleCount)
+        {
+
+            double FrequencyStep = ((double)(FreqEnd - FreqStart)) / InitialSampleCount;
+            if (FrequencyStep < 0.51)
+                FrequencyStep = 0.51;
+
+            double correctionRatio = FrequencyStep / Math.Round(FrequencyStep);
+            return (long)Math.Truncate(InitialSampleCount * correctionRatio);
+        }
 
         public static String BuildZeroLeftString(Int64 nValue, int nNeededlength)
         {
@@ -50,7 +60,7 @@ namespace SNASharp
             nValue /= 1000;
             Int64 nMilliard = nValue % 1000;
 
-            String Result = nMilliard.ToString()+ Separator + BuildZeroLeftString(nMillion,3) + Separator + BuildZeroLeftString(nMilliers,3) + Separator + BuildZeroLeftString(nUnits,3);
+            String Result = nMilliard.ToString() + Separator + BuildZeroLeftString(nMillion, 3) + Separator + BuildZeroLeftString(nMilliers, 3) + Separator + BuildZeroLeftString(nUnits, 3);
 
             for (int i = 0; i < 13; i++)
             {
@@ -78,10 +88,10 @@ namespace SNASharp
                     nFirstIndex = i;
                 }
 
- //               if (Data[i] == fMaxValue)
- //               {
- //                   nLastIndex = i;
- //               }
+                //               if (Data[i] == fMaxValue)
+                //               {
+                //                   nLastIndex = i;
+                //               }
 
             }
             //           return (nFirstIndex + nLastIndex) >> 1;
@@ -131,7 +141,7 @@ namespace SNASharp
 
 
             int nIndex;
-            for (nIndex = nStartIndex+ nIncrement; nIndex >= 0 && nIndex <= nMaxIndex; nIndex += nIncrement)
+            for (nIndex = nStartIndex + nIncrement; nIndex >= 0 && nIndex <= nMaxIndex; nIndex += nIncrement)
             {
                 if (Array[nIndex] >= fLevelToFind)
                 {
@@ -149,7 +159,7 @@ namespace SNASharp
                 }
             }
 
-            return nIndex- nIncrement;
+            return nIndex - nIncrement;
         }
 
         public static void FilterArray(short[] Array, int nPass = 1)
@@ -169,14 +179,11 @@ namespace SNASharp
         }
 
 
-        public static void FilterArray( float[] Array, int nPass = 1)
+        public static void FilterArray(float[] Array, int nPass = 1)
         {
-            float[] backup = new float[Array.Length];
-            
 
             for (int nCurrentPass = 0; nCurrentPass < nPass; nCurrentPass++)
             {
-                Array.CopyTo(backup, 0);
                 // first parse in direct 
                 for (int i = 1; i < Array.Length; i++)
                 {
@@ -184,15 +191,9 @@ namespace SNASharp
                 }
 
                 // now in reverse
-                for (int i = backup.Length - 2; i >= 0; i--)
+                for (int i = Array.Length - 2; i >= 0; i--)
                 {
-                    backup[i] = 0.5f * backup[i] + 0.5f * backup[i + 1];
-                }
-
-                // and we take the average of both filterings
-                for (int i = 0; i < Array.Length; i++)
-                {
-                    Array[i] = 0.5f * Array[i] + 0.5f * backup[i];
+                    Array[i] = 0.5f * Array[i] + 0.5f * Array[i + 1];
                 }
             }
 

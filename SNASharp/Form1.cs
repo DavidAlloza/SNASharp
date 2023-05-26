@@ -964,10 +964,7 @@ namespace SNASharp
                 {
                     SamplesTextBox.ForeColor = Color.Black;
                 }
-
-                double FrequencyStep = ((double)(nFrequencyDetectionEnd - nFrequencyDetectionStart)) / Convert.ToInt64(SamplesTextBox.Text);
-                double correctionRatio = FrequencyStep / Math.Round(FrequencyStep);
-                SamplesTextBox.Text = (Math.Truncate(Convert.ToInt64(SamplesTextBox.Text) * correctionRatio)).ToString();
+                SamplesTextBox.Text = Utility.UpdateSampleCountToMatchIntegerFrequencyStepConstraint(nFrequencyDetectionStart, nFrequencyDetectionEnd, Convert.ToInt64(SamplesTextBox.Text)).ToString();
             }
         }
 
