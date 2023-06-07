@@ -62,7 +62,7 @@ namespace SNASharp
 
         public Int64 GetFrequencyGranularityDisplay(Int64 fBW, int nDisplay = 13)
         {
-            Int64[] List = new Int64[] { 100,200,250,500,1000,2000,2500,
+            Int64[] List = new Int64[] { 5,10,25,50,100,200,250,500,1000,2000,2500,
                                         5000,10000,20000,25000,50000,
                                         100000,200000,250000,500000,
                                         1000000,2000000, 2500000,
@@ -230,9 +230,16 @@ namespace SNASharp
                 }
                 else
                 {
-                    Int64 nRest = nFreqDisplay / 100;
-                    nRest = nRest % 10;
-                    sFrequency = (nFreqDisplay / 1000).ToString() + "." + nRest.ToString() + "k";
+                    if (nGranularity >= 1000)
+                    {
+                        Int64 nRest = nFreqDisplay / 100;
+                        nRest = nRest % 10;
+                        sFrequency = (nFreqDisplay / 1000).ToString() + "." + nRest.ToString() + "k";
+                    }
+                    else
+                    {
+                        sFrequency = (nFreqDisplay).ToString()+"Hz";
+                    }
                 }
 
                 float StringSize = g.MeasureString(sFrequency, FreqFont).Width;

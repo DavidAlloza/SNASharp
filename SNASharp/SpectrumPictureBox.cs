@@ -248,7 +248,7 @@ namespace SNASharp
             nPreviousBW = GraphConfig.nLastDrawingHighFrequency - GraphConfig.nLastDrawingLowFrequency;
 
 
-            if (nPreviousBW < 100)
+            if (nPreviousBW < 10)
                 return;
 
             nNewStartFrequency = nCentralFrequency - (Int64)(nPreviousBW * fZoomInRatio * 0.5f);
@@ -305,7 +305,7 @@ namespace SNASharp
 
                 if (Event.Button == MouseButtons.Left)
                 {
-                    if (nPreviousBW < 100)
+                    if (nPreviousBW < 10)
                         return;
 
                     nNewStartFrequency = nCentralFrequency - (Int64)(nPreviousBW * fZoomInRatio*0.5f);
